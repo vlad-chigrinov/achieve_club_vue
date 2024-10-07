@@ -1,126 +1,261 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { useRouter, onBeforeRouteUpdate } from 'vue-router'
 
-const achievements = ref([])
+const router = useRouter()
 
-onMounted(async () => {
-  var responce = await fetch('http://achieve.by:5000/api/achievements')
-  achievements.value = await responce.json()
+onBeforeRouteUpdate(() => {
+  console.log('on before route updated')
+  if (tryLoadTokens() == false) router.push('/login')
 
-  responce = await fetch('http://achieve.by:5000/api/completedAchievements/247')
-  var competed = await responce.json()
-  achievements.value.map((a) => {
-    var finded = competed.find((ca) => ca.achieveId == a.id)
-    if (finded) {
-      a.completionCount = finded.completionCount
-      a.completed = true
-    }
-  })
+  if (tryAuth()) router.push('/login')
 })
-</script>
 
+async function tryAuth() {
+  var responce = await fetch('http://achieve.by:5000/ping')
+  console.log('status code', responce.status)
+  return responce.ok
+}
+
+function tryLoadTokens() {
+  var accessToken = localStorage.getItem('access-token')
+  var refreshToken = localStorage.getItem('refresh-token')
+  if (accessToken != null && refreshToken != null) {
+    document.cookie = 'X-Access-Token=' + accessToken + ';X-Refresh-Token=' + refreshToken + ';'
+    return true
+  } else {
+    return false
+  }
+}
+</script>
 <template>
-  <div class="achievements">
-    <div class="achievement" v-for="achievement in achievements" :key="achievement.id">
-      <div class="header">
-        <img :src="'http://achieve.by:5000/' + achievement.logoURL" />
+  <RouterView />
+  <div class="px"></div>
+  <footer>
+    <div class="footerSections">
+      <div class="firstSection">
+        <a href="/">
+          <img id="icon-nav" src="./assets/img/logo.png" alt="profile" />
+        </a>
+        <h3>Профиль</h3>
+        <hr />
       </div>
-      <div class="body">
-        <div class="up">
-          <div class="start">
-            <p class="title">{{ achievement.title }}</p>
-            <div class="xp-chip">
-              <span v-if="achievement.completionCount > 0"
-                >{{ achievement.completionCount }} ×
-              </span>
-              <span>{{ achievement.xp }}XP</span>
-            </div>
-          </div>
-          <div class="end">
-            <div class="percentage">
-              <span class="value">{{ achievement.completionRatio }}</span>
-              <img src="./assets/img/percent.svg" class="percent-icon" />
-              <img src="./assets/img/users.svg" class="user-icon" />
-            </div>
-          </div>
-        </div>
-        <div class="center">
-          <p>{{ achievement.description }}</p>
-        </div>
+      <div class="secondSection">
+        <a href="/topusers">
+          <img id="icon-nav" src="./assets/img/logo.png" alt="top-users" />
+        </a>
+        <h3>Топ 100 пользователей</h3>
+        <hr />
+      </div>
+      <div class="thirdSection">
+        <a href="/topclubs">
+          <img id="icon-nav" src="./assets/img/logo.png" alt="top-clubs" />
+        </a>
+        <h3>Топ клубов</h3>
+        <hr />
       </div>
     </div>
-  </div>
+  </footer>
 </template>
-
 <style scoped>
-.achievement {
+header {
+  background-color: #0d4e81;
+  border-radius: 0px 0px 50px 50px;
+}
+
+nav {
+  background: #0e1316;
+  position: fixed;
+  width: 480px;
+  top: 1010px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#infoTask {
+  color: #0e1316;
+}
+
+#logoTask {
+  width: 60px;
+}
+
+#icon-nav {
+  width: 32px;
+  object-fit: cover;
+}
+
+#clubName {
+  color: black;
+}
+
+#hr {
+  background: #2a6b6e;
+}
+
+footer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.footerSections {
   display: flex;
-  border-radius: 10px;
-  margin: 15px 5% 15px 5%;
-  padding: 10px;
-  background-color: #151e1d;
-  box-shadow: 0px 0px 15px 4px #151e1d;
+  background: #0e1316;
+  width: 100%;
+  justify-content: space-evenly;
+  -webkit-box-shadow: 0px -5px 15px 4px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0px -5px 15px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px -5px 15px 4px rgba(0, 0, 0, 0.2);
 }
 
-.header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0.5vw;
+.firstSection img {
+  cursor: pointer;
 }
 
-.header img {
-  width: 100px;
-  height: 100px;
+.secondSection img {
+  cursor: pointer;
 }
 
-.body {
+.thirdSection img {
+  cursor: pointer;
+}
+
+footer img,
+footer i {
+  font-size: 50px;
+  color: #2a6b6e;
+  text-align: center;
+  margin: 10px 15px 5px 15px;
+  object-fit: cover;
+}
+
+hr {
+  border-bottom: 5px solid #2a6b6e;
+  margin: 5% 0 0 0;
   width: 100%;
 }
 
-.body .up {
-  display: flex;
-  justify-content: space-between;
-}
-
-.body .up .start {
-  display: flex;
-  align-items: center;
-}
-
-.body .up .start .title {
-  font-weight: bold;
-  font-size: 14pt;
-}
-
-.body .up .start .xp-chip {
-  border-radius: 7px;
-  margin: 10px;
-  padding: 5px;
-  font-weight: bold;
+.firstSection h3 {
+  font-size: 0.8em;
   color: white;
-  background-color: indianred;
+  text-align: center;
 }
 
-.percentage {
+.secondSection h3 {
+  font-size: 0.8em;
+  color: white;
+  text-align: center;
+}
+
+.thirdSection h3 {
+  font-size: 0.8em;
+  color: white;
+  text-align: center;
+}
+
+.firstSection {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: right;
+  border: 1px solid #151e1d;
+  background: #151e1d;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 15px;
 }
 
-.percentage .value {
-  font-size: 18pt;
-  font-weight: bold;
+.secondSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #151e1d;
+  background: #151e1d;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 15px;
 }
 
-.percentage .user-icon {
-  width: 32px;
-  margin-left: 14px;
+.thirdSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #151e1d;
+  background: #151e1d;
+  margin: 5px;
+  padding: 10px;
+  border-radius: 15px;
 }
 
-.percentage .percent-icon {
-  position: absolute;
-  width: 22px;
-  transform: translate(-24px, -5px);
+.px {
+  width: 100%;
+  height: 75px;
+}
+
+@media (max-width: 430px) {
+  #infoTask {
+    text-align: left;
+  }
+}
+
+@media (min-width: 1100px) {
+  #infoTask {
+    width: 100%;
+    text-align: left;
+  }
+
+  .notInfoTask {
+    width: 100%;
+    text-align: left;
+  }
+
+  #nameTask {
+    text-align: left;
+  }
+
+  .aboutTask {
+    width: 100%;
+  }
+
+  .mark {
+    display: unset;
+  }
+
+  .taskXP {
+    width: 100px;
+    text-align: right;
+  }
+
+  .completedTask {
+    cursor: pointer;
+  }
+
+  .notCompletedTask {
+    cursor: pointer;
+  }
+
+  #profileSlogan {
+    width: 50%;
+  }
+
+  .exitLink {
+    width: 50%;
+  }
+}
+
+@media (max-width: 800px) {
+  footer {
+    width: 100%;
+  }
+}
+
+.hr-hidden hr {
+  display: none;
+}
+
+.hr-visible hr {
+  display: block;
 }
 </style>
