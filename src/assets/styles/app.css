@@ -1,24 +1,34 @@
 @font-face {
   font-family: 'Play';
-  src: url('../fonts/Play-Bold.ttf');
-  font-weight: bold;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Play';
-  src: url('../fonts/Play-Regular.ttf');
+  src: url(../fonts/Play-Regular.ttf);
   font-weight: normal;
   font-style: normal;
 }
 
-* {
+@font-face {
   font-family: 'Play';
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  color: #e6ebee;
+  src: url(../fonts/Play-Bold.ttf);
+  font-weight: bold;
+  font-style: normal;
 }
 
+@font-face {
+  font-family: 'Exo 2';
+  src: url(../fonts/Exo2-Regular.ttf);
+  font-weight: bold;
+  font-style: normal;
+}
+
+html,
 body {
-  background-color: #0e1316;
+  font-family: 'Exo 2';
+  background: #0e1316;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  box-sizing: border-box;
+  outline: none;
 }

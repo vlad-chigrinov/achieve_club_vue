@@ -1,32 +1,4 @@
-<script setup>
-import { useRouter, onBeforeRouteUpdate } from 'vue-router'
-
-const router = useRouter()
-
-onBeforeRouteUpdate(() => {
-  console.log('on before route updated')
-  if (tryLoadTokens() == false) router.push('/login')
-
-  if (tryAuth()) router.push('/login')
-})
-
-async function tryAuth() {
-  var responce = await fetch('http://achieve.by:5000/ping')
-  console.log('status code', responce.status)
-  return responce.ok
-}
-
-function tryLoadTokens() {
-  var accessToken = localStorage.getItem('access-token')
-  var refreshToken = localStorage.getItem('refresh-token')
-  if (accessToken != null && refreshToken != null) {
-    document.cookie = 'X-Access-Token=' + accessToken + ';X-Refresh-Token=' + refreshToken + ';'
-    return true
-  } else {
-    return false
-  }
-}
-</script>
+<script setup></script>
 <template>
   <RouterView />
   <div class="px"></div>
