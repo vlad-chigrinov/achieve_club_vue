@@ -1,8 +1,10 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../Stores/AuthStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 const emailInput = ref('v@v.vv')
 const passwordInput = ref('vlad8888')
@@ -38,7 +40,14 @@ async function Login() {
     }
     const responce = await fetch(path, requestOptions)
     if (responce.ok) {
-      //router.push('/')
+      const data = await responce.json()
+      const tokens = {
+        userId: data['userId'],
+        authToken: data['authToken'],
+        refreshToken: data['refreshToken']
+      }
+      authStore.login(tokens)
+      router.push('/')
     } else {
       serverError.value = 'Неправильный логин или пароль'
     }

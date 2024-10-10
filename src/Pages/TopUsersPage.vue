@@ -9,28 +9,29 @@
   <!-----------------------------------header----------------------------------------->
   <main>
     <div class="topUsers">
-      <a href="#"></a>
-      <div class="topUser">
-        <div class="userImage">
-          <img alt="" src="http://achieve.by:5000/icons/clubs/palace.png" />
-        </div>
-        <div class="userAboutWrapper">
-          <div class="nameSurnameUser">
-            <span>First Last</span>
-          </div>
-          <div class="xpCountUser">
-            <span>Опыт: 1000</span>
-          </div>
-        </div>
-        <div class="ClubLogoAndPositionUser">
-          <div class="clubUserLogo">
+      <a href="#">
+        <div class="topUser">
+          <div class="userImage">
             <img alt="" src="http://achieve.by:5000/icons/clubs/palace.png" />
           </div>
-          <div class="topPositionUser">
-            <span>#1</span>
+          <div class="userAboutWrapper">
+            <div class="nameSurnameUser">
+              <span>First Last</span>
+            </div>
+            <div class="xpCountUser">
+              <span>Опыт: 1000</span>
+            </div>
+          </div>
+          <div class="ClubLogoAndPositionUser">
+            <div class="clubUserLogo">
+              <img alt="" src="http://achieve.by:5000/icons/clubs/palace.png" />
+            </div>
+            <div class="topPositionUser">
+              <span>#1</span>
+            </div>
           </div>
         </div>
-      </div>
+      </a>
     </div>
   </main>
 </template>

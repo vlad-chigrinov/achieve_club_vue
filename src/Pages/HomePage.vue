@@ -1,126 +1,658 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import AchievementItem from '../Components/AchievementItem.vue'
+import { useAuthStore } from '../Stores/AuthStore'
+import { useRouter } from 'vue-router'
+
+const authStore = useAuthStore()
+const router = useRouter()
 
 const achievements = ref([])
 
 onMounted(async () => {
-  var responce = await fetch('http://achieve.by:5000/api/achievements')
+  if ((await authStore.auth()) == false) {
+    router.push('/login')
+    return
+  }
+
+  var responce = await fetch('/api/achievements')
   achievements.value = await responce.json()
 
-  responce = await fetch('http://achieve.by:5000/api/completedAchievements/247')
-  var competed = await responce.json()
-  achievements.value.map((a) => {
-    var finded = competed.find((ca) => ca.achieveId == a.id)
+  responce = await fetch('/api/completedAchievements/' + authStore.getUserId)
+  const completed = await responce.json()
+  for (const ca in completed) {
+    var finded = achievements.value.find((a) => a.id == ca.achieveId)
     if (finded) {
-      a.completionCount = finded.completionCount
-      a.completed = true
+      finded.completionCount = ca.completionCount
+      finded.completed = true
     }
-  })
+  }
 })
+
+const completedAchievements = computed(() => achievements.value.filter((a) => a.competed))
 </script>
 
 <template>
-  <div class="achievements">
-    <div class="achievement" v-for="achievement in achievements" :key="achievement.id">
-      <div class="header">
-        <img :src="'http://achieve.by:5000/' + achievement.logoURL" />
-      </div>
-      <div class="body">
-        <div class="up">
-          <div class="start">
-            <p class="title">{{ achievement.title }}</p>
-            <div class="xp-chip">
-              <span v-if="achievement.completionCount > 0"
-                >{{ achievement.completionCount }} ×
-              </span>
-              <span>{{ achievement.xp }}XP</span>
-            </div>
-          </div>
-          <div class="end">
-            <div class="percentage">
-              <span class="value">{{ achievement.completionRatio }}</span>
-              <img src="../assets/img/percent.svg" class="percent-icon" />
-              <img src="../assets/img/users.svg" class="user-icon" />
-            </div>
-          </div>
-        </div>
-        <div class="center">
-          <p>{{ achievement.description }}</p>
+  <header>
+    <div class="exitLink">
+      <a href="login">
+        <img id="exitImg" src="../assets/img/logo.png" alt="" />
+      </a>
+    </div>
+    <div class="heading-wrapper"></div>
+    <div class="userProfile">
+      <div class="userImage">
+        <label for="changePhotoInput" class="changePhotoText">
+          <img id="userProfileImg" src="../assets/img/logo.png" alt="User Avatar" />
+        </label>
+        <div class="userId">
+          <p id="nameSurname">Name Surname</p>
         </div>
       </div>
     </div>
-  </div>
+  </header>
+  <main>
+    <div class="generalInfo">
+      <div class="xp">
+        <h1 id="XPLevel">1000 ХР</h1>
+        <p id="XPSlogan">Общее количество опыта</p>
+      </div>
+      <hr id="hr" />
+      <div class="task">
+        <!--Completed Count-->
+        <h1 id="allTasks">Заданий выполнено: 17 из 84</h1>
+        <!--Completed Ratio (%)-->
+        <p id="tasksSlogan">Выполнено 34%</p>
+
+        <div class="progress-container">
+          <div class="progress-bar" style="width: 34%"></div>
+        </div>
+      </div>
+    </div>
+    <h1>Выполненные достижения</h1>
+    <div class="achievement-list">
+      <achievement-item
+        v-for="achievement in completedAchievements"
+        :key="achievement.Id"
+        :achievement="achievement"
+      />
+    </div>
+  </main>
 </template>
 
 <style scoped>
-.achievement {
-  display: flex;
-  border-radius: 10px;
-  margin: 15px 5% 15px 5%;
-  padding: 10px;
+header {
   background-color: #151e1d;
-  box-shadow: 0px 0px 15px 4px #151e1d;
+  border-radius: 0px 0px 50px 50px;
+  margin: 0;
 }
 
-.header {
+main {
+  background-color: #0e1316;
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
-  margin: 0.5vw;
+  margin-bottom: 30px;
 }
 
-.header img {
-  width: 100px;
-  height: 100px;
+nav {
+  background: white;
+  position: fixed;
+  width: 480px;
+  top: 1010px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-.body {
+.userMenu {
+  display: flex;
+  justify-content: space-around;
+}
+
+#exitImg {
+  width: 40px;
+  height: 40px;
+  transform: rotate(180deg);
+}
+
+.paragraph {
+  padding: 15px;
+}
+
+#userParagraph {
+  width: 50px;
+}
+
+.userProfile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.userImage {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.clubImage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+#userProfileImg {
+  width: 148px;
+  height: 148px;
+  border-radius: 50%;
+  border: 1px solid #0d2122;
+}
+
+#clubImg {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  border: 1px solid #0d2122;
+}
+
+#nameSurname {
+  margin-left: 5%;
   width: 100%;
 }
 
-.body .up {
+.changePhotoInput {
+  display: none;
+}
+
+.changePhotoContainer {
+  margin-top: 10px;
+  color: mediumaquamarine;
+}
+
+.changePhotoText {
+  cursor: pointer;
+}
+
+.userId {
+  font-family: 'Exo 2', sans-serif;
+  font-style: normal;
+  font-weight: lighter;
+  font-size: xx-large;
+  color: white;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.userId * {
+  margin: 0;
+}
+
+#locate {
+  color: mediumaquamarine !important;
+  text-decoration: none;
+}
+
+#locate:visited {
+  color: white;
+}
+
+.heading-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+#profileSlogan {
+  display: flex;
+  justify-content: center !important;
+  width: 60%;
+  font-size: 20px;
+  font-family: 'Exo 2', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  margin-left: 20%;
+  color: white;
+  justify-content: flex-end;
+}
+
+.exitLink {
+  display: flex;
+  justify-content: left;
+  padding-top: 20px;
+  padding-left: 20px;
+}
+
+.xp {
+  margin-bottom: 15px;
+}
+.task {
+  margin-top: 15px;
+}
+
+.exitLink a {
+  cursor: pointer;
+}
+
+#locate,
+#XPLevel,
+#allTasks,
+#nameTask,
+#reward {
+  font-family: 'Exo 2', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 19px;
+  color: white;
+  margin: 0;
+}
+
+#completedTasks,
+#notCompletedTasks {
+  font-family: 'Exo 2', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 29px;
+  margin: 0;
+  color: white;
+  text-align: center;
+}
+
+#locateSlogan,
+#XPSlogan,
+#tasksSlogan,
+.infoTask,
+.notInfoTask {
+  font-family: 'Exo 2', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  margin: 0;
+  color: white;
+  padding-top: 5px;
+}
+
+.notInfoTask {
+  color: #0e1316;
+}
+
+.taskXP {
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.infoTask {
+  color: #0e1316;
+}
+
+.userPerscentIcon {
+  width: 20px;
+}
+
+.taskXP p {
+  font-size: large;
+  font-weight: bold;
+  margin: 0;
+  /*margin-right: 4px;*/
+  color: white !important;
+}
+
+.taskXPNotCompleted p {
+  color: #0e1316;
+}
+
+.generalInfo {
+  text-align: center;
+}
+
+.generalInfo,
+.completedTask,
+.notCompletedTask {
+  background: #0d2122;
+  margin: 3%;
+  padding: 2%;
+  border-radius: 20px;
+  width: 56%;
+}
+
+#completed,
+#notCompleted {
+  margin-bottom: 10px;
+}
+
+#notCompleted {
+  margin-top: 15px;
+}
+
+#completedTask,
+#notCompletedTask {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background: #7bc3ff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+}
+
+#notCompletedTask {
+  background: white;
+}
+
+#notComplitedTaskHighlighted {
+  background: #98ffdf;
+}
+
+#acceptList {
+  right: 5%;
+  bottom: 15%;
+  z-index: 1;
+  border: none;
+  text-align: center;
+  position: fixed;
+  border-radius: 20px;
+  padding: 15px;
+  background: #2a6b6e;
+  color: black;
+}
+
+#acceptList:hover {
+  cursor: pointer;
+}
+
+#qr-code-img {
+  width: 48px;
+  object-fit: cover;
+}
+
+.aboutTask {
+  width: 100%;
+}
+
+#infoTask {
+  color: white;
+}
+
+#logoTask {
+  width: 60px;
+  object-fit: cover;
+}
+
+#clubName {
+  text-align: center;
+  color: white;
+}
+
+#hr {
+  background: #818181;
+}
+
+#markUp,
+.markUpRed {
+  margin: 0;
+  font-family: 'Exo 2', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  border: 1px solid;
+  padding: 4px;
+  border-radius: 10px;
+  color: #0e1316;
+}
+
+#markUpRed {
+  border: 1px solid #ff0000;
+  color: #ff0000;
+}
+
+.mark {
   display: flex;
   justify-content: space-between;
 }
 
-.body .up .start {
+.taskXP {
+  padding-left: 10px;
+}
+
+.taskImg {
+  padding-right: 10px;
+  padding-top: 4px;
+}
+
+#markUp {
+  height: 20px;
+}
+
+.markUpRed {
+  height: 20px;
+}
+
+footer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+}
+
+.footerSections {
   display: flex;
+  background: white;
+  width: 100%;
+  justify-content: center;
+  -webkit-box-shadow: 0px -5px 15px 4px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0px -5px 15px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px -5px 15px 4px rgba(0, 0, 0, 0.2);
+}
+
+footer img {
+  width: 50px;
+  margin: 10px 30px 5px 30px;
+  object-fit: cover;
+}
+
+.secondSection hr {
+  border-bottom: 5px solid #0e1316;
+  border-radius: 10px 10px 0px 0px;
+  margin: 0;
+}
+
+.px {
+  width: 100%;
+  height: 75px;
+}
+
+.achievement-list {
+  width: 60%;
+  display: grid;
+  gap: 15px;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
   align-items: center;
 }
 
-.body .up .start .title {
-  font-weight: bold;
-  font-size: 14pt;
+#achieve-count {
+  margin: 2%;
 }
 
-.body .up .start .xp-chip {
-  border-radius: 7px;
-  margin: 10px;
-  padding: 5px;
-  font-weight: bold;
-  color: white;
-  background-color: indianred;
+.modal-achievements {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /*white-space: nowrap;*/
+  overflow-x: auto;
+  width: 90%;
+  max-width: 90%;
 }
 
-.percentage {
+.modal-achieve {
+  background: #252b2b;
+  height: 10em;
+  margin: 1%;
+  padding: 0 5% 0 5%;
+  border-radius: 10px;
+  margin-right: 10px;
+  text-align: center;
   display: flex;
   align-items: center;
-  justify-content: right;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.percentage .value {
-  font-size: 18pt;
-  font-weight: bold;
+.modal-achieve img {
+  width: 4em;
+  object-fit: cover;
 }
 
-.percentage .user-icon {
-  width: 32px;
-  margin-left: 14px;
+.modal-achieve h3 {
+  font-size: 0.8em;
+  text-align: center;
+  margin-top: 5%;
+  word-wrap: break-word;
 }
 
-.percentage .percent-icon {
-  position: absolute;
-  width: 22px;
-  transform: translate(-24px, -5px);
+.qr-code {
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 25px;
+  margin: 2%;
+  padding: 5%;
+}
+
+.qr-code img {
+  width: 15em;
+  object-fit: cover;
+}
+
+#show-qrcode {
+  text-align: center;
+}
+
+#modal-nameSurname {
+  width: 50%;
+  text-align: center;
+}
+
+#modal-userImg {
+  width: 7em;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid #0d2122;
+}
+
+@media (max-width: 430px) {
+  .achievement-list {
+    grid-template-columns: repeat(1, 1fr) !important;
+    gap: 0px;
+    width: unset !important;
+  }
+  #infoTask {
+    text-align: left;
+  }
+
+  .modal-achievements {
+    scrollbar-width: none; /* Скрываем скролл-бар в Firefox */
+    -ms-overflow-style: none; /* Скрываем скролл-бар в Internet Explorer и Edge */
+  }
+
+  .modal-achievements::-webkit-scrollbar {
+    display: none; /* Скрываем скролл-бар в WebKit-браузерах (Chrome, Safari) */
+  }
+}
+
+@media (max-width: 600px) {
+  .generalInfo,
+  .completedTask,
+  .notCompletedTask {
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 85%;
+  }
+
+  .achievement-list {
+    grid-template-columns: repeat(1, 1fr) !important;
+    gap: 0px;
+    width: unset !important;
+  }
+
+  #notCompletedTasks,
+  #completedTasks {
+    padding-left: 10px;
+  }
+
+  #nameSurname {
+    width: unset !important;
+  }
+
+  .modal-achievements {
+    scrollbar-width: none; /* Скрываем скролл-бар в Firefox */
+    -ms-overflow-style: none; /* Скрываем скролл-бар в Internet Explorer и Edge */
+  }
+
+  .modal-achievements::-webkit-scrollbar {
+    display: none; /* Скрываем скролл-бар в WebKit-браузерах (Chrome, Safari) */
+  }
+}
+
+@media (max-width: 800px) {
+  #acceptList {
+    right: 2%;
+  }
+  .achievement-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: unset !important;
+  }
+}
+
+@media (min-width: 1100px) {
+  #infoTask {
+    width: 100%;
+    text-align: left;
+  }
+
+  .notInfoTask {
+    width: 100%;
+    text-align: left;
+  }
+
+  #nameTask {
+    text-align: left;
+  }
+
+  .mark {
+    display: unset;
+  }
+
+  .taskXP {
+    width: 100px;
+    text-align: right;
+  }
+
+  .notCompletedTask {
+    cursor: pointer;
+  }
+}
+
+.progress-container {
+  width: 100%;
+  background-color: #2b3635;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.progress-bar {
+  height: 10px;
+  background-color: #74b6bc;
+  transition: width 0.5s;
 }
 </style>
