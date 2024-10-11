@@ -21,41 +21,80 @@
             <label class="input-label">Выберите клуб</label>
             <select class="input">
                 <option value="ru">Двойной Чикаго</option>
-                <option value="en">Дворец</option>
             </select>
         </div>
         <div class="field">
             <label class="input-label">Имя</label>
-            <input class="input is-error" type="text" placeholder="Введите имя...">
+            <input class="input is-error" v-model="name" type="text" placeholder="Введите имя...">
             <p class="error">Обязательно для заполнения</p>
         </div>
         <div class="field">
             <label class="input-label">Фамилия</label>
-            <input class="input is-error" type="text" placeholder="Введите фамилию...">
+            <input class="input is-error"  v-model="surname" type="text" placeholder="Введите фамилию...">
             <p class="error">Обязательно для заполнения</p>
         </div>
         <div class="field">
             <label class="input-label">E-mail</label>
-            <input class="input is-error" type="text" placeholder="email@mail.com">
+            <input class="input is-error"  v-model="email" type="text" placeholder="email@mail.com">
             <p class="error">Обязательно для заполнения</p>
         </div>
         <div class="field">
-            <label class="input-label">Пароль</label>
-            <input class="input" type="password" placeholder="•••••••••">
+            <label class="input-label" >Пароль</label>
+            <input class="input"   v-model="password" type="password" placeholder="•••••••••">
             <p class="error">Обязательно для заполнения</p>
         </div>
         <div class="field">
             <label class="input-label">Подтверждение пароля</label>
-            <input class="input" type="password" placeholder="•••••••••">
+            <input class="input"  v-model="password2" type="password" placeholder="•••••••••">
             <p class="error">Обязательно для заполнения</p>
         </div>
-        <button type="submit" id="login-button">Зарегистрироваться</button>
+        <button type="submit" @click="login" id="login-button">Зарегистрироваться</button>
     </div>
 
 
 </main>
 </template>
+<script setup>
 
+import { ref} from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../Stores/AuthStore'
+
+// eslint-disable-next-line no-unused-vars
+const router = useRouter()
+// eslint-disable-next-line no-unused-vars
+const authStore = useAuthStore()
+// eslint-disable-next-line no-unused-vars
+const email = ref('')
+// eslint-disable-next-line no-unused-vars
+const password = ref('')
+// eslint-disable-next-line no-unused-vars
+const name = ref('')
+// eslint-disable-next-line no-unused-vars
+const surname = ref('')
+// eslint-disable-next-line no-unused-vars
+const clubId = ref(1)
+// eslint-disable-next-line no-unused-vars
+const password2 = ref('')
+// eslint-disable-next-line no-unused-vars
+const avatar = ref('StaticFiles/dodge.gif');
+//const use = ref(useAuthStore())
+const login = async () =>{
+    await useAuthStore.login({
+        firstName:name.value,
+        lastName: surname.value,
+        emailAddres:email.value,
+        clubId:1,
+        avatarUrl:avatar.value,
+        password:password.value,
+        proofCode:1111
+    })
+}
+
+    
+
+
+</script>
 <style scoped>
 header {
     display: flex;
