@@ -1,233 +1,54 @@
-<script setup></script>
+<script setup>
+import { useDark } from '@vueuse/core'
+
+useDark({
+  selector: 'body',
+  attribute: 'theme',
+  valueDark: 'dark',
+  valueLight: 'light'
+})
+</script>
 <template>
   <RouterView />
   <div class="px"></div>
   <footer>
-    <div class="footerSections">
-      <div class="firstSection">
-        <a href="/">
-          <img id="icon-nav" src="./assets/img/logo.png" alt="profile" />
-        </a>
+    <div id="menu">
+      <a class="menu-item" href="/">
+        <span class="icon-image material-symbols-outlined">home</span>
         <h3>Профиль</h3>
-        <hr />
-      </div>
-      <div class="secondSection">
-        <a href="/topusers">
-          <img id="icon-nav" src="./assets/img/logo.png" alt="top-users" />
-        </a>
-        <h3>Топ 100 пользователей</h3>
-        <hr />
-      </div>
-      <div class="thirdSection">
-        <a href="/topclubs">
-          <img id="icon-nav" src="./assets/img/logo.png" alt="top-clubs" />
-        </a>
-        <h3>Топ клубов</h3>
-        <hr />
-      </div>
+      </a>
+      <a class="menu-item" href="/topusers">
+        <span class="icon-image material-symbols-outlined">list</span>
+        <h3>Топ 100</h3>
+      </a>
+      <a class="menu-item" href="/topclubs">
+        <span class="icon-image material-symbols-outlined">info</span>
+        <h3>Инфо</h3>
+      </a>
     </div>
   </footer>
 </template>
 <style scoped>
-header {
-  background-color: #0d4e81;
-  border-radius: 0px 0px 50px 50px;
-}
-
-nav {
-  background: #0e1316;
-  position: fixed;
-  width: 480px;
-  top: 1010px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-#infoTask {
-  color: #0e1316;
-}
-
-#logoTask {
-  width: 60px;
-}
-
-#icon-nav {
-  width: 32px;
-  object-fit: cover;
-}
-
-#clubName {
-  color: black;
-}
-
-#hr {
-  background: #2a6b6e;
-}
-
-footer {
-  width: 100%;
+#menu {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
   position: fixed;
   bottom: 0;
-  overflow: hidden;
-}
-
-.footerSections {
-  display: flex;
-  background: #0e1316;
   width: 100%;
-  justify-content: space-evenly;
-  -webkit-box-shadow: 0px -5px 15px 4px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0px -5px 15px 4px rgba(0, 0, 0, 0.2);
-  box-shadow: 0px -5px 15px 4px rgba(0, 0, 0, 0.2);
+  background-color: var(--background);
 }
 
-.firstSection img {
-  cursor: pointer;
-}
-
-.secondSection img {
-  cursor: pointer;
-}
-
-.thirdSection img {
-  cursor: pointer;
-}
-
-footer img,
-footer i {
-  font-size: 50px;
-  color: #2a6b6e;
+.menu-item {
+  background-color: var(--surface-variant);
+  color: var(--on-surface-variant);
+  margin: 0 10px 0 10px;
   text-align: center;
-  margin: 10px 15px 5px 15px;
-  object-fit: cover;
-}
-
-hr {
-  border-bottom: 5px solid #2a6b6e;
-  margin: 5% 0 0 0;
-  width: 100%;
-}
-
-.firstSection h3 {
-  font-size: 0.8em;
-  color: white;
-  text-align: center;
-}
-
-.secondSection h3 {
-  font-size: 0.8em;
-  color: white;
-  text-align: center;
-}
-
-.thirdSection h3 {
-  font-size: 0.8em;
-  color: white;
-  text-align: center;
-}
-
-.firstSection {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #151e1d;
-  background: #151e1d;
-  margin: 5px;
+  border-radius: 10px;
   padding: 10px;
-  border-radius: 15px;
 }
 
-.secondSection {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #151e1d;
-  background: #151e1d;
-  margin: 5px;
-  padding: 10px;
-  border-radius: 15px;
-}
-
-.thirdSection {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #151e1d;
-  background: #151e1d;
-  margin: 5px;
-  padding: 10px;
-  border-radius: 15px;
-}
-
-.px {
-  width: 100%;
-  height: 75px;
-}
-
-@media (max-width: 430px) {
-  #infoTask {
-    text-align: left;
-  }
-}
-
-@media (min-width: 1100px) {
-  #infoTask {
-    width: 100%;
-    text-align: left;
-  }
-
-  .notInfoTask {
-    width: 100%;
-    text-align: left;
-  }
-
-  #nameTask {
-    text-align: left;
-  }
-
-  .aboutTask {
-    width: 100%;
-  }
-
-  .mark {
-    display: unset;
-  }
-
-  .taskXP {
-    width: 100px;
-    text-align: right;
-  }
-
-  .completedTask {
-    cursor: pointer;
-  }
-
-  .notCompletedTask {
-    cursor: pointer;
-  }
-
-  #profileSlogan {
-    width: 50%;
-  }
-
-  .exitLink {
-    width: 50%;
-  }
-}
-
-@media (max-width: 800px) {
-  footer {
-    width: 100%;
-  }
-}
-
-.hr-hidden hr {
-  display: none;
-}
-
-.hr-visible hr {
-  display: block;
+.icon-image {
+  color: var(--primary);
 }
 </style>

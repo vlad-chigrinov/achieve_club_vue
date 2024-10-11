@@ -1,31 +1,38 @@
 <script setup>
-defineProps(['achievement'])
+defineProps({
+  achievement: {
+    type: Object,
+    required: true
+  }
+})
 </script>
 
 <template>
   <div class="achievement">
-    <div class="header">
-      <img :src="'http://achieve.by:5000/' + achievement.logoURL" />
+    <div
+      class="card-before"
+      :class="{ 'card-top': achievement.completionCount }"
+      v-if="achievement.isMultiple"
+    >
+      <span v-if="achievement.completionCount"> Комбо ×{{ achievement.completionCount }} </span>
+      <span v-else> Начни комбо! </span>
     </div>
-    <div class="body">
-      <div class="up">
-        <div class="start">
-          <p class="title">{{ achievement.title }}</p>
-          <div class="xp-chip">
-            <span v-if="achievement.completionCount > 0">{{ achievement.completionCount }} × </span>
-            <span>{{ achievement.xp }}XP</span>
-          </div>
-        </div>
-        <div class="end">
-          <div class="percentage">
-            <span class="value">{{ achievement.completionRatio }}</span>
-            <img src="../assets/img/percent.svg" class="percent-icon" />
-            <img src="../assets/img/users.svg" class="user-icon" />
-          </div>
-        </div>
+    <div class="card" :class="{ 'card-top': !achievement.completionCount }">
+      <div class="logo">
+        <img :src="'http://achieve.by:5000/' + achievement.logoURL" />
       </div>
-      <div class="center">
-        <p>{{ achievement.description }}</p>
+      <div class="content">
+        <div class="header">
+          <div class="start">
+            <p class="title">{{ achievement.title }}</p>
+            <div class="xp-chip">
+              <span>{{ achievement.xp }}XP</span>
+            </div>
+          </div>
+        </div>
+        <div class="center">
+          <p>{{ achievement.description }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -33,51 +40,66 @@ defineProps(['achievement'])
 <style scoped>
 .achievement {
   display: flex;
-  border-radius: 10px;
-  margin: 15px 5% 15px 5%;
-  padding: 10px;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+}
+.card-before {
+  background-color: indianred;
+  width: 100%;
+  text-align: center;
+  padding-top: 3px;
+  padding-bottom: 4px;
+}
+.card {
+  display: flex;
+  width: 100%;
   background-color: #151e1d;
-  box-shadow: 0px 0px 15px 4px #151e1d;
+  border-radius: 0 0 10px 10px;
 }
 
-.header {
+.card-top {
+  border-radius: 10px 10px 0 0;
+}
+
+.logo {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 0.5vw;
 }
 
-.header img {
+.logo img {
   width: 100px;
   height: 100px;
 }
 
-.body {
+.content {
   width: 100%;
 }
 
-.body .up {
+.content .header {
   display: flex;
   justify-content: space-between;
 }
 
-.body .up .start {
+.content .header .start {
   display: flex;
   align-items: center;
 }
 
-.body .up .start .title {
+.content .header .start .title {
   font-weight: bold;
   font-size: 14pt;
 }
 
-.body .up .start .xp-chip {
-  border-radius: 7px;
+.content .header .start .xp-chip {
   margin: 10px;
-  padding: 5px;
+  padding: 4px;
   font-weight: bold;
   color: white;
-  background-color: indianred;
+  border: 3px solid indianred;
+  border-radius: 7px;
 }
 
 .percentage {
