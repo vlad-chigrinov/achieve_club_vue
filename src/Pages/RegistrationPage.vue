@@ -78,17 +78,34 @@ const clubId = ref(1)
 const password2 = ref('')
 // eslint-disable-next-line no-unused-vars
 const avatar = ref('StaticFiles/dodge.gif');
-//const use = ref(useAuthStore())
+// eslint-disable-next-line no-unused-vars
+const use = useAuthStore()
+let Account = {
+    firstName:name.value,
+    lastName: surname.value,
+    emailAddres:email.value,
+    clubId:1,
+    avatarUrl:avatar.value,
+    password:password.value,
+    proofCode:1111
+}
+const path = '/auth/ValidateProofCode'
 const login = async () =>{
-    await useAuthStore.login({
-        firstName:name.value,
-        lastName: surname.value,
-        emailAddres:email.value,
-        clubId:1,
-        avatarUrl:avatar.value,
-        password:password.value,
-        proofCode:1111
-    })
+    try{
+        let responce = await fetch(path).then((responce) =>{
+            return responce.json()
+        })
+        if(responce.ok){
+            console.log('зарегался')
+            await use.login({Account})
+            localStorage.setItem(JSON.parse(Account));
+            router.push('/')
+            
+        }
+    }catch(err){
+        console.log(err.message)
+    }
+       
 }
 
     
