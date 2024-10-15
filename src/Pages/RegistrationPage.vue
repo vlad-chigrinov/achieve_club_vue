@@ -2,27 +2,22 @@
     <header>
     <div id="title">
         <h1>Зарегистрируйтесь</h1>
-        <select class="change-lang">
-            <option value="ru">RU</option>
-            <option value="en">EN</option>
-            <option value="pl">PL</option>
-        </select>
+        
     </div>
     <div id="subtitle">
         <h3>
-            <span>или</span>
+            <span>или </span>
             <a href="login">войдите в аккаунт</a>
         </h3>
     </div>
 </header>
+<div class="proof-cont" > 
+    <p>На вашу почту был отправлен код подтверждения</p>
+    <input type="text" v-model="proofCode" id="p-input">
+    <button id="p-button">Отправить</button>
+</div>
 <main>
     <div id="login-form">
-        <div class="field">
-            <label class="input-label">Выберите клуб</label>
-            <select class="input">
-                <option value="ru">Двойной Чикаго</option>
-            </select>
-        </div>
         <div class="field">
             <label class="input-label">Имя</label>
             <input class="input is-error" v-model="name" type="text" placeholder="Введите имя...">
@@ -35,7 +30,7 @@
         </div>
         <div class="field">
             <label class="input-label">E-mail</label>
-            <input class="input is-error"  v-model="email" type="text" placeholder="email@mail.com">
+            <input class="input is-error"  v-model="emailAddress" type="text" placeholder="email@mail.com">
             <p class="error">Обязательно для заполнения</p>
         </div>
         <div class="field">
@@ -50,9 +45,8 @@
         </div>
         <button type="submit" @click="login" id="login-button">Зарегистрироваться</button>
     </div>
-
-
 </main>
+
 </template>
 <script setup>
 
@@ -69,7 +63,7 @@ const email = ref('')
 // eslint-disable-next-line no-unused-vars
 const password = ref('')
 // eslint-disable-next-line no-unused-vars
-const name = ref('')
+const emailAddress = ref('')
 // eslint-disable-next-line no-unused-vars
 const surname = ref('')
 // eslint-disable-next-line no-unused-vars
@@ -80,28 +74,46 @@ const password2 = ref('')
 const avatar = ref('StaticFiles/dodge.gif');
 // eslint-disable-next-line no-unused-vars
 const use = useAuthStore()
-let Account = {
-    firstName:name.value,
+ let Account = {
+     firstName:name.value,
     lastName: surname.value,
-    emailAddres:email.value,
-    clubId:1,
-    avatarUrl:avatar.value,
-    password:password.value,
-    proofCode:1111
+    emailAddres:emailAddress.value,
+     clubId:1,
+     avatarUrl:avatar.value,
+     password:password.value,
+     proofCode:proofCode
 }
-const path = '/auth/ValidateProofCode'
+let proofCode = ref('');
+let responce;
 const login = async () =>{
     try{
-        let responce = await fetch(path).then((responce) =>{
-            return responce.json()
+        responce = await fetch('/api/email/proof_email',{
+            headers:{
+                ' Accept-Language: ru': 'application/json;charset=utf-8'
+            },
+            body:email.value
         })
+        
         if(responce.ok){
-            console.log('зарегался')
-            await use.login({Account})
-            localStorage.setItem(JSON.parse(Account));
-            router.push('/')
-            
+            let responce1 = await fetch('/api/email/validate_code',{
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+            },
+                 body: JSON.stringify(emailAddress,proofCode)
+            })
+            if(responce1.ok){
+                let responce2 = await fetch('/api/auth/registration',{
+                    headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                    body: JSON.stringify(Account)
+                })
+                if(responce2.ok){
+                    router.push('/');
+                }
+            }
         }
+        
     }catch(err){
         console.log(err.message)
     }
@@ -118,7 +130,30 @@ header {
     flex-direction: column;
     align-items: center;
 }
-
+.proof-cont{
+    z-index:99999999;
+    margin-left: 25%;
+    background-color: #0e1316;
+    width:50%;
+    height:40vh;
+    border:1px solid white;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    align-items: center;
+}
+#p-input{
+    width:50%;
+    background: none;
+    border:none;
+    border-bottom:1px solid #80d4d6;
+}
+#p-button{
+    margin-top:5%;
+    width:50%;
+    background: none;
+    border-color:#80d4d6;
+}
 #title {
     display: flex;
     align-items: center;
@@ -129,7 +164,9 @@ header {
     justify-content: flex-start;
     color: #d1d6d9;
 }
-
+main{
+    margin-bottom:10%;
+}
     #subtitle a {
         color: #80d4d6;
     }
