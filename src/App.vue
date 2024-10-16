@@ -14,7 +14,7 @@ useDark({
   <footer>
     <div id="menu">
       <a class="menu-item" href="/">
-        <span class="icon-image material-symbols-outlined">home</span>
+        <i class="icon-image fa-solid fa-user"></i>
         <h3>Профиль</h3>
       </a>
       <a class="menu-item" href="/topusers">
@@ -34,7 +34,7 @@ useDark({
   justify-content: center;
   overflow: hidden;
   position: fixed;
-  bottom: 0;
+  bottom: 0dvh;
   width: 100%;
   background-color: var(--background);
 }

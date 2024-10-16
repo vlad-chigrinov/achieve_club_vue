@@ -2,6 +2,7 @@
 import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../Stores/AuthStore'
+import axios from 'axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -29,28 +30,25 @@ const loginDisabled = computed(() => {
 
 async function Login() {
   if (validateInputs()) {
-    const path = '/api/auth/login?api-version=1.1'
+    const path = 'https://localhost:7170/api/auth/login?api-version=1.1'
     const requestData = { email: emailInput.value, password: passwordInput.value }
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(requestData)
-    }
-    const responce = await fetch(path, requestOptions)
-    if (responce.ok) {
-      const data = await responce.json()
-      const tokens = {
-        userId: data['userId'],
-        authToken: data['authToken'],
-        refreshToken: data['refreshToken']
-      }
-      authStore.login(tokens)
-      router.push('/')
-    } else {
-      serverError.value = 'Неправильный логин или пароль'
-    }
+
+    axios
+      .post(path, requestData)
+      .then(function (responce) {
+        const data = responce.data
+        const tokens = {
+          userId: data['userId'],
+          authToken: data['authToken'],
+          refreshToken: data['refreshToken']
+        }
+        authStore.login(tokens)
+        router.push('/')
+      })
+      .catch((error) => {
+        console.log(error)
+        serverError.value = 'Неправильный логин или пароль'
+      })
   }
 }
 
@@ -133,24 +131,24 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 50px;
 }
 
 #title {
   display: flex;
   align-items: center;
-  font-size: 45pt;
+  font-size: 36pt;
   font-weight: 400;
-  line-height: 52pt;
+  line-height: 44pt;
   color: var(--primary);
 }
 
 #subtitle {
   display: flex;
   justify-content: flex-start;
-  font-size: 36pt;
+  font-size: 22pt;
   font-weight: 400;
-  line-height: 44pt;
+  line-height: 30pt;
   color: var(--secondary);
 }
 

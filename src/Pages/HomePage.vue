@@ -19,13 +19,13 @@ onMounted(async () => {
   }
 
   const requestOptions = { headers: { Authorization: 'Bearer ' + authStore.authToken } }
-  let responce = await fetch('/api/users/current', requestOptions)
+  let responce = await fetch('http://achieve.by:5000/api/users/current', requestOptions)
   userInfo.value = await responce.json()
 
-  responce = await fetch('/api/achievements')
+  responce = await fetch('http://achieve.by:5000/api/achievements')
   achievements.value = await responce.json()
 
-  responce = await fetch('/api/completedAchievements/current', requestOptions)
+  responce = await fetch('http://achieve.by:5000/api/completedAchievements/current', requestOptions)
   const completed = await responce.json()
   for (const ca of completed) {
     var finded = achievements.value.find((a) => a.id == ca.achieveId)

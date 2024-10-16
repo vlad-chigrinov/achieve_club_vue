@@ -59,13 +59,15 @@ export const useAuthStore = defineStore('auth', {
 
 async function SendPingRequest(authToken) {
   console.log('send ping request')
-  const responce = await fetch('/api/ping', { headers: { Authorization: 'Bearer ' + authToken } })
+  const responce = await fetch('http://achieve.by:5000/api/ping', {
+    headers: { Authorization: 'Bearer ' + authToken }
+  })
   return responce.ok
 }
 
 async function SendRefreshRequest(userId, refreshToken) {
   console.log('send refresh request')
-  const responce = await fetch('/api/auth/refresh?api-version=1.1', {
+  const responce = await fetch('http://achieve.by:5000/api/auth/refresh?api-version=1.1', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ userId: userId, refreshToken: refreshToken })
