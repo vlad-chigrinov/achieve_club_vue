@@ -14,7 +14,7 @@
 <div class="proof-cont" > 
     <p>На вашу почту был отправлен код подтверждения</p>
     <input type="text" v-model="proofCode" id="p-input">
-    <button id="p-button">Отправить</button>
+    <button id="p-button" @click="proofLogin">Отправить</button>
 </div>
 <main>
     <div id="login-form">
@@ -85,16 +85,8 @@ const use = useAuthStore()
 }
 let proofCode = ref('');
 let responce;
-const login = async () =>{
-    try{
-        responce = await fetch('/api/email/proof_email',{
-            headers:{
-                ' Accept-Language: ru': 'application/json;charset=utf-8'
-            },
-            body:email.value
-        })
-        
-        if(responce.ok){
+const proofLogin = async()=>{
+    if(responce.ok){
             let responce1 = await fetch('/api/email/validate_code',{
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
@@ -113,6 +105,17 @@ const login = async () =>{
                 }
             }
         }
+}
+const login = async () =>{
+    try{
+        responce = await fetch('/api/email/proof_email',{
+            headers:{
+                ' Accept-Language: ru': 'application/json;charset=utf-8'
+            },
+            body:email.value
+        })
+        
+        
         
     }catch(err){
         console.log(err.message)
