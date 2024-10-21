@@ -11,10 +11,13 @@
         </h3>
     </div>
 </header>
-<div class="proof-cont" > 
-    <p>На вашу почту был отправлен код подтверждения</p>
-    <input type="text" v-model="proofCode" id="p-input">
-    <button id="p-button" @click="proofLogin">Отправить</button>
+<div v-if="showModal" class="modal">
+    <div class="modal-content">
+      <span @click="showModal = false" class="close">&times;</span>
+      <h1>на вашу почту {{email}} был отправлен код потверждения</h1>
+      <input type="text" name="" id="" v-model="proofCode">
+      <button @click="proofLogin">Подтверждение</button>
+    </div>
 </div>
 <main>
     <div id="login-form">
@@ -44,6 +47,9 @@
             <p class="error">Обязательно для заполнения</p>
         </div>
         <button type="submit" @click="login" id="login-button">Зарегистрироваться</button>
+        <div v-show="text!=null">
+            <p>Такой пользователь уже есть</p>
+        </div>
     </div>
 </main>
 
@@ -73,6 +79,11 @@ const password2 = ref('')
 // eslint-disable-next-line no-unused-vars
 const avatar = ref('StaticFiles/dodge.gif');
 // eslint-disable-next-line no-unused-vars
+let showModal1 = false;
+let text = null;
+
+const proofCode = ref('');
+// eslint-disable-next-line no-unused-vars
 const use = useAuthStore()
  let Account = {
      firstName:name.value,
@@ -81,20 +92,24 @@ const use = useAuthStore()
      clubId:1,
      avatarUrl:avatar.value,
      password:password.value,
-     proofCode:proofCode
+     proofCode:proofCode.value
 }
-let proofCode = ref('');
 let responce;
+const showModal =  () => {
+      this.showModal1 = true;
+}
 const proofLogin = async()=>{
     if(responce.ok){
-            let responce1 = await fetch('/api/email/validate_code',{
+            let responce1 = await fetch('https://achieve.by:5000/api/email/validate_code',{
+                method:'POST',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
             },
                  body: JSON.stringify(emailAddress,proofCode)
             })
             if(responce1.ok){
-                let responce2 = await fetch('/api/auth/registration',{
+                let responce2 = await fetch('https://achieve.by:5000/api/auth/registration',{
+                    method:'POST',
                     headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
@@ -105,10 +120,15 @@ const proofLogin = async()=>{
                 }
             }
         }
+        else{
+            text = 'такой аккаунт уже сушествует'
+        }
 }
 const login = async () =>{
+   showModal();
     try{
-        responce = await fetch('/api/email/proof_email',{
+        responce = await fetch('https://achieve.by:5000/api/email/proof_email',{
+            method:'POST',
             headers:{
                 ' Accept-Language: ru': 'application/json;charset=utf-8'
             },
@@ -250,7 +270,39 @@ main{
     margin-bottom: 10px;
     width: 30%
 }
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
 
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
 @media (max-width: 768px) {
     .field {
         width: 85%;
