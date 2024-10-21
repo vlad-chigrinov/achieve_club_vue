@@ -7,8 +7,8 @@ import axios from 'axios'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const emailInput = ref('v@v.vv')
-const passwordInput = ref('vlad8888')
+const emailInput = ref()
+const passwordInput = ref()
 
 const emailError = ref('')
 const passwordError = ref('')
@@ -30,7 +30,7 @@ const loginDisabled = computed(() => {
 
 async function Login() {
   if (validateInputs()) {
-    const path = 'https://localhost:7170/api/auth/login?api-version=1.1'
+    const path = 'https://achieve.by:5000/api/auth/login?api-version=1.1'
     const requestData = { email: emailInput.value, password: passwordInput.value }
 
     axios

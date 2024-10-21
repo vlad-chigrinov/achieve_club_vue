@@ -19,7 +19,7 @@ defineProps({
     </div>
     <div class="card" :class="{ 'card-top': !achievement.completionCount }">
       <div class="logo">
-        <img :src="'http://achieve.by:5000/' + achievement.logoURL" />
+        <img :src="'https://achieve.by:5000/' + achievement.logoURL" />
       </div>
       <div class="content">
         <div class="header">
@@ -45,7 +45,8 @@ defineProps({
   margin: 10px;
 }
 .card-before {
-  background-color: indianred;
+  background-color: var(--tertiary-container);
+  color: var(--on-tertiary-container);
   width: 100%;
   text-align: center;
   padding-top: 3px;
@@ -54,28 +55,32 @@ defineProps({
 .card {
   display: flex;
   width: 100%;
-  background-color: #151e1d;
-  border-radius: 0 0 10px 10px;
+  background-color: var(--surface-container);
+  color: var(--on-surface-container);
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 .card-top {
-  border-radius: 10px 10px 0 0;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 .logo {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0.5vw;
+  margin: 7px;
 }
 
 .logo img {
-  width: 100px;
-  height: 100px;
+  width: 85px;
+  height: 85px;
 }
 
 .content {
   width: 100%;
+  margin-right: 10px;
 }
 
 .content .header {
@@ -97,8 +102,7 @@ defineProps({
   margin: 10px;
   padding: 4px;
   font-weight: bold;
-  color: white;
-  border: 3px solid indianred;
+  border: 3px solid var(--surface-tint);
   border-radius: 7px;
 }
 

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import AchievementItem from '../Components/AchievementItem.vue'
+import MainLoyout from '../Layouts/MainLayout.vue'
 import { useAuthStore } from '../Stores/AuthStore'
 import { useRouter } from 'vue-router'
 
@@ -10,7 +11,7 @@ const router = useRouter()
 const achievements = ref([])
 const userInfo = ref()
 
-const currentPage = ref()
+const currentPage = ref('noncompleted')
 
 onMounted(async () => {
   if ((await authStore.tryAuth()) == false) {
@@ -19,13 +20,16 @@ onMounted(async () => {
   }
 
   const requestOptions = { headers: { Authorization: 'Bearer ' + authStore.authToken } }
-  let responce = await fetch('http://achieve.by:5000/api/users/current', requestOptions)
+  let responce = await fetch('https://achieve.by:5000/api/users/current', requestOptions)
   userInfo.value = await responce.json()
 
-  responce = await fetch('http://achieve.by:5000/api/achievements')
+  responce = await fetch('https://achieve.by:5000/api/achievements')
   achievements.value = await responce.json()
 
-  responce = await fetch('http://achieve.by:5000/api/completedAchievements/current', requestOptions)
+  responce = await fetch(
+    'https://achieve.by:5000/api/completedAchievements/current',
+    requestOptions
+  )
   const completed = await responce.json()
   for (const ca of completed) {
     var finded = achievements.value.find((a) => a.id == ca.achieveId)
@@ -59,95 +63,97 @@ const achievementsCount = computed(() => achievements.value.length)
 const completedCount = computed(() => completedAchievements.value.length)
 </script>
 <template>
-  <template v-if="userInfo">
-    <header>
-      <div class="line-wrapper">
-        <button @click="Logout" id="exit-button" class="icon-button">
-          <span id="logout-image" class="icon-image material-symbols-outlined">logout</span>
-        </button>
-        <img
-          id="user-avatar"
-          :src="'http://achieve.by:5000/' + userInfo.avatar"
-          alt="User Avatar"
-        />
-        <button @click="Logout" id="settings-button" class="icon-button">
-          <span id="settings-image" class="icon-image material-symbols-outlined">settings</span>
-        </button>
-      </div>
-      <h1 id="user-name">{{ userInfo.firstName }} {{ userInfo.lastName }}</h1>
-    </header>
-    <main>
-      <div id="info-grid">
-        <div class="info-block">
-          <span class="info-icon material-symbols-outlined">social_leaderboard</span>
-          <div class="info-data">
-            <p class="info-value">{{ userInfo.xpSum }}</p>
-            <p class="info-title">Всего XP</p>
+  <main-loyout>
+    <template v-if="userInfo">
+      <header>
+        <div class="line-wrapper">
+          <button @click="Logout" id="exit-button" class="icon-button">
+            <i class="icon-image mirror fa-solid fa-right-from-bracket"></i>
+          </button>
+          <img
+            id="user-avatar"
+            :src="'https://achieve.by:5000/' + userInfo.avatar"
+            alt="User Avatar"
+          />
+          <button @click="Logout" id="settings-button" class="icon-button">
+            <i class="icon-image fa-solid fa-gear"></i>
+          </button>
+        </div>
+        <h1 id="user-name">{{ userInfo.firstName }} {{ userInfo.lastName }}</h1>
+      </header>
+      <main>
+        <div id="info-grid">
+          <div class="info-block">
+            <i class="info-icon fa-solid fa-sparkles"></i>
+            <div class="info-data">
+              <p class="info-value">{{ userInfo.xpSum }}</p>
+              <p class="info-title">Всего XP</p>
+            </div>
+          </div>
+          <div class="info-block">
+            <i class="info-icon fa-solid fa-circles-overlap"></i>
+            <div class="info-data">
+              <p class="info-value">{{ completedCount }} из {{ achievementsCount }}</p>
+              <p class="info-title">Заданий выполнено</p>
+            </div>
           </div>
         </div>
-        <div class="info-block">
-          <span class="info-icon material-symbols-outlined">star_half</span>
-          <div class="info-data">
-            <p class="info-value">{{ completedCount }} из {{ achievementsCount }}</p>
-            <p class="info-title">Заданий выполнено</p>
-          </div>
+        <div id="filters">
+          <button
+            class="filter"
+            :class="{ selected: currentPage == 'kombo' }"
+            @click="currentPage = 'kombo'"
+          >
+            <i class="filter-icon fa-solid fa-cubes-stacked"></i>
+            <span class="filter-title"> комбо </span>
+            <div class="selected-marker"></div>
+          </button>
+          <button
+            class="filter"
+            :class="{ selected: currentPage == 'completed' }"
+            @click="currentPage = 'completed'"
+          >
+            <i class="filter-icon fa-solid fa-circle-check"></i>
+            <span class="filter-title"> сделано </span>
+            <div class="selected-marker"></div>
+          </button>
+          <button
+            class="filter"
+            :class="{ selected: currentPage == 'noncompleted' }"
+            @click="currentPage = 'noncompleted'"
+          >
+            <i class="filter-icon fa-solid fa-circle-xmark"></i>
+            <span class="filter-title"> несделано </span>
+            <div class="selected-marker"></div>
+          </button>
         </div>
-        <div class="info-block">
-          <span class="info-icon material-symbols-outlined">star_half</span>
-          <div class="info-data">
-            <p class="info-value">{{ completedCount }} из {{ achievementsCount }}</p>
-            <p class="info-title">Заданий выполнено</p>
-          </div>
+        <hr style="color: var(--outline-variant)" />
+        <div class="achievement-list">
+          <template v-if="currentPage == 'kombo'">
+            <achievement-item
+              v-for="achievement in comboAchievements"
+              :key="achievement.Id"
+              :achievement="achievement"
+            />
+          </template>
+          <template v-else-if="currentPage == 'completed'">
+            <achievement-item
+              v-for="achievement in completedAchievements"
+              :key="achievement.Id"
+              :achievement="achievement"
+            />
+          </template>
+          <template v-else>
+            <achievement-item
+              v-for="achievement in nonCompletedAchievements"
+              :key="achievement.Id"
+              :achievement="achievement"
+            />
+          </template>
         </div>
-      </div>
-      <div id="filters">
-        <button
-          class="filter"
-          :class="{ selected: currentPage == 'kombo' }"
-          @click="currentPage = 'kombo'"
-        >
-          комбо
-        </button>
-        <button
-          class="filter"
-          :class="{ selected: currentPage == 'completed' }"
-          @click="currentPage = 'completed'"
-        >
-          сделано
-        </button>
-        <button
-          class="filter"
-          :class="{ selected: currentPage == 'noncompleted' }"
-          @click="currentPage = 'noncompleted'"
-        >
-          несделано
-        </button>
-      </div>
-      <div class="achievement-list">
-        <template v-if="currentPage == 'kombo'">
-          <achievement-item
-            v-for="achievement in comboAchievements"
-            :key="achievement.Id"
-            :achievement="achievement"
-          />
-        </template>
-        <template v-else-if="currentPage == 'completed'">
-          <achievement-item
-            v-for="achievement in completedAchievements"
-            :key="achievement.Id"
-            :achievement="achievement"
-          />
-        </template>
-        <template v-else>
-          <achievement-item
-            v-for="achievement in nonCompletedAchievements"
-            :key="achievement.Id"
-            :achievement="achievement"
-          />
-        </template>
-      </div>
-    </main>
-  </template>
+      </main>
+    </template>
+  </main-loyout>
 </template>
 <style scoped>
 .line-wrapper {
@@ -165,9 +171,12 @@ const completedCount = computed(() => completedAchievements.value.length)
 }
 
 .icon-image {
-  font-variation-settings: 'FILL' 1 'OPSZ' 30;
   font-size: 25pt;
   color: var(--secondary);
+}
+
+.mirror {
+  transform: rotate(0.5turn);
 }
 
 #user-avatar {
@@ -239,21 +248,37 @@ const completedCount = computed(() => completedAchievements.value.length)
 #filters {
   display: flex;
   justify-content: space-evenly;
+  background-color: var(--surface);
+  color: var(--on-surface);
 }
 
 .filter {
-  font-size: 16pt;
-  background-color: transparent;
   border: none;
+  background: none;
+  color: var(--on-surface);
   cursor: pointer;
-  color: var(--on-tertiary-container);
-  background-color: var(--tertiary-container);
-  padding: 7px;
-  border-radius: 14px;
 }
 
 .selected {
-  color: var(--on-primary-container);
-  background-color: var(--primary-container);
+  color: var(--primary);
+}
+
+.filter .filter-icon {
+  font-size: 20px;
+}
+
+.filter .filter-title {
+  font-size: 20px;
+}
+
+.selected-marker {
+  width: 100%;
+  margin-top: 10px;
+  height: 5px;
+  border-radius: 20px 20px 0 0;
+}
+
+.selected .selected-marker {
+  background-color: var(--primary);
 }
 </style>
