@@ -11,7 +11,7 @@
         </h3>
     </div>
 </header>
-<div v-if="showModal" class="modal">
+<div v-show="showModal" class="modal">
     <div class="modal-content">
       <span @click="showModal = false" class="close">&times;</span>
       <h1>на вашу почту {{email}} был отправлен код потверждения</h1>
@@ -23,32 +23,41 @@
     <div id="login-form">
         <div class="field">
             <label class="input-label">Имя</label>
-            <input class="input is-error" v-model="name" type="text" placeholder="Введите имя...">
-            <p class="error">Обязательно для заполнения</p>
+            <input class="input" v-model="name1" type="text" placeholder="Введите имя...">
+            <div v-show="name1 == ''">
+                <p class="error">Обязательно для заполнения</p>
+            </div>
         </div>
         <div class="field">
             <label class="input-label">Фамилия</label>
-            <input class="input is-error"  v-model="surname" type="text" placeholder="Введите фамилию...">
-            <p class="error">Обязательно для заполнения</p>
+            <input class="input"  v-model="surname" type="text" placeholder="Введите фамилию...">
+            <div v-show="surname == ''">
+                <p class="error">Обязательно для заполнения</p>
+            </div>        
         </div>
         <div class="field">
             <label class="input-label">E-mail</label>
-            <input class="input is-error"  v-model="emailAddress" type="text" placeholder="email@mail.com">
-            <p class="error">Обязательно для заполнения</p>
-        </div>
+            <input class="input"  v-model="emailAddress" type="text" placeholder="email@mail.com">
+            <div v-show="emailAddress == ''">
+                <p class="error">Обязательно для заполнения</p>
+            </div>       
+         </div>
         <div class="field">
             <label class="input-label" >Пароль</label>
             <input class="input"   v-model="password" type="password" placeholder="•••••••••">
-            <p class="error">Обязательно для заполнения</p>
+            <div v-show="password == ''">
+                <p class="error">Обязательно для заполнения</p>
+            </div>        
         </div>
         <div class="field">
             <label class="input-label">Подтверждение пароля</label>
             <input class="input"  v-model="password2" type="password" placeholder="•••••••••">
-            <p class="error">Обязательно для заполнения</p>
-        </div>
+            <div v-show="password2 == ''">
+                <p class="error">Обязательно для заполнения</p>
+            </div>        </div>
         <button type="submit" @click="login" id="login-button">Зарегистрироваться</button>
-        <div v-show="text!=null">
-            <p>Такой пользователь уже есть</p>
+        <div v-show="textError!=''">
+            <p>{{textError}}</p>
         </div>
     </div>
 </main>
@@ -58,12 +67,10 @@
 
 import { ref} from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '../Stores/AuthStore'
 
 // eslint-disable-next-line no-unused-vars
 const router = useRouter()
 // eslint-disable-next-line no-unused-vars
-const authStore = useAuthStore()
 // eslint-disable-next-line no-unused-vars
 const email = ref('')
 // eslint-disable-next-line no-unused-vars
@@ -80,23 +87,23 @@ const password2 = ref('')
 const avatar = ref('StaticFiles/dodge.gif');
 // eslint-disable-next-line no-unused-vars
 let showModal1 = false;
-let text = null;
-
+let textError = ref('');
+const name1 = ref('');;
 const proofCode = ref('');
-// eslint-disable-next-line no-unused-vars
-const use = useAuthStore()
- let Account = {
-     firstName:name.value,
-    lastName: surname.value,
-    emailAddres:emailAddress.value,
-     clubId:1,
-     avatarUrl:avatar.value,
-     password:password.value,
-     proofCode:proofCode.value
-}
 let responce;
+
+let Account = ref({
+    firstName:name1,
+    lastName: surname,
+    emailAddres:emailAddress,
+    clubId:1,
+    avatarUrl:avatar,
+    password:password,
+    proofCode:proofCode
+});
+
 const showModal =  () => {
-      this.showModal1 = true;
+    showModal1 = true;
 }
 const proofLogin = async()=>{
     if(responce.ok){
@@ -105,7 +112,7 @@ const proofLogin = async()=>{
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
             },
-                 body: JSON.stringify(emailAddress,proofCode)
+                 body: JSON.stringify(Account.value.emailAddres,Account.value.proofCode)
             })
             if(responce1.ok){
                 let responce2 = await fetch('https://achieve.by:5000/api/auth/registration',{
@@ -120,27 +127,26 @@ const proofLogin = async()=>{
                 }
             }
         }
-        else{
-            text = 'такой аккаунт уже сушествует'
-        }
+        
 }
-const login = async () =>{
-   showModal();
+const login = async () => {
     try{
-        responce = await fetch('https://achieve.by:5000/api/email/proof_email',{
+        const res = await fetch('https://achieve.by:5000/api/email/proof_email',{
             method:'POST',
             headers:{
-                ' Accept-Language: ru': 'application/json;charset=utf-8'
+                'Content-Type': 'application/json;charset=utf-8',
+                'Accept-Language':'ru'
             },
-            body:email.value
-        })
-        
-        
-        
-    }catch(err){
-        console.log(err.message)
-    }
-       
+            body:JSON.stringify(Account.value.emailAddres)
+        }) 
+        responce = res; 
+        showModal();
+    } catch(err){
+        if(err == 409){
+            textError.value = 'Такой пользователь есть уже'
+        }
+        console.log(err.message);
+    }  
 }
 
     
@@ -153,30 +159,8 @@ header {
     flex-direction: column;
     align-items: center;
 }
-.proof-cont{
-    z-index:99999999;
-    margin-left: 25%;
-    background-color: #0e1316;
-    width:50%;
-    height:40vh;
-    border:1px solid white;
-    display: flex;
-    justify-content: space-around;
-    flex-direction: column;
-    align-items: center;
-}
-#p-input{
-    width:50%;
-    background: none;
-    border:none;
-    border-bottom:1px solid #80d4d6;
-}
-#p-button{
-    margin-top:5%;
-    width:50%;
-    background: none;
-    border-color:#80d4d6;
-}
+
+
 #title {
     display: flex;
     align-items: center;
