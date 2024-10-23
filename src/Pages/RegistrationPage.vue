@@ -26,35 +26,35 @@
       <div class="field">
         <label class="input-label">Имя</label>
         <input class="input" v-model="firstName" type="text" placeholder="Введите имя..." />
-        <div v-show="firstName == ''">
+        <div v-if="firstName.length < 2">
           <p class="error">Обязательно для заполнения</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Фамилия</label>
         <input class="input" v-model="lastName" type="text" placeholder="Введите фамилию..." />
-        <div v-show="lastName == ''">
+        <div v-if="lastName.length < 5">
           <p class="error">Обязательно для заполнения</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">E-mail</label>
         <input class="input" v-model="emailAddress" type="text" placeholder="email@mail.com" />
-        <div v-show="emailAddress == ''">
+        <div v-if="!emailRegex.test(emailAddress.value)">
           <p class="error">Обязательно для заполнения</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Пароль</label>
         <input class="input" v-model="password" type="password" placeholder="•••••••••" />
-        <div v-show="password == ''">
+        <div v-if="!/[A-z]/.test(password.value) || !/\d/.test(password.value)">
           <p class="error">Обязательно для заполнения</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Подтверждение пароля</label>
         <input class="input" v-model="password2" type="password" placeholder="•••••••••" />
-        <div v-show="password2 == ''">
+        <div v-if="password2 == ''">
           <p class="error">Обязательно для заполнения</p>
         </div>
       </div>
@@ -63,6 +63,8 @@
         <p>{{ textError }}</p>
       </div>
     </div>
+    <!-- <popup></popup> -->
+    
     <!-- <div v-show="responce">
         <modal></modal>
     </div> -->
@@ -71,9 +73,10 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+//import popup from '../Components/v-pop-up.vue'
 
 const router = useRouter()
-
+const emailRegex = /^\S+@\S+\.\S+$/
 const password = ref('')
 
 const emailAddress = ref('')
