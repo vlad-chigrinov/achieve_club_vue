@@ -40,14 +40,14 @@
       <div class="field">
         <label class="input-label">E-mail</label>
         <input class="input" v-model="emailAddress" type="text" placeholder="email@mail.com" />
-        <div v-if="!emailRegex.test(emailAddress.value)">
+        <div v-if="validateEmail">
           <p class="error">Обязательно для заполнения</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Пароль</label>
         <input class="input" v-model="password" type="password" placeholder="•••••••••" />
-        <div v-if="!/[A-z]/.test(password.value) || !/\d/.test(password.value)">
+        <div v-if="validatePassword">
           <p class="error">Обязательно для заполнения</p>
         </div>
       </div>
@@ -63,41 +63,47 @@
         <p>{{ textError }}</p>
       </div>
     </div>
-    <!-- <popup></popup> -->
+     <popup v-if="isVoiceModalOpen" @close="isVoiceModalOpen = false"></popup> 
     
-    <!-- <div v-show="responce">
-        <modal></modal>
-    </div> -->
+    
   </main>
 </template>
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-//import popup from '../Components/v-pop-up.vue'
+import popup from '../Components/v-pop-up.vue'
 
 const router = useRouter()
-const emailRegex = /^\S+@\S+\.\S+$/
 const password = ref('')
 
 const emailAddress = ref('')
-
+const isVoiceModalOpen = true;
 const lastName = ref('')
 const firstName = ref('');
 const clubId = 1
-
 const password2 = ref('')
-
 const avatarURL = 'StaticFiles/dodge.gif'
-
-//let showModal1 = false
 let textError = ref('')
 const proofCode = ref('')
 let responce = ref('')
+const emailError = ref('');
+const passwordError = ref('');
+function validateEmail(){
+  const emailRegex = /^\S+@\S+\.\S+$/
+  if (!emailRegex.test(emailAddress.value)) {
+    emailError.value = 'Вы ввели недействительную почту'
+    
+  }
+}
+function validatePassword(){
+  if (password.value.length < 6) {
+    passwordError.value = 'Недействительный пароль'
+  }
 
-// const showModal = () => {
-//   showModal1 = true
-// }
-
+  if (!/[A-z]/.test(password.value)) {
+    passwordError.value = 'Недействительный пароль'
+  }
+}
 const proofLogin = async () => {
   console.log(responce.value)
   if (responce.value == "200") {

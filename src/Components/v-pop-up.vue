@@ -1,29 +1,41 @@
 <template>
-  <div class="modal-mask">
-      <div class="modal-wrapper">
-        <div class="modal-container">
-
-          <div class="modal-header">
-            <slot name="header">
-              default header
-            </slot>
-          </div>
-
-          <div class="modal-body">
-            <slot name="body">
-              default body
-            </slot>
-          </div>
-
-          <div class="modal-footer">
-            <slot name="footer">
-              default footer
-              <button class="modal-default-button" @click="$emit('close')">
-                OK
-              </button>
-            </slot>
-          </div>
-        </div>
-      </div>
+  <div class="container">
+    <div class="text" style="float:right">
+      <button id="btn-close" @click="close">X</button>
     </div>
+    <br>
+    <div class="content">
+      <input type="text" placeholder="text">
+      <button>click</button>
+    </div>
+  </div>
 </template>
+<script >
+export default{
+  methods:{
+    close(){
+      this.$emit('close')
+    }
+  }
+}
+</script>
+<style scoped>
+
+.container{
+  width:20%;
+  height:20vh;
+  margin:0 auto;
+  margin-top:10%;
+  position:fixed;
+  inset: 0;
+  z-index:10;
+  background-color:rgb(255, 0, 0);
+}
+.content>text{
+  padding:6%;
+}
+#btn-close{
+  border:none;
+  background:none;
+}
+</style>
