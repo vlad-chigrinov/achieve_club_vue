@@ -77,7 +77,7 @@ const router = useRouter()
 const password = ref('')
 
 const emailAddress = ref('')
-const isVoiceModalOpen = true;
+const isVoiceModalOpen = ref(true);
 const lastName = ref('')
 const firstName = ref('');
 const clubId = 1
