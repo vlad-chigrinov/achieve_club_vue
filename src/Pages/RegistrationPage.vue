@@ -10,18 +10,7 @@
       </h3>
     </div>
   </header>
-  <!-- <div v-if="showModal" class="modal">
-    <div class="modal-content">
-      <span @click="showModal = false" class="close">&times;</span>
-      <h1>на вашу почту {{email}} был отправлен код потверждения</h1>
-      <input type="text" name="" id="" v-model="proofCode">
-      <button @click="proofLogin">Подтверждение</button>
-    </div>
-</div> -->
   <main>
-    <input type="text" v-model="proofCode" />
-    <button @click="proofLogin">send</button>
-
     <div id="login-form">
       <div class="field">
         <label class="input-label">Имя</label>
@@ -58,26 +47,32 @@
           <p class="error">Обязательно для заполнения</p>
         </div>
       </div>
-      <button type="submit" @click="login" id="login-button">Зарегистрироваться</button>
       <div v-show="textError != ''">
-        <p>{{ textError }}</p>
+        <p class="error">{{textError}}</p>
       </div>
+      <button type="submit" @click="login" id="login-button">Зарегистрироваться</button>
     </div>
-     <popup v-if="isVoiceModalOpen" @close="isVoiceModalOpen = false"></popup> 
-    
-    
+    <div v-if="isVoiceModalOpen == true">
+      <div class="container">
+        <br>
+        <div class="content">
+          <p align="center" id="modal-text">На вашу почту {{emailAddress.value}} было отправлен код подтверждения</p>
+          <div class="input-container">
+            <input type="text" class="input-part" maxlength="4" v-model="proofCode"/>
+          </div>
+          <button id="login-button1" @click="proofLogin">Подтвердить</button>
+        </div>
+      </div>
+    </div>  
   </main>
 </template>
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import popup from '../Components/v-pop-up.vue'
-
 const router = useRouter()
 const password = ref('')
-
 const emailAddress = ref('')
-const isVoiceModalOpen = ref(true);
+const isVoiceModalOpen = ref(false);
 const lastName = ref('')
 const firstName = ref('');
 const clubId = 1
@@ -88,6 +83,22 @@ const proofCode = ref('')
 let responce = ref('')
 const emailError = ref('');
 const passwordError = ref('');
+function ModalOpen(){
+  switch(responce.value){
+    case 200:
+      isVoiceModalOpen.value = true;
+      break;
+      case 409:
+        isVoiceModalOpen.value = false;
+        textError.value = 'Такой полдьзователь уже есть\nлибо код ранее был отправлен на почту'
+        break;
+        case 400:
+          isVoiceModalOpen.value = false;
+            textError.value='Одно или несколько полей не были заполнены'
+          break;
+  }
+}
+
 function validateEmail(){
   const emailRegex = /^\S+@\S+\.\S+$/
   if (!emailRegex.test(emailAddress.value)) {
@@ -125,6 +136,9 @@ const proofLogin = async () => {
       if (responce2.ok) {
         router.push('/')
       }
+      if(responce.value == 400){
+        console.log(proofCode.value);
+      }
     }
   }
 }
@@ -138,7 +152,7 @@ const login = async () => {
     body: JSON.stringify(emailAddress.value)
   })
   responce.value = res.status
-  //showModal()
+  ModalOpen();
 }
 </script>
 <style scoped>
@@ -236,6 +250,17 @@ main {
   border-radius: 20px;
   cursor: pointer;
 }
+#login-button1 {
+  color: #80d4d6;
+  font-size: 15pt;
+  font-weight: bold;
+  padding: 10px 30px 10px 30px;
+  background-color: #151e1d;
+  border: 0;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top:5%;
+}
 
 .field {
   margin-bottom: 10px;
@@ -274,6 +299,57 @@ main {
   text-decoration: none;
   cursor: pointer;
 }
+.container{
+  width:50%;
+  height:45vh;
+  margin:0 auto;
+  margin-top:10%;
+  position:fixed;
+  inset: 0;
+  z-index:10;
+  background-color: #0e1316;
+  border-radius:5px;
+  border:1px solid #80d4d6;
+}
+.content{
+  padding:6%;
+  display:flex;
+  justify-content:center;
+  flex-direction: column;
+  align-items: center;
+}
+#btn-close{
+  border:none;
+  background:none;
+}
+.text{
+  padding:4%;
+}
+#modal-text{
+  margin-bottom:5%;
+}
+.input-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px; /* Максимальная ширина контейнера */
+        }
+        .input-part {
+         width:25%;
+         height:10vh;
+         background:none;
+         border:1px solid #80d4d6;
+         border-radius: 5px;
+         font-size: 15px;
+         padding:1%;
+        }
+        .input-part:first-child {
+          border-radius:5%;
+        }
+        .input-part:last-child {
+          border-radius:5%;
+
+        }
 @media (max-width: 768px) {
   .field {
     width: 85%;
