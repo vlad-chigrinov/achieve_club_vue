@@ -56,9 +56,14 @@
       <div class="container">
         <br>
         <div class="content">
-          <p align="center" id="modal-text">На вашу почту {{emailAddress.value}} было отправлен код подтверждения</p>
+          <p style="text-align: center;" id="modal-text">Подтверждение адреса электронной почты</p>
+          <p style="text-align: center;" id="modal-text">Вы получили код по электронной почте</p>
+          <p style="text-align: center;" id="modal-text">{{emailAddress}}</p>
           <div class="input-container">
-            <input type="text" class="input-part" maxlength="4" v-model="proofCode"/>
+            <input type="text" class="input-part" maxlength="1" v-model="v1" @input="onInput(1)"/>
+            <input type="text" class="input-part" maxlength="1" v-model="v2" @input="onInput(2)"/>
+            <input type="text" class="input-part" maxlength="1" v-model="v3" @input="onInput(3)"/>
+            <input type="text" class="input-part" maxlength="1" v-model="v4" @input="onInput(4)"/>
           </div>
           <button id="login-button1" @click="proofLogin">Подтвердить</button>
         </div>
@@ -69,6 +74,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+const v1 = ref('');
+const v2 = ref('');
+const v3 = ref('');
+const v4 = ref('');
+
 const router = useRouter()
 const password = ref('')
 const emailAddress = ref('')
@@ -83,6 +93,12 @@ const proofCode = ref('')
 let responce = ref('')
 const emailError = ref('');
 const passwordError = ref('');
+const refs = ref({
+  input1:null,
+  input2:null,
+  input3:null,
+  input4:null
+});
 function ModalOpen(){
   switch(responce.value){
     case 200:
@@ -99,6 +115,13 @@ function ModalOpen(){
   }
 }
 
+function onInput(part){
+  if(part < 4){
+    const nextInput = part + 1;
+    refs[nextInput].focus();
+
+  }
+}
 function validateEmail(){
   const emailRegex = /^\S+@\S+\.\S+$/
   if (!emailRegex.test(emailAddress.value)) {
@@ -118,6 +141,7 @@ function validatePassword(){
 const proofLogin = async () => {
   console.log(responce.value)
   if (responce.value == "200") {
+    proofCode.value = v1.value + v2.value + v3.value + v4.value;
     let responce1 = await fetch('https://achieve.by:5000/api/email/validate_code', {
       method: 'POST',
       headers: {
@@ -156,6 +180,11 @@ const login = async () => {
 }
 </script>
 <style scoped>
+*{
+  margin:0;
+  padding:0;
+  box-sizing: border-box;
+}
 header {
   display: flex;
   flex-direction: column;
@@ -300,8 +329,8 @@ main {
   cursor: pointer;
 }
 .container{
-  width:50%;
-  height:45vh;
+  max-width:50%;
+  max-height:50vh;
   margin:0 auto;
   margin-top:10%;
   position:fixed;
@@ -310,6 +339,7 @@ main {
   background-color: #0e1316;
   border-radius:5px;
   border:1px solid #80d4d6;
+  overflow: hidden;
 }
 .content{
   padding:6%;
@@ -342,6 +372,7 @@ main {
          border-radius: 5px;
          font-size: 15px;
          padding:1%;
+         text-align: center;
         }
         .input-part:first-child {
           border-radius:5%;
