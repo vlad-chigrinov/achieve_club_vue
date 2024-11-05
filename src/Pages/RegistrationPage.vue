@@ -29,14 +29,14 @@
       <div class="field">
         <label class="input-label">E-mail</label>
         <input class="input" v-model="emailAddress" type="text" placeholder="email@mail.com" />
-        <div v-if="validateEmail">
+        <div v-if="!validateEmail(emailAddress.value)">
           <p class="error">Обязательно для заполнения</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Пароль</label>
         <input class="input" v-model="password" type="password" placeholder="•••••••••" />
-        <div v-if="validatePassword">
+        <div v-if="!isValidPassword()">
           <p class="error">Обязательно для заполнения</p>
         </div>
       </div>
@@ -91,14 +91,13 @@ const avatarURL = 'StaticFiles/dodge.gif'
 let textError = ref('')
 const proofCode = ref('')
 let responce = ref('')
-const emailError = ref('');
-const passwordError = ref('');
-const refs = ref({
-  input1:null,
-  input2:null,
-  input3:null,
-  input4:null
-});
+
+
+// Пример использования
+function isValidPassword(password) {
+      const pattern = /^(?=.*[a-zA-Z]).{6,}$/;
+      return pattern.test(password);
+}
 function ModalOpen(){
   switch(responce.value){
     case 200:
@@ -107,6 +106,7 @@ function ModalOpen(){
       case 409:
         isVoiceModalOpen.value = false;
         textError.value = 'Такой полдьзователь уже есть\nлибо код ранее был отправлен на почту'
+        isVoiceModalOpen.value = false;
         break;
         case 400:
           isVoiceModalOpen.value = false;
@@ -115,29 +115,12 @@ function ModalOpen(){
   }
 }
 
-function onInput(part){
-  if(part < 4){
-    const nextInput = part + 1;
-    refs[nextInput].focus();
 
-  }
+function validateEmail(email) {
+    const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return pattern.test(email);
 }
-function validateEmail(){
-  const emailRegex = /^\S+@\S+\.\S+$/
-  if (!emailRegex.test(emailAddress.value)) {
-    emailError.value = 'Вы ввели недействительную почту'
-    
-  }
-}
-function validatePassword(){
-  if (password.value.length < 6) {
-    passwordError.value = 'Недействительный пароль'
-  }
 
-  if (!/[A-z]/.test(password.value)) {
-    passwordError.value = 'Недействительный пароль'
-  }
-}
 const proofLogin = async () => {
   console.log(responce.value)
   if (responce.value == "200") {
@@ -330,7 +313,7 @@ main {
 }
 .container{
   max-width:50%;
-  max-height:50vh;
+  max-height:60vh;
   margin:0 auto;
   margin-top:10%;
   position:fixed;
@@ -339,7 +322,6 @@ main {
   background-color: #0e1316;
   border-radius:5px;
   border:1px solid #80d4d6;
-  overflow: hidden;
 }
 .content{
   padding:6%;
@@ -387,3 +369,4 @@ main {
   }
 }
 </style>
+
