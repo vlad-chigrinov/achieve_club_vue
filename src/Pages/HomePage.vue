@@ -25,6 +25,7 @@ onMounted(async () => {
 
   responce = await fetch('https://achieve.by:5000/api/achievements')
   achievements.value = await responce.json()
+  achievements.value.sort((a, b) => a.xp > b.xp)
 
   responce = await fetch(
     'https://achieve.by:5000/api/completedAchievements/current',
@@ -142,6 +143,7 @@ const completedCount = computed(() => completedAchievements.value.length)
               :key="achievement.Id"
               :achievement="achievement"
             />
+            <template v-if="completedAchievements.length != 0">
           </template>
           <template v-else>
             <achievement-item
