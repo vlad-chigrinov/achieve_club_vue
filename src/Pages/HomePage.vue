@@ -138,12 +138,21 @@ const completedCount = computed(() => completedAchievements.value.length)
             />
           </template>
           <template v-else-if="currentPage == 'completed'">
-            <achievement-item
-              v-for="achievement in completedAchievements"
-              :key="achievement.Id"
-              :achievement="achievement"
-            />
             <template v-if="completedAchievements.length != 0">
+              <achievement-item
+                v-for="achievement in completedAchievements"
+                :key="achievement.Id"
+                :achievement="achievement"
+              />
+            </template>
+            <div v-else class="empty-hero">
+              <i class="fa-solid fa-dolly-empty"></i>
+              <h3>Начни выполнять достижения!</h3>
+              <p>
+                Тут отображаются все твои выволненные достижения, чтобы тут что-то появилось -
+                выполни любое достижение.
+              </p>
+            </div>
           </template>
           <template v-else>
             <achievement-item
