@@ -137,28 +137,24 @@ header {
 #title {
   display: flex;
   align-items: center;
-  font-size: 36pt;
+  font-size: 26pt;
   font-weight: 400;
-  line-height: 44pt;
+  line-height: 30pt;
   color: var(--primary);
 }
 
 #subtitle {
   display: flex;
   justify-content: flex-start;
-  font-size: 22pt;
+  font-size: 20pt;
   font-weight: 400;
-  line-height: 30pt;
+  line-height: 28pt;
   color: var(--secondary);
 }
 
 #subtitle a {
-  color: var(--tertiary);
-  text-decoration: underline;
-}
-
-#title > h1 {
-  font-size: 20pt;
+  color: var(--primary);
+  text-shadow: var(--shadow) 0 0 2px;
 }
 
 main {
@@ -167,14 +163,14 @@ main {
 }
 
 #login-form {
-  background-color: var(--surface-variant);
-  color: var(--on-surface-variant);
-  padding: 50px;
+  background-color: var(--tertiary);
+  color: var(--on-tertiary);
+  padding: 30px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 700px;
+  max-width: 800px;
   margin: 60px 20px 0 20px;
 }
 
@@ -191,9 +187,11 @@ main {
 .custom-input {
   font-size: 15pt;
   background-color: var(--background);
+  color: var(--primary);
   padding: 7px;
   width: 100%;
   border-radius: 5px;
+  border: none;
 }
 
 .custom-input::placeholder {
@@ -201,25 +199,21 @@ main {
 }
 
 .custom-input:focus {
-  border-color: transparent;
-  box-shadow: 0 0 1px 0.2rem var(--primary);
+  box-shadow: 0 0 6px 0.1rem var(--shadow);
 }
 
 .custom-input:not(:focus) {
-  border: 2px solid gray;
+  box-shadow: 0 0 6px 0.1rem var(--inverse-shadow);
 }
 
 .error {
-  color: var(--error);
+  background-color: var(--secondary);
+  color: var(--on-secondary);
   font-size: 10pt;
-  margin: 3px;
-}
-
-.error-message {
-  color: (--error-text);
-  font-size: 10pt;
-  margin: 0 0 10px 0;
-  text-align: center;
+  margin-top: 7px;
+  padding: 3px;
+  display: inline-block;
+  border-radius: 5px;
 }
 
 .input-help {
@@ -227,21 +221,23 @@ main {
   font-size: 10pt;
   color: var(--primary);
   margin: 7px 0;
+  text-shadow: var(--shadow) 0 0 2px;
 }
 
 #login-button {
-  color: var(--on-primary-container);
+  color: var(--on-primary);
   font-size: 15pt;
   font-weight: bold;
-  padding: 10px 30px 10px 30px;
-  background-color: var(--primary-container);
+  padding: 8px 26px 8px 26px;
+  background-color: var(--primary);
   border: 0;
-  border-radius: 20px;
+  border-radius: 18px;
   cursor: pointer;
 }
 
 #login-button:disabled {
-  color: var(--on-secondary);
+  background-color: var(--secondary);
+  color: var(--tertiary);
   cursor: not-allowed;
 }
 </style>
