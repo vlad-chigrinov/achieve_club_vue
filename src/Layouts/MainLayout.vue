@@ -25,7 +25,7 @@
   position: fixed;
   bottom: 0dvh;
   width: 100%;
-  background-color: var(--surface-container);
+  background-color: var(--background);
   padding: 10px;
 }
 
@@ -33,22 +33,22 @@
   margin: 0 10px 0 10px;
   text-align: center;
   padding: 10px;
-  color: var(--on-surface-variant);
+  color: var(--secondary);
 }
 
 .selected {
-  color: var(--on-surface);
+  color: var(--primary);
 }
 
 .icon-image {
-  background-color: var(--secondary-container);
-  color: var(--on-secondary-container);
+  background-color: var(--secondary);
+  color: var(--on-secondary);
   padding: 7px 30px;
   border-radius: 16px;
 }
 
 .selected .icon-image {
-  background-color: var(--primary-container);
-  color: var(--on-primary-container);
+  background-color: var(--primary);
+  color: var(--on-primary);
 }
 </style>
