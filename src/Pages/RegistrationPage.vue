@@ -56,16 +56,19 @@
       <div class="container">
         <br>
         <div class="content">
-          <p style="text-align: center;" id="modal-text">Подтверждение адреса электронной почты</p>
-          <p style="text-align: center;" id="modal-text">Вы получили код по электронной почте</p>
-          <p style="text-align: center;" id="modal-text">{{emailAddress}}</p>
-          <div class="input-container">
-            <input type="text" class="input-part" maxlength="1" v-model="v1" @input="onInput(1)"/>
-            <input type="text" class="input-part" maxlength="1" v-model="v2" @input="onInput(2)"/>
-            <input type="text" class="input-part" maxlength="1" v-model="v3" @input="onInput(3)"/>
-            <input type="text" class="input-part" maxlength="1" v-model="v4" @input="onInput(4)"/>
+          <div id="sms-modal-text">
+            <p style="text-align: center;font-size:18px;" id="modal-text">Подтверждение адреса</p>
+            <p style="text-align: center;font-size:18px"> электронной почты</p>
+            <p style="text-align: center;font-size:15px" id="modal-text">Вы получили код по электронной почте</p>
+            <p style="text-align: center;" id="modal-text">{{emailAddress}}</p>
           </div>
-          <button id="login-button1" @click="proofLogin">Подтвердить</button>
+          <div class="input-container">
+            <input type="text" class="input-part" maxlength="1" v-model="v1"  @input="moveFocus($event, length1)"  @keydown="handleKeyDown($event, input2Ref)"/>
+            <input type="text" class="input-part" maxlength="1" v-model="v2"  @input="moveFocus($event, length2)"  @keydown="handleKeyDown($event, input1Ref, input3Ref)"/>
+            <input type="text" class="input-part" maxlength="1" v-model="v3"  @input="moveFocus($event, length3)"  @keydown="handleKeyDown($event, input2Ref, input3Ref)"/>
+            <input type="text" class="input-part" maxlength="1" v-model="v4"  @input="moveFocus($event, length4)"  @keydown="handleKeyDown($event, input3Ref, inputRef)"/>
+          </div>
+          <button id="login-button1" @click="proofLogin">Отправить</button>
         </div>
       </div>
     </div>  
@@ -90,7 +93,15 @@ const password2 = ref('')
 const avatarURL = 'StaticFiles/dodge.gif'
 let textError = ref('')
 const proofCode = ref('')
+let input1Ref = ref(null);
+let input2Ref = ref(null);
+let input3Ref = ref(null);
+let inputRef = ref(null);
 let responce = ref('')
+let length1 = ref('');
+let length2 = ref('');
+let length3 = ref('');
+let length4 = ref('');
 
 
 // Пример использования
@@ -149,6 +160,24 @@ const proofLogin = async () => {
     }
   }
 }
+function moveFocus(event, maxLength) {
+      if (event.target.value.length >= maxLength) {
+        const nextInput = event.target.nextElementSibling;
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
+}
+const handleKeyDown = (event, prevInput, nextInput) => {
+      // Проверка нажатия Backspace
+      
+      if (event.key === 'Backspace' && event.target.value.length === 0) {
+        if (prevInput) {
+          prevInput.focus(); // Переносим фокус на предыдущий инпут
+        }
+      }
+      else if(nextInput){console.debug('300')}
+    };
 const login = async () => {
   const res = await fetch('https://achieve.by:5000/api/email/proof_email', {
     method: 'POST',
@@ -312,8 +341,8 @@ main {
   cursor: pointer;
 }
 .container{
-  max-width:50%;
-  max-height:60vh;
+  max-width:30%;
+  max-height:50vh;
   margin:0 auto;
   margin-top:10%;
   position:fixed;
@@ -344,17 +373,19 @@ main {
             display: flex;
             justify-content: center;
             width: 100%;
-            max-width: 400px; /* Максимальная ширина контейнера */
+            gap:5%;
+           
         }
         .input-part {
-         width:25%;
+         width:18%;
          height:10vh;
          background:none;
-         border:1px solid #80d4d6;
-         border-radius: 5px;
+         border:2px solid #929696;
+         border-radius: 15px !important;
          font-size: 15px;
          padding:1%;
          text-align: center;
+
         }
         .input-part:first-child {
           border-radius:5%;
