@@ -11,27 +11,27 @@ defineProps({
   <div class="achievement">
     <div
       class="card-before"
-      :class="{ 'card-top': achievement.completionCount }"
+      :class="{ 'card-top': achievement.isMultiple }"
       v-if="achievement.isMultiple"
     >
       <span v-if="achievement.completionCount"> Комбо ×{{ achievement.completionCount }} </span>
       <span v-else> Начни комбо! </span>
     </div>
-    <div class="card" :class="{ 'card-top': !achievement.completionCount }">
-      <div class="logo">
-        <img :src="'https://achieve.by:5000/' + achievement.logoURL" />
+    <div class="card" :class="{ 'card-top': !achievement.isMultiple }">
+      <div class="left">
+        <img class="logo" :src="'https://achieve.by:5000/' + achievement.logoURL" />
       </div>
-      <div class="content">
+      <div class="right">
         <div class="header">
-          <div class="start">
-            <p class="title">{{ achievement.title }}</p>
-            <div class="xp-chip">
-              <span>{{ achievement.xp }}XP</span>
-            </div>
+          <div class="title">
+            <span>{{ achievement.title }}</span>
+          </div>
+          <div class="xp-chip">
+            <span>{{ achievement.xp }}XP</span>
           </div>
         </div>
-        <div class="center">
-          <p>{{ achievement.description }}</p>
+        <div class="content">
+          <span>{{ achievement.description }}</span>
         </div>
       </div>
     </div>
@@ -45,8 +45,8 @@ defineProps({
   margin: 10px;
 }
 .card-before {
-  background-color: var(--tertiary-container);
-  color: var(--on-tertiary-container);
+  background-color: var(--secondary);
+  color: var(--on-secondary);
   width: 100%;
   text-align: center;
   padding-top: 3px;
@@ -54,77 +54,58 @@ defineProps({
 }
 .card {
   display: flex;
+  flex-direction: row;
+  gap: 5px;
+  padding: 5px;
   width: 100%;
-  background-color: var(--surface-container);
-  color: var(--on-surface-container);
+  background-color: var(--tertiary);
+  color: var(--on-tertiary);
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
 }
 
 .card-top {
-  border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+}
+
+.left {
+  align-self: center;
 }
 
 .logo {
+  width: 65px;
+  height: 65px;
+}
+
+.right {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 7px;
-}
-
-.logo img {
-  width: 85px;
-  height: 85px;
-}
-
-.content {
+  flex-direction: column;
+  gap: 3px;
   width: 100%;
-  margin-right: 10px;
 }
 
-.content .header {
+.right .header {
   display: flex;
+  gap: 5px;
+  align-items: center;
   justify-content: space-between;
 }
 
-.content .header .start {
-  display: flex;
-  align-items: center;
-}
-
-.content .header .start .title {
+.xp-chip {
+  padding: 3px;
   font-weight: bold;
-  font-size: 14pt;
+  font-size: 9pt;
+  border: 1px solid var(--outline);
+  border-radius: 8px;
 }
 
-.content .header .start .xp-chip {
-  margin: 10px;
-  padding: 4px;
+.title {
   font-weight: bold;
-  border: 3px solid var(--surface-tint);
-  border-radius: 7px;
+  font-size: 11pt;
 }
 
-.percentage {
-  display: flex;
-  align-items: center;
-  justify-content: right;
-}
-
-.percentage .value {
-  font-size: 18pt;
-  font-weight: bold;
-}
-
-.percentage .user-icon {
-  width: 32px;
-  margin-left: 14px;
-}
-
-.percentage .percent-icon {
-  position: absolute;
-  width: 22px;
-  transform: translate(-24px, -5px);
+.content {
+  font-size: 11pt;
 }
 </style>

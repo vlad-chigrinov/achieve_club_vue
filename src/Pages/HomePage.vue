@@ -127,7 +127,7 @@ const completedCount = computed(() => completedAchievements.value.length)
             <div class="selected-marker"></div>
           </button>
         </div>
-        <hr style="color: var(--outline-variant)" />
+        <hr style="color: var(--primary); background-color: var(--primary)" />
         <div class="achievement-list">
           <template v-if="currentPage == 'kombo'">
             <achievement-item
@@ -172,7 +172,7 @@ const completedCount = computed(() => completedAchievements.value.length)
 
 .icon-image {
   font-size: 25pt;
-  color: var(--secondary);
+  color: var(--primary);
 }
 
 .mirror {
@@ -187,15 +187,16 @@ const completedCount = computed(() => completedAchievements.value.length)
 }
 
 #user-name {
-  font-size: 30pt;
-  line-height: 38pt;
+  font-size: 22pt;
+  line-height: 30pt;
   text-align: center;
   font-weight: bold;
+  color: var(--primary);
 }
 
 #info-grid {
   display: grid;
-  margin: 20px 10px 20px 10px;
+  margin: 10px 10px 20px 10px;
   gap: 12px;
 }
 
@@ -218,21 +219,23 @@ const completedCount = computed(() => completedAchievements.value.length)
 }
 
 .info-block {
-  background-color: var(--surface-variant);
-  color: var(--on-surface-variant);
+  background-color: var(--tertiary);
+  color: var(--on-tertiary);
   border-radius: 15px;
   padding: 7px;
   display: flex;
   align-items: center;
-  box-shadow: 0 0 6px 0.1px var(--shadow);
+  box-shadow: inset 0 0 4px 0.1px var(--inverse-shadow);
 }
 
 .info-icon {
-  background-color: var(--tertiary-container);
-  color: var(--on-tertiary-container);
+  background-color: var(--secondary);
+  color: var(--on-secondary);
   font-size: 20pt;
+  line-height: 38pt;
   text-align: center;
-  padding: 10px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
 }
 
@@ -248,14 +251,13 @@ const completedCount = computed(() => completedAchievements.value.length)
 #filters {
   display: flex;
   justify-content: space-evenly;
-  background-color: var(--surface);
-  color: var(--on-surface);
+  background-color: var(--background);
 }
 
 .filter {
   border: none;
   background: none;
-  color: var(--on-surface);
+  color: var(--secondary);
   cursor: pointer;
 }
 
@@ -264,11 +266,11 @@ const completedCount = computed(() => completedAchievements.value.length)
 }
 
 .filter .filter-icon {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .filter .filter-title {
-  font-size: 20px;
+  font-size: 17px;
 }
 
 .selected-marker {
@@ -280,5 +282,33 @@ const completedCount = computed(() => completedAchievements.value.length)
 
 .selected .selected-marker {
   background-color: var(--primary);
+}
+
+.achievement-list {
+  margin-bottom: 100px;
+}
+
+.empty-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+  background-color: var(--tertiary);
+  color: var(--on-tertiary);
+  border-radius: 15px;
+  padding: 10px;
+}
+
+.empty-hero i {
+  font-size: 65px;
+  margin: 3px;
+}
+
+.empty-hero h3 {
+  font-size: 18px;
+}
+
+.empty-hero p {
+  font-size: 14px;
 }
 </style>
