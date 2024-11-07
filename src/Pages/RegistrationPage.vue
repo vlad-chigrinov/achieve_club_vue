@@ -50,7 +50,7 @@
       <div v-show="textError != ''">
         <p class="error">{{textError}}</p>
       </div>
-      <button type="submit" @click="login" id="login-button">Зарегистрироваться</button>
+      <button type="submit" @click="login" id="login-button" >Зарегистрироваться</button>
     </div>
     <div v-if="isVoiceModalOpen == true">
       <div class="container">
@@ -63,24 +63,27 @@
             <p style="text-align: center;" id="modal-text">{{emailAddress}}</p>
           </div>
           <div class="input-container">
-            <input type="text" ref="lenght1" class="input-part" maxlength="1" v-model="v1"  @input="moveFocus($event, length1)"/>
-            <input type="text" class="input-part" maxlength="1" v-model="v2"  @input="moveFocus($event, length2)"  />
-            <input type="text" class="input-part" maxlength="1" v-model="v3"  @input="moveFocus($event, length3)"  />
-            <input type="text" class="input-part" maxlength="1" v-model="v4"  @input="moveFocus($event, length4)"  />
+            <input type="text" ref="lenght1" class="input-part" maxlength="1" v-model="inputPart1"  @input="moveFocus($event, length1)"/>
+            <input type="text" class="input-part" maxlength="1" v-model="inputPart2"  @input="moveFocus($event, length2)"  />
+            <input type="text" class="input-part" maxlength="1" v-model="inputPart3"  @input="moveFocus($event, length3)"  />
+            <input type="text" class="input-part" maxlength="1" v-model="inputPart4"  @input="moveFocus($event, length4)"  />
           </div>
-          <button id="login-button1" @click="proofLogin">Отправить</button>
+          <div class="errors" v-if="proofCodeError">
+            <p class="error">{{proofCodeError}}</p>
+          </div>
+          <button class="login-button1" @click="proofLogin">Отправить</button>
         </div>
       </div>
     </div>  
   </main>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref , watch } from 'vue'
 import { useRouter } from 'vue-router'
-const v1 = ref('');
-const v2 = ref('');
-const v3 = ref('');
-const v4 = ref('');
+const inputPart1 = ref('');
+const inputPart2 = ref('');
+const inputPart3 = ref('');
+const inputPart4 = ref('');
 
 const router = useRouter()
 const password = ref('')
@@ -102,8 +105,34 @@ let passwordError = ref('');
 let emailError = ref('');
 let firstNameError = ref('');
 let lastNameError = ref('');
+let proofCodeError = ref('');
+let responceProofLogic = ref('');
+watch(emailAddress, () => {
+  emailError.value = ''
+})
+watch(inputPart1,inputPart2,inputPart3,inputPart4, () => {
+  proofCodeError.value = ''
+})
 
+watch(password, () => {
+  passwordError.value = ''
+})
 
+watch(firstName,()=>{
+  firstNameError.value = ''
+})
+watch(lastName,()=>{
+  lastNameError.value = ''
+})
+
+function validateProofCode(){
+  if(inputPart1.value == '' || inputPart2.value == '' || inputPart3.value == '' || inputPart4.value ==''){
+    proofCodeError.value = 'Вы некоректно ввели код'
+  }
+  if(responceProofLogic.value == 400){
+    proofCodeError.value = 'Вы ввели неверный код'
+  }
+}
 function ModalOpen(){
   switch(responce.value){
     case 200:
@@ -123,27 +152,31 @@ function ModalOpen(){
 const proofLogin = async () => {
   console.log(responce.value)
   if (responce.value == "200") {
-    proofCode.value = v1.value + v2.value + v3.value + v4.value;
-    let responce1 = await fetch('https://achieve.by:5000/api/email/validate_code', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8'
-      },
-      body: JSON.stringify({emailAddress:emailAddress.value, proofCode:Number(proofCode.value)})
-    })
-    if (responce1.ok) {
-      let responce2 = await fetch('https://achieve.by:5000/api/auth/registration', {
+    if(validateProofCode()){
+
+      proofCode.value = inputPart1.value + inputPart2.value + inputPart3.value + inputPart4.value;
+      let responce1 = await fetch('https://achieve.by:5000/api/email/validate_code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json;charset=utf-8'
         },
-        body: JSON.stringify({firstName:firstName.value,lastName:lastName.value,emailAddress:emailAddress.value,clubId,avatarURL,password:password.value,proofCode:Number(proofCode.value)})
+        body: JSON.stringify({emailAddress:emailAddress.value, proofCode:Number(proofCode.value)})
       })
-      if (responce2.ok) {
-        router.push('/')
-      }
-      if(responce.value == 400){
-        console.log(proofCode.value);
+      if (responce1.ok) {
+        let responce2 = await fetch('https://achieve.by:5000/api/auth/registration', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+          body: JSON.stringify({firstName:firstName.value,lastName:lastName.value,emailAddress:emailAddress.value,clubId,avatarURL,password:password.value,proofCode:Number(proofCode.value)})
+        })
+        if (responce2.ok) {
+          router.push('/')
+        }
+        if(responce.value == 400){
+          console.log(proofCode.value);
+        }
+        responce1 = responceProofLogic
       }
     }
   }
@@ -179,39 +212,48 @@ const login = async () => {
   }
 function validateInputs() {
   let result = true
-  if(firstName.value.length<=2){
+  if(firstName.value.length<=1){
     firstNameError.value = 'Имя должно содержать не менее 2 символов'
+    isVoiceModalOpen.value = false
   }
-  if(lastName.value.length<=5){
+  if(lastName.value.length<=4){
     lastNameError.value = 'Имя должно содержать не менее 5 символов'
+    isVoiceModalOpen.value = false
+
   }
   if (emailAddress.value.length == 0) {
     emailError.value = 'Введите почту'
+    isVoiceModalOpen.value = false
     result = false
   }
   const emailRegex = /^\S+@\S+\.\S+$/
   if (!emailRegex.test(emailAddress.value)) {
     emailError.value = 'Вы ввели недействительную почту'
+    isVoiceModalOpen.value = false
     result = false
   }
 
   if (password.value.length == 0) {
     passwordError.value = 'Введите пароль'
+    isVoiceModalOpen.value = false
     result = false
   }
 
   if (password.value.length < 6) {
     passwordError.value = 'Недействительный пароль'
+    isVoiceModalOpen.value = false
     result = false
   }
 
   if (!/[A-z]/.test(password.value)) {
     passwordError.value = 'Недействительный пароль'
+    isVoiceModalOpen.value = false
     result = false
   }
 
   if (!/\d/.test(password.value)) {
     passwordError.value = 'Недействительный пароль'
+    isVoiceModalOpen.value = false
     result = false
   }
 
@@ -318,9 +360,12 @@ main {
   border-radius: 20px;
   cursor: pointer;
 }
-#login-button1 {
+.login-button1 {
+  
+  height:20%;
+  text-align: center;
   color: #80d4d6;
-  font-size: 15pt;
+  font-size: 1.0rem;
   font-weight: bold;
   padding: 10px 30px 10px 30px;
   background-color: #151e1d;
@@ -341,7 +386,7 @@ main {
   left: 0;
   top: 0;
   width: 100%;
-  height: 100%;
+  height: 50vh;
   overflow: auto;
   background-color: rgba(0, 0, 0, 0.4);
 }
@@ -369,7 +414,7 @@ main {
 }
 .container{
   max-width:30%;
-  max-height:40vh;
+  max-height:50%;
   margin:0 auto;
   margin-top:10%;
   position:fixed;
@@ -380,7 +425,7 @@ main {
   border:1px solid #80d4d6;
 }
 .content{
-  padding:6%;
+  padding:4%;
   display:flex;
   justify-content:center;
   flex-direction: column;
