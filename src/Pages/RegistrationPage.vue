@@ -63,10 +63,22 @@
             <p style="text-align: center;" id="modal-text">{{emailAddress}}</p>
           </div>
           <div class="input-container">
-            <input type="text" ref="lenght1" class="input-part" maxlength="1" v-model="inputPart1"  @input="moveFocus($event, length1)"/>
-            <input type="text" class="input-part" maxlength="1" v-model="inputPart2"  @input="moveFocus($event, length2)"  />
-            <input type="text" class="input-part" maxlength="1" v-model="inputPart3"  @input="moveFocus($event, length3)"  />
-            <input type="text" class="input-part" maxlength="1" v-model="inputPart4"  @input="moveFocus($event, length4)"  />
+            <input :ref="inputPart1" type="text" class="input-part" maxlength="1" 
+            v-model="inputPart1"  @input="moveFocus($event, length1)" />
+
+
+            <input :ref="inputPart2" type="text" class="input-part"
+             maxlength="1" v-model="inputPart2" 
+              @input="moveFocus($event, length2)"  />
+
+
+            <input :ref="inputPart3" type="text" class="input-part" 
+            maxlength="1" v-model="inputPart3"  @input="moveFocus($event, length3)"   />
+
+
+            <input :ref="inputPart4" type="text" class="input-part" 
+            maxlength="1" 
+            v-model="inputPart4"  @input="moveFocus($event, length4)"  />
           </div>
           <div class="errors" v-if="proofCodeError">
             <p class="error">{{proofCodeError}}</p>
@@ -125,11 +137,13 @@ watch(lastName,()=>{
   lastNameError.value = ''
 })
 
+
+
 function validateProofCode(){
   if(inputPart1.value == '' || inputPart2.value == '' || inputPart3.value == '' || inputPart4.value ==''){
     proofCodeError.value = 'Вы некоректно ввели код'
   }
-  if(responceProofLogic.value == 400){
+  if(responce.value == 400){
     proofCodeError.value = 'Вы ввели неверный код'
   }
 }
@@ -184,12 +198,6 @@ const proofLogin = async () => {
 function moveFocus(event, maxLength) {
       if (event.target.value.length >= maxLength) {
         const nextInput = event.target.nextElementSibling;
-        if (nextInput) {
-          nextInput.focus();
-        }
-      }
-      if(event.target.value === 'backspace'){
-        const nextInput = event.target.previousElementSibling;
         if (nextInput) {
           nextInput.focus();
         }
