@@ -15,36 +15,36 @@
       <div class="field">
         <label class="input-label">Имя</label>
         <input class="input" v-model="firstName" type="text" placeholder="Введите имя..." />
-        <div v-if="firstName.length < 2">
-          <p class="error">Обязательно для заполнения</p>
+        <div v-if="firstNameError">
+          <p class="error">{{firstNameError}}</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Фамилия</label>
         <input class="input" v-model="lastName" type="text" placeholder="Введите фамилию..." />
-        <div v-if="lastName.length < 5">
-          <p class="error">Обязательно для заполнения</p>
+        <div v-if="lastNameError">
+          <p class="error">{{lastNameError}}</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">E-mail</label>
         <input class="input" v-model="emailAddress" type="text" placeholder="email@mail.com" />
-        <div v-if="!validateEmail(emailAddress.value)">
-          <p class="error">Обязательно для заполнения</p>
+        <div v-if="emailError">
+          <p class="error">{{emailError}}</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Пароль</label>
         <input class="input" v-model="password" type="password" placeholder="•••••••••" />
-        <div v-if="!isValidPassword()">
-          <p class="error">Обязательно для заполнения</p>
+        <div v-if="passwordError">
+          <p class="error">{{passwordError}}</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Подтверждение пароля</label>
         <input class="input" v-model="password2" type="password" placeholder="•••••••••" />
-        <div v-if="password2 == ''">
-          <p class="error">Обязательно для заполнения</p>
+        <div v-if="passwordError">
+          <p class="error">{{passwordError}}</p>
         </div>
       </div>
       <div v-show="textError != ''">
@@ -63,10 +63,10 @@
             <p style="text-align: center;" id="modal-text">{{emailAddress}}</p>
           </div>
           <div class="input-container">
-            <input type="text" class="input-part" maxlength="1" v-model="v1"  @input="moveFocus($event, length1)"  @keydown="handleKeyDown($event, input2Ref)"/>
-            <input type="text" class="input-part" maxlength="1" v-model="v2"  @input="moveFocus($event, length2)"  @keydown="handleKeyDown($event, input1Ref, input3Ref)"/>
-            <input type="text" class="input-part" maxlength="1" v-model="v3"  @input="moveFocus($event, length3)"  @keydown="handleKeyDown($event, input2Ref, input3Ref)"/>
-            <input type="text" class="input-part" maxlength="1" v-model="v4"  @input="moveFocus($event, length4)"  @keydown="handleKeyDown($event, input3Ref, inputRef)"/>
+            <input type="text" ref="lenght1" class="input-part" maxlength="1" v-model="v1"  @input="moveFocus($event, length1)"/>
+            <input type="text" class="input-part" maxlength="1" v-model="v2"  @input="moveFocus($event, length2)"  />
+            <input type="text" class="input-part" maxlength="1" v-model="v3"  @input="moveFocus($event, length3)"  />
+            <input type="text" class="input-part" maxlength="1" v-model="v4"  @input="moveFocus($event, length4)"  />
           </div>
           <button id="login-button1" @click="proofLogin">Отправить</button>
         </div>
@@ -93,22 +93,17 @@ const password2 = ref('')
 const avatarURL = 'StaticFiles/dodge.gif'
 let textError = ref('')
 const proofCode = ref('')
-let input1Ref = ref(null);
-let input2Ref = ref(null);
-let input3Ref = ref(null);
-let inputRef = ref(null);
 let responce = ref('')
 let length1 = ref('');
 let length2 = ref('');
 let length3 = ref('');
 let length4 = ref('');
+let passwordError = ref('');
+let emailError = ref('');
+let firstNameError = ref('');
+let lastNameError = ref('');
 
 
-// Пример использования
-function isValidPassword(password) {
-      const pattern = /^(?=.*[a-zA-Z]).{6,}$/;
-      return pattern.test(password);
-}
 function ModalOpen(){
   switch(responce.value){
     case 200:
@@ -125,13 +120,6 @@ function ModalOpen(){
           break;
   }
 }
-
-
-function validateEmail(email) {
-    const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return pattern.test(email);
-}
-
 const proofLogin = async () => {
   console.log(responce.value)
   if (responce.value == "200") {
@@ -167,28 +155,67 @@ function moveFocus(event, maxLength) {
           nextInput.focus();
         }
       }
-}
-const handleKeyDown = (event, prevInput, nextInput) => {
-      // Проверка нажатия Backspace
-      
-      if (event.key === 'Backspace' && event.target.value.length === 0) {
-        if (prevInput) {
-          prevInput.focus(); // Переносим фокус на предыдущий инпут
+      if(event.target.value === 'backspace'){
+        const nextInput = event.target.previousElementSibling;
+        if (nextInput) {
+          nextInput.focus();
         }
       }
-      else if(nextInput){console.debug('300')}
-    };
+}
+
 const login = async () => {
-  const res = await fetch('https://achieve.by:5000/api/email/proof_email', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json;charset=utf-8',
-      'Accept-Language': 'ru'
-    },
-    body: JSON.stringify(emailAddress.value)
-  })
-  responce.value = res.status
-  ModalOpen();
+  if(validateInputs()){
+    const res = await fetch('https://achieve.by:5000/api/email/proof_email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Accept-Language': 'ru'
+      },
+      body: JSON.stringify(emailAddress.value)
+    })
+    responce.value = res.status
+    ModalOpen();
+  }
+  }
+function validateInputs() {
+  let result = true
+  if(firstName.value.length<=2){
+    firstNameError.value = 'Имя должно содержать не менее 2 символов'
+  }
+  if(lastName.value.length<=5){
+    lastNameError.value = 'Имя должно содержать не менее 5 символов'
+  }
+  if (emailAddress.value.length == 0) {
+    emailError.value = 'Введите почту'
+    result = false
+  }
+  const emailRegex = /^\S+@\S+\.\S+$/
+  if (!emailRegex.test(emailAddress.value)) {
+    emailError.value = 'Вы ввели недействительную почту'
+    result = false
+  }
+
+  if (password.value.length == 0) {
+    passwordError.value = 'Введите пароль'
+    result = false
+  }
+
+  if (password.value.length < 6) {
+    passwordError.value = 'Недействительный пароль'
+    result = false
+  }
+
+  if (!/[A-z]/.test(password.value)) {
+    passwordError.value = 'Недействительный пароль'
+    result = false
+  }
+
+  if (!/\d/.test(password.value)) {
+    passwordError.value = 'Недействительный пароль'
+    result = false
+  }
+
+  return result
 }
 </script>
 <style scoped>
@@ -342,7 +369,7 @@ main {
 }
 .container{
   max-width:30%;
-  max-height:50vh;
+  max-height:40vh;
   margin:0 auto;
   margin-top:10%;
   position:fixed;
