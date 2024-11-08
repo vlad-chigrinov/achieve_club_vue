@@ -57,10 +57,10 @@
         <br>
         <div class="content">
           <div id="sms-modal-text">
-            <p style="text-align: center;font-size:18px;" id="modal-text">Подтверждение адреса</p>
-            <p style="text-align: center;font-size:18px"> электронной почты</p>
-            <p style="text-align: center;font-size:15px" id="modal-text">Вы получили код по электронной почте</p>
-            <p style="text-align: center;" id="modal-text">{{emailAddress}}</p>
+            <p style="text-align: center;" class="modal-text">Подтверждение адреса</p>
+            <p style="text-align: center;" class="modal-text"> электронной почты</p>
+            <p style="text-align: center;" class="modal-text">Вы получили код по электронной почте</p>
+            <p style="text-align: center;" class="modal-text">{{emailAddress}}</p>
           </div>
           <div class="input-container">
             <input :ref="inputPart1" type="text" class="input-part" maxlength="1" 
@@ -80,10 +80,13 @@
             maxlength="1" 
             v-model="inputPart4"  @input="moveFocus($event, length4)"  />
           </div>
-          <div class="errors" v-if="proofCodeError">
-            <p class="error">{{proofCodeError}}</p>
+          <div class="errors" v-if="inputPart1.value == '' || inputPart2.value == '' || inputPart3.value == '' || inputPart4 == ''">
+            <p class="error">Введите код</p>
           </div>
-          <button class="login-button1" @click="proofLogin">Отправить</button>
+          <div class="errors" v-if="inputPart1.value == '' || inputPart2.value == '' || inputPart3.value == '' || inputPart4 == ''">
+            <p class="error" v-if="proofCodeError">{{proofCodeError}}</p>
+          </div>
+          <button v-else class="login-button1" @click="proofLogin">Отправить</button>
         </div>
       </div>
     </div>  
@@ -118,7 +121,6 @@ let emailError = ref('');
 let firstNameError = ref('');
 let lastNameError = ref('');
 let proofCodeError = ref('');
-let responceProofLogic = ref('');
 watch(emailAddress, () => {
   emailError.value = ''
 })
@@ -139,14 +141,7 @@ watch(lastName,()=>{
 
 
 
-function validateProofCode(){
-  if(inputPart1.value == '' || inputPart2.value == '' || inputPart3.value == '' || inputPart4.value ==''){
-    proofCodeError.value = 'Вы некоректно ввели код'
-  }
-  if(responce.value == 400){
-    proofCodeError.value = 'Вы ввели неверный код'
-  }
-}
+
 function ModalOpen(){
   switch(responce.value){
     case 200:
@@ -166,7 +161,7 @@ function ModalOpen(){
 const proofLogin = async () => {
   console.log(responce.value)
   if (responce.value == "200") {
-    if(validateProofCode()){
+    
 
       proofCode.value = inputPart1.value + inputPart2.value + inputPart3.value + inputPart4.value;
       let responce1 = await fetch('https://achieve.by:5000/api/email/validate_code', {
@@ -187,14 +182,15 @@ const proofLogin = async () => {
         if (responce2.ok) {
           router.push('/')
         }
-        if(responce.value == 400){
+        if(responce2.value == 400){
           console.log(proofCode.value);
+          proofCodeError.value = 'Неверный код'
         }
-        responce1 = responceProofLogic
+       
       }
     }
-  }
 }
+
 function moveFocus(event, maxLength) {
       if (event.target.value.length >= maxLength) {
         const nextInput = event.target.nextElementSibling;
@@ -432,6 +428,56 @@ main {
   border-radius:5px;
   border:1px solid #80d4d6;
 }
+@media(max-width:782px){
+  .container{
+  max-width:40%;
+  max-height:50%;
+  margin:0 auto;
+  margin-top:20%;
+  position:fixed;
+  inset: 0;
+  z-index:10;
+  background-color: #0e1316;
+  border-radius:5px;
+  border:1px solid #80d4d6;
+}
+}
+@media(max-width:577px){
+  .container{
+  max-width:50%;
+  max-height:50%;
+  margin:0 auto;
+  margin-top:30%;
+  position:fixed;
+  inset: 0;
+  z-index:10;
+  background-color: #0e1316;
+  border-radius:5px;
+  border:1px solid #80d4d6;
+}
+  .modal-text{
+    font-size: 15px;
+    text-align: justify;
+  }
+}
+@media(max-width:410px){
+  .container{
+  max-width:60%;
+  max-height:45%;
+  margin:0 auto;
+  margin-top:50%;
+  position:fixed;
+  inset: 0;
+  z-index:10;
+  background-color: #0e1316;
+  border-radius:5px;
+  border:1px solid #80d4d6;
+}
+  .modal-text{
+    font-size: 13px;
+    text-align: justify;
+  }
+}
 .content{
   padding:4%;
   display:flex;
@@ -465,6 +511,7 @@ main {
          font-size: 15px;
          padding:1%;
          text-align: center;
+         margin-top:15%;
 
         }
         .input-part:first-child {
