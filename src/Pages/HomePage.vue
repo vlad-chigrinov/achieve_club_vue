@@ -15,7 +15,6 @@ const userInfo = ref()
 const currentPage = ref('noncompleted')
 
 const showModal = ref(false)
-const showFab = ref(true)
 
 onMounted(async () => {
   if ((await authStore.tryAuth()) == false) {
@@ -31,8 +30,10 @@ onMounted(async () => {
   achievements.value = await responce.json()
   achievements.value
     .sort((a, b) => a.xp > b.xp)
-    .map((a) => (a.selected = false))
-    .map((a) => (a.completed = false))
+    .map((a) => {
+      a.selected = false
+      a.completed = false
+    })
 
   responce = await fetch(
     'https://achieve.by:5000/api/completedAchievements/current',
@@ -54,8 +55,13 @@ function Logout() {
 }
 
 function SelectAchievement(achievement) {
-  if (achievement.isMultiple == false && achievement.completed == false)
-    achievement.selected = !achievement.selected
+  if (achievement.selected == true) {
+    achievement.selected = false
+    console.log('unselelect')
+  } else if (achievement.isMultiple || !achievement.completed) {
+    achievement.selected = true
+    console.log('select')
+  }
 }
 
 const completedAchievements = computed(() =>
@@ -71,14 +77,20 @@ const comboAchievements = computed(() =>
     .filter((a) => a.isMultiple)
     .sort((a, b) => a.completionCount > b.completionCount)
 )
-
-const selected = computed(() => achievements.value.filter((a) => a.selected))
-
 const achievementsCount = computed(() => achievements.value.length)
 const completedCount = computed(() => completedAchievements.value.length)
+
+const showFab = computed(() => selected.value.length > 0)
+
+const selected = computed(() => achievements.value.filter((a) => a.selected))
 </script>
 <template>
-  <qr-code-modal @onClose="showModal = false" :isShow="showModal" :achievements="selected" />
+  <qr-code-modal
+    v-if="showModal"
+    @onClose="showModal = false"
+    :userInfo="userInfo"
+    :achievements="selected"
+  />
   <button class="fab" :class="{ hide: !showFab }" @click="showModal = !showModal">
     <i class="fa-solid fa-qrcode"></i>
   </button>
