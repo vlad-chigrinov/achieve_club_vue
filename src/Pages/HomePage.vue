@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import AchievementItem from '../Components/AchievementItem.vue'
+import QrCodeModal from '../Components/QrCodeModal.vue'
 import MainLoyout from '../Layouts/MainLayout.vue'
 import { useAuthStore } from '../Stores/AuthStore'
 import { useRouter } from 'vue-router'
@@ -12,6 +13,9 @@ const achievements = ref([])
 const userInfo = ref()
 
 const currentPage = ref('noncompleted')
+
+const showModal = ref(false)
+const showFab = ref(true)
 
 onMounted(async () => {
   if ((await authStore.tryAuth()) == false) {
@@ -25,7 +29,10 @@ onMounted(async () => {
 
   responce = await fetch('https://achieve.by:5000/api/achievements')
   achievements.value = await responce.json()
-  achievements.value.sort((a, b) => a.xp > b.xp)
+  achievements.value
+    .sort((a, b) => a.xp > b.xp)
+    .map((a) => (a.selected = false))
+    .map((a) => (a.completed = false))
 
   responce = await fetch(
     'https://achieve.by:5000/api/completedAchievements/current',
@@ -46,6 +53,11 @@ function Logout() {
   router.push('/login')
 }
 
+function SelectAchievement(achievement) {
+  if (achievement.isMultiple == false && achievement.completed == false)
+    achievement.selected = !achievement.selected
+}
+
 const completedAchievements = computed(() =>
   achievements.value.filter((a) => a.completed && a.isMultiple == false)
 )
@@ -60,10 +72,16 @@ const comboAchievements = computed(() =>
     .sort((a, b) => a.completionCount > b.completionCount)
 )
 
+const selected = computed(() => achievements.value.filter((a) => a.selected))
+
 const achievementsCount = computed(() => achievements.value.length)
 const completedCount = computed(() => completedAchievements.value.length)
 </script>
 <template>
+  <qr-code-modal @onClose="showModal = false" :isShow="showModal" :achievements="selected" />
+  <button class="fab" :class="{ hide: !showFab }" @click="showModal = !showModal">
+    <i class="fa-solid fa-qrcode"></i>
+  </button>
   <main-loyout>
     <template v-if="userInfo">
       <header>
@@ -132,6 +150,7 @@ const completedCount = computed(() => completedAchievements.value.length)
         <div class="achievement-list">
           <template v-if="currentPage == 'kombo'">
             <achievement-item
+              @click="SelectAchievement(achievement)"
               v-for="achievement in comboAchievements"
               :key="achievement.Id"
               :achievement="achievement"
@@ -140,6 +159,7 @@ const completedCount = computed(() => completedAchievements.value.length)
           <template v-else-if="currentPage == 'completed'">
             <template v-if="completedAchievements.length != 0">
               <achievement-item
+                @click="SelectAchievement(achievement)"
                 v-for="achievement in completedAchievements"
                 :key="achievement.Id"
                 :achievement="achievement"
@@ -156,6 +176,7 @@ const completedCount = computed(() => completedAchievements.value.length)
           </template>
           <template v-else>
             <achievement-item
+              @click="SelectAchievement(achievement)"
               v-for="achievement in nonCompletedAchievements"
               :key="achievement.Id"
               :achievement="achievement"
@@ -167,6 +188,22 @@ const completedCount = computed(() => completedAchievements.value.length)
   </main-loyout>
 </template>
 <style scoped>
+.fab {
+  position: fixed;
+  bottom: 100px;
+  right: 0;
+  margin: 20px;
+  background-color: var(--primary);
+  color: var(--on-primary);
+  padding: 10px;
+  font-size: 25pt;
+  border-radius: 20px;
+}
+
+.fab.hide {
+  visibility: hidden;
+}
+
 .line-wrapper {
   display: flex;
   flex-direction: row;
