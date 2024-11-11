@@ -5,10 +5,6 @@ import QrcodeVue from 'qrcode.vue'
 defineEmits(['onClose'])
 
 defineProps({
-  isShow: {
-    Type: Boolean,
-    Required: true
-  },
   value: {
     Type: String,
     Required: true
@@ -24,33 +20,17 @@ defineProps({
 })
 </script>
 <template>
-  <div class="modal-wrapper" :class="{ hide: !isShow }" @click.self="$emit('onClose')">
+  <div class="modal-wrapper" @click.self="$emit('onClose')">
     <div class="modal">
       <div class="user-info">
-        <img class="avatar" src="https://placehold.co/60x60" />
-        <p class="name">Владислав Чигринов</p>
+        <img class="avatar" :src="'https://achieve.by:5000/' + userInfo.avatar" />
+        <p class="name">{{ userInfo.firstName }} {{ userInfo.lastName }}</p>
       </div>
       <p class="achieve-count">Достижений: 10</p>
       <div class="achievements">
-        <div class="achievement">
-          <img src="https://placehold.co/40x40" />
-          <p>Достижение Достижение</p>
-        </div>
-        <div class="achievement">
-          <img src="https://placehold.co/40x40" />
-          <p>Достижение</p>
-        </div>
-        <div class="achievement">
-          <img src="https://placehold.co/40x40" />
-          <p>Достижение1</p>
-        </div>
-        <div class="achievement">
-          <img src="https://placehold.co/40x40" />
-          <p>Достижение1</p>
-        </div>
-        <div class="achievement">
-          <img src="https://placehold.co/40x40" />
-          <p>Достижение1</p>
+        <div class="achievement" v-for="achievement in achievements" :key="achievement.Id">
+          <img :src="'https://achieve.by:5000/' + achievement.logoURL" />
+          <p>{{ achievement.title }}</p>
         </div>
       </div>
       <div class="qr-wrapper">
@@ -78,10 +58,6 @@ defineProps({
   background-color: rgba(128, 128, 128, 0.25);
 }
 
-.modal-wrapper.hide {
-  visibility: hidden;
-}
-
 .modal {
   background-color: white;
   padding: 20px;
@@ -102,6 +78,8 @@ defineProps({
 
 .user-info .avatar {
   border-radius: 50%;
+  width: 70px;
+  height: 70px;
 }
 
 .user-info .name {
@@ -123,6 +101,7 @@ defineProps({
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: 5px;
   padding: 10px;
   border-radius: 10px;
@@ -135,7 +114,8 @@ defineProps({
 }
 
 .achievement p {
-  font-weight: bold;
+  font-size: 10pt;
+  text-wrap: nowrap;
 }
 
 .qr-wrapper {
