@@ -44,7 +44,7 @@
         <label class="input-label">Подтверждение пароля</label>
         <input class="input" v-model="password2" type="password" placeholder="•••••••••" />
         <div v-if="passwordError">
-          <p class="error">{{passwordError}}</p>
+          <p class="error">{{doublePasswordError}}</p>
         </div>
       </div>
       <div v-show="textError != ''">
@@ -52,10 +52,14 @@
       </div>
       <button type="submit" @click="login" id="login-button" >Зарегистрироваться</button>
     </div>
+    <div v-if="isModalErrorOpen == true">
+      <errormodal @close="closeErrorModal" @open="errorModalWindow" :email="emailAddress.value"></errormodal>
+    </div>
     <div v-if="isVoiceModalOpen == true">
       <div class="container">
         <br>
         <div class="content">
+          <div class="btn-close"><button @click="()=> isVoiceModalOpen = false">x</button></div>
           <div id="sms-modal-text">
             <p style="text-align: center;" class="modal-text">Подтверждение адреса</p>
             <p style="text-align: center;" class="modal-text"> электронной почты</p>
@@ -86,7 +90,7 @@
           <div class="errors" v-if="inputPart1.value == '' || inputPart2.value == '' || inputPart3.value == '' || inputPart4 == ''">
             <p class="error" v-if="proofCodeError">{{proofCodeError}}</p>
           </div>
-          <button v-else class="login-button1" @click="proofLogin">Отправить</button>
+          <button v-else class="login-button1" @click="proofRegisterCode">Отправить</button>
         </div>
       </div>
     </div>  
@@ -95,11 +99,13 @@
 <script setup>
 import { ref , watch } from 'vue'
 import { useRouter } from 'vue-router'
+import errormodal from '../Components/409-time-out-modal.vue'
+// eslint-disable-next-line no-unused-vars
+let isModalErrorOpen = ref(false);
 const inputPart1 = ref('');
 const inputPart2 = ref('');
 const inputPart3 = ref('');
 const inputPart4 = ref('');
-
 const router = useRouter()
 const password = ref('')
 const emailAddress = ref('')
@@ -117,6 +123,7 @@ let length2 = ref('');
 let length3 = ref('');
 let length4 = ref('');
 let passwordError = ref('');
+let doublePasswordError = ref('');
 let emailError = ref('');
 let firstNameError = ref('');
 let lastNameError = ref('');
@@ -138,10 +145,18 @@ watch(firstName,()=>{
 watch(lastName,()=>{
   lastNameError.value = ''
 })
+watch(password2,() =>{
+  doublePasswordError.value = ''
+})
 
 
 
-
+const closeErrorModal = ()=>{
+  isModalErrorOpen.value = false;
+}
+function errorModalWindow(){
+  isVoiceModalOpen.value = true;
+}
 function ModalOpen(){
   switch(responce.value){
     case 200:
@@ -149,19 +164,18 @@ function ModalOpen(){
       break;
       case 409:
         isVoiceModalOpen.value = false;
-        textError.value = 'Такой полдьзователь уже есть\nлибо код ранее был отправлен на почту'
-        isVoiceModalOpen.value = false;
+        isModalErrorOpen.value = true;
         break;
         case 400:
+          textError.value='Одно или несколько полей не были заполнены'
           isVoiceModalOpen.value = false;
-            textError.value='Одно или несколько полей не были заполнены'
           break;
   }
 }
-const proofLogin = async () => {
+const proofRegisterCode = async () => {
   console.log(responce.value)
-  if (responce.value == "200") {
-    
+  console.log('proof-login');
+ 
 
       proofCode.value = inputPart1.value + inputPart2.value + inputPart3.value + inputPart4.value;
       let responce1 = await fetch('https://achieve.by:5000/api/email/validate_code', {
@@ -188,7 +202,7 @@ const proofLogin = async () => {
         }
        
       }
-    }
+    
 }
 
 function moveFocus(event, maxLength) {
@@ -243,20 +257,25 @@ function validateInputs() {
     result = false
   }
 
-  if (password.value.length < 6) {
-    passwordError.value = 'Недействительный пароль'
+  if (password.value.length < 5) {
+    passwordError.value = 'Пароль не должен содержать меньше 6 символов'
     isVoiceModalOpen.value = false
     result = false
   }
 
   if (!/[A-z]/.test(password.value)) {
-    passwordError.value = 'Недействительный пароль'
+    passwordError.value = 'Пароль должен содержать минимум 1 букву'
     isVoiceModalOpen.value = false
     result = false
   }
 
   if (!/\d/.test(password.value)) {
-    passwordError.value = 'Недействительный пароль'
+    passwordError.value = 'Пароль должен содержать минимум 1 цифру'
+    isVoiceModalOpen.value = false
+    result = false
+  }
+  if (password2.value != password.value) {
+    doublePasswordError.value = 'Пароли должны совпадать'
     isVoiceModalOpen.value = false
     result = false
   }
