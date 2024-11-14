@@ -18,9 +18,10 @@ defineProps({
     Required: true
   }
 })
+
 </script>
 <template>
-  <div class="modal-wrapper" @click.self="$emit('onClose')">
+  <div class="modal-wrapper" @click.self="$emit['onClose']">
     <div class="modal">
       <div class="user-info">
         <img class="avatar" :src="'https://achieve.by:5000/' + userInfo.avatar" />
@@ -35,12 +36,12 @@ defineProps({
       </div>
       <div class="qr-wrapper">
         <div class="qr">
-          <qrcode-vue :size="Number(150)" value="Hello world!" />
+          <qrcode-vue :size="Number(150)" :value />
         </div>
       </div>
       <p class="help-text">Пожалуйста, покажите QR-код тренеру.</p>
       <div class="close-wrapper">
-        <button class="close" @click="$emit('onClose')">Закруть</button>
+        <button class="close" @click="$emit['onClose']">Закруть</button>
       </div>
     </div>
   </div>

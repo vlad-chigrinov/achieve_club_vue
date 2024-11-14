@@ -5,6 +5,7 @@ import QrCodeModal from '../Components/QrCodeModal.vue'
 import MainLoyout from '../Layouts/MainLayout.vue'
 import { useAuthStore } from '../Stores/AuthStore'
 import { useRouter } from 'vue-router'
+import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -15,6 +16,15 @@ const userInfo = ref()
 const currentPage = ref('noncompleted')
 
 const showModal = ref(false)
+
+const connection = ref(
+  new HubConnectionBuilder()
+    .withUrl('https://achieve.by:5000/achieve', {
+      skipNegotiation: true,
+      transport: HttpTransportType.WebSockets
+    })
+    .build()
+)
 
 onMounted(async () => {
   if ((await authStore.tryAuth()) == false) {
@@ -49,9 +59,35 @@ onMounted(async () => {
   }
 })
 
+const completeEventName = computed(() => 'completed:' + userInfo.value.id)
+
 function Logout() {
   authStore.logout()
   router.push('/login')
+}
+
+function OpenModal() {
+  connection.value.start().then(() => {
+    console.log('signalr connected')
+    connection.value.on(completeEventName.value, () => {
+      OnModalSubmit()
+    })
+    console.log('signalr subscribed ' + completeEventName.value)
+  })
+  showModal.value = true
+}
+
+function OnModalSubmit() {
+  console.log('on ' + completeEventName.value)
+  connection.value.stop()
+  showModal.value = false
+  console.log('signalr disconnected')
+  selected.value.forEach(a=>a.selected = false)
+}
+
+function CloseModal() {
+  connection.value.stop()
+  showModal.value = true
 }
 
 function SelectAchievement(achievement) {
@@ -83,15 +119,20 @@ const completedCount = computed(() => completedAchievements.value.length)
 const showFab = computed(() => selected.value.length > 0)
 
 const selected = computed(() => achievements.value.filter((a) => a.selected))
+
+const qrCoreValue = computed(
+  () => userInfo.value.id + ':' + selected.value.map((a) => a.id.toString()).join(':')
+)
 </script>
 <template>
   <qr-code-modal
     v-if="showModal"
-    @onClose="showModal = false"
+    @onClose="CloseModal"
+    :value="qrCoreValue"
     :userInfo="userInfo"
     :achievements="selected"
   />
-  <button class="fab" :class="{ hide: !showFab }" @click="showModal = !showModal">
+  <button class="fab" :class="{ hide: !showFab }" @click="OpenModal">
     <i class="fa-solid fa-qrcode"></i>
   </button>
   <main-loyout>
