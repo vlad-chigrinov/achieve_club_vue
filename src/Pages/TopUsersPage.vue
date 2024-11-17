@@ -14,7 +14,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main-loyout>
+  <main-loyout :tab="Number(2)">
     <header>
       <h1>Топ пользователей</h1>
     </header>

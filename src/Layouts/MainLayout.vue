@@ -1,16 +1,27 @@
+<script setup>
+import { defineProps } from 'vue'
+
+defineProps({
+  tab: {
+    type: Number,
+    required: true
+  }
+})
+</script>
+
 <template>
   <slot></slot>
   <footer>
     <div id="menu">
-      <a class="menu-item selected" href="/">
+      <a class="menu-item" :class="{ selected: tab == 1 }" href="/">
         <i class="icon-image fa-solid fa-user"></i>
         <h3>Профиль</h3>
       </a>
-      <a class="menu-item" href="/topusers">
+      <a class="menu-item" :class="{ selected: tab == 2 }" href="/topusers">
         <i class="icon-image fa-solid fa-users"></i>
         <h3>Топ 100</h3>
       </a>
-      <a class="menu-item" href="/topclubs">
+      <a class="menu-item" :class="{ selected: tab == 3 }" href="/info">
         <i class="icon-image fa-solid fa-circle-info"></i>
         <h3>Инфо</h3>
       </a>
