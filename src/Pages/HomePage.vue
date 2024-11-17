@@ -6,6 +6,7 @@ import MainLoyout from '../Layouts/MainLayout.vue'
 import { useAuthStore } from '../Stores/AuthStore'
 import { useRouter } from 'vue-router'
 import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr'
+import VueLoadImage from 'vue-load-image'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -26,7 +27,35 @@ const connection = ref(
     .build()
 )
 
-onMounted(async () => {
+const completeEventName = computed(() => 'completed:' + userInfo.value.id)
+
+const completedAchievements = computed(() =>
+  achievements.value.filter((a) => a.completed && a.isMultiple == false)
+)
+
+const nonCompletedAchievements = computed(() =>
+  achievements.value.filter((a) => a.completed != true && a.isMultiple == false)
+)
+
+const comboAchievements = computed(() =>
+  achievements.value
+    .filter((a) => a.isMultiple)
+    .sort((a, b) => a.completionCount > b.completionCount)
+)
+const achievementsCount = computed(() => achievements.value.length)
+const completedCount = computed(() => completedAchievements.value.length)
+
+const showFab = computed(() => selected.value.length > 0)
+
+const selected = computed(() => achievements.value.filter((a) => a.selected))
+
+const qrCoreValue = computed(
+  () => userInfo.value.id + ':' + selected.value.map((a) => a.id.toString()).join(':')
+)
+
+onMounted(async () => await LoadData())
+
+async function LoadData() {
   if ((await authStore.tryAuth()) == false) {
     router.push('/login')
     return
@@ -57,37 +86,35 @@ onMounted(async () => {
       finded.completed = true
     }
   }
-})
-
-const completeEventName = computed(() => 'completed:' + userInfo.value.id)
+}
 
 function Logout() {
   authStore.logout()
   router.push('/login')
 }
 
-function OpenModal() {
-  connection.value.start().then(() => {
+async function OpenModal() {
+  await connection.value.start().then(() => {
     console.log('signalr connected')
     connection.value.on(completeEventName.value, () => {
       OnModalSubmit()
     })
     console.log('signalr subscribed ' + completeEventName.value)
+    showModal.value = true
   })
-  showModal.value = true
 }
 
-function OnModalSubmit() {
+async function OnModalSubmit() {
   console.log('on ' + completeEventName.value)
-  connection.value.stop()
   showModal.value = false
-  console.log('signalr disconnected')
-  selected.value.forEach(a=>a.selected = false)
+  await connection.value.stop().then(() => console.log('signalr disconnected'))
+  await LoadData()
 }
 
-function CloseModal() {
-  connection.value.stop()
-  showModal.value = true
+async function CloseModal() {
+  console.log('close')
+  await connection.value.stop().then(() => console.log('signalr disconnected'))
+  showModal.value = false
 }
 
 function SelectAchievement(achievement) {
@@ -99,35 +126,11 @@ function SelectAchievement(achievement) {
     console.log('select')
   }
 }
-
-const completedAchievements = computed(() =>
-  achievements.value.filter((a) => a.completed && a.isMultiple == false)
-)
-
-const nonCompletedAchievements = computed(() =>
-  achievements.value.filter((a) => a.completed != true && a.isMultiple == false)
-)
-
-const comboAchievements = computed(() =>
-  achievements.value
-    .filter((a) => a.isMultiple)
-    .sort((a, b) => a.completionCount > b.completionCount)
-)
-const achievementsCount = computed(() => achievements.value.length)
-const completedCount = computed(() => completedAchievements.value.length)
-
-const showFab = computed(() => selected.value.length > 0)
-
-const selected = computed(() => achievements.value.filter((a) => a.selected))
-
-const qrCoreValue = computed(
-  () => userInfo.value.id + ':' + selected.value.map((a) => a.id.toString()).join(':')
-)
 </script>
 <template>
   <qr-code-modal
     v-if="showModal"
-    @onClose="CloseModal"
+    @on-close="CloseModal"
     :value="qrCoreValue"
     :userInfo="userInfo"
     :achievements="selected"
@@ -135,18 +138,24 @@ const qrCoreValue = computed(
   <button class="fab" :class="{ hide: !showFab }" @click="OpenModal">
     <i class="fa-solid fa-qrcode"></i>
   </button>
-  <main-loyout>
+  <main-loyout :tab="Number(1)">
     <template v-if="userInfo">
       <header>
         <div class="line-wrapper">
           <button @click="Logout" id="exit-button" class="icon-button">
             <i class="icon-image mirror fa-solid fa-right-from-bracket"></i>
           </button>
-          <img
-            id="user-avatar"
-            :src="'https://achieve.by:5000/' + userInfo.avatar"
-            alt="User Avatar"
-          />
+          <vue-load-image>
+            <template v-slot:image>
+              <img class="avatar" :src="'https://achieve.by:5000/' + userInfo.avatar" />
+            </template>
+            <template v-slot:preloader>
+              <i class="avatar avatar-loader fa-solid fa-loader"></i>
+            </template>
+            <template v-slot:error>
+              <i class="avatar avatar-error fa-solid fa-circle-exclamation"></i>
+            </template>
+          </vue-load-image>
           <button @click="Logout" id="settings-button" class="icon-button">
             <i class="icon-image fa-solid fa-gear"></i>
           </button>
@@ -280,11 +289,49 @@ const qrCoreValue = computed(
   transform: rotate(0.5turn);
 }
 
-#user-avatar {
+.avatar {
   margin-top: 25px;
   width: 170px;
+  height: 170px;
   border-radius: 50%;
   box-shadow: 0 0 9px 0.1px var(--shadow);
+}
+
+.avatar-loader {
+  text-align: center;
+  font-size: 150px;
+  line-height: 170px;
+  color: var(--primary);
+  animation: rotation 1s infinite;
+}
+
+@keyframes rotation {
+  from🅓 {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 180deg;
+  }
+}
+
+.avatar-error {
+  text-align: center;
+  font-size: 150px;
+  line-height: 170px;
+  color: var(--primary);
+  animation: blinking 1s infinite;
+}
+
+@keyframes blinking {
+  from {
+    transform: translateY(-3px);
+  }
+  75% {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(-3px);
+  }
 }
 
 #user-name {
