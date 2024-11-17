@@ -1,4 +1,5 @@
 <script setup>
+import VueLoadImage from 'vue-load-image'
 defineProps({
   achievement: {
     type: Object,
@@ -22,10 +23,20 @@ defineProps({
       :class="{
         'card-top': !achievement.isMultiple,
         selected: achievement.selected || achievement.completed
-        }"
+      }"
     >
       <div class="left">
-        <img class="logo" :src="'https://achieve.by:5000/' + achievement.logoURL" />
+        <vue-load-image>
+          <template v-slot:image>
+            <img class="logo" :src="'https://achieve.by:5000/' + achievement.logoURL" />
+          </template>
+          <template v-slot:preloader>
+            <i class="logo logo-loader fa-solid fa-loader"></i>
+          </template>
+          <template v-slot:error>
+            <i class="logo logo-error fa-solid fa-circle-exclamation"></i>
+          </template>
+        </vue-load-image>
       </div>
       <div class="right">
         <div class="header">
@@ -87,6 +98,43 @@ defineProps({
 .logo {
   width: 65px;
   height: 65px;
+}
+
+.logo-loader {
+  text-align: center;
+  font-size: 55px;
+  line-height: 65px;
+  color: var(--primary);
+  animation: rotation 1s infinite;
+}
+
+@keyframes rotation {
+  from🅓 {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 180deg;
+  }
+}
+
+.logo-error {
+  text-align: center;
+  font-size: 55px;
+  line-height: 65px;
+  color: var(--primary);
+  animation: blinking 1s infinite;
+}
+
+@keyframes blinking {
+  from {
+    transform: translateY(-3px);
+  }
+  75% {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(-3px);
+  }
 }
 
 .right {
