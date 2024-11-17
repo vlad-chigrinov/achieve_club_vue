@@ -21,7 +21,7 @@ onMounted(async () => {
     </header>
     <main>
       <div class="users-list">
-        <div class="user" v-for="(user, idx) in users" :key="user.id">
+        <a :href="'/users/' + user.id" class="user" v-for="(user, idx) in users" :key="user.id">
           <div class="left">
             <vue-load-image>
               <template v-slot:image>
@@ -42,7 +42,7 @@ onMounted(async () => {
           <div class="right">
             <p class="position">#{{ idx + 1 }}</p>
           </div>
-        </div>
+        </a>
       </div>
     </main>
   </main-loyout>
