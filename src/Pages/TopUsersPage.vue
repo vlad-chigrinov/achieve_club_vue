@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue'
 import MainLoyout from '../Layouts/MainLayout.vue'
 import axios from 'axios'
+import VueLoadImage from 'vue-load-image'
 
 const users = ref([])
 
@@ -22,7 +23,17 @@ onMounted(async () => {
       <div class="users-list">
         <div class="user" v-for="(user, idx) in users" :key="user.id">
           <div class="left">
-            <img class="avatar" :src="'https://achieve.by:5000/' + user.avatar" />
+            <vue-load-image>
+              <template v-slot:image>
+                <img class="avatar" :src="'https://achieve.by:5000/' + user.avatar" />
+              </template>
+              <template v-slot:preloader>
+                <i class="avatar avatar-loader fa-solid fa-loader"></i>
+              </template>
+              <template v-slot:error>
+                <i class="avatar avatar-error fa-solid fa-circle-exclamation"></i>
+              </template>
+            </vue-load-image>
           </div>
           <div class="center">
             <p class="name">{{ user.firstName }} {{ user.lastName }}</p>
@@ -61,19 +72,56 @@ main {
 }
 
 .user {
+  text-decoration: none;
   background-color: var(--tertiary);
   color: var(--on-tertiary);
   border-radius: 15px;
   margin: 0 10px 0 10px;
-  padding: 5px;
+  padding: 7px;
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 12px;
 }
 
 .user .avatar {
   width: 55px;
+  height: 55px;
   border-radius: 50%;
+}
+
+.user .avatar-loader {
+  text-align: center;
+  font-size: 3em;
+  color: var(--primary);
+  animation: rotation 1s infinite;
+}
+
+@keyframes rotation {
+  from🅓 {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 180deg;
+  }
+}
+
+.user .avatar-error {
+  text-align: center;
+  font-size: 3em;
+  color: var(--primary);
+  animation: blinking 1s infinite;
+}
+
+@keyframes blinking {
+  from {
+    transform: translateY(-3px);
+  }
+  75% {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(-3px);
+  }
 }
 
 .user .center {
