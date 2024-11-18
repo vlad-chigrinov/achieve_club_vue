@@ -37,7 +37,7 @@ onMounted(async () => {
           </div>
           <div class="center">
             <p class="name">{{ user.firstName }} {{ user.lastName }}</p>
-            <p class="xp">{{ user.xpSum }}</p>
+            <p class="xp">{{ user.xpSum }} <span class="xp-help">XP</span></p>
           </div>
           <div class="right">
             <p class="position">#{{ idx + 1 }}</p>
@@ -132,6 +132,10 @@ main {
 
 .name {
   font-size: 14px;
+}
+
+.xp-help {
+  color: var(--secondary);
 }
 
 .position {
