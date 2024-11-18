@@ -433,7 +433,16 @@ function SelectAchievement(achievement) {
 }
 
 .achievement-list {
-  margin-bottom: 100px;
+  margin: 10px 10px 100px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 500px) {
+  .achievement-list {
+    margin: 15px 15px 100px 15px;
+  }
 }
 
 .empty-hero {

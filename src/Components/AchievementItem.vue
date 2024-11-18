@@ -22,7 +22,7 @@ defineProps({
       class="card"
       :class="{
         'card-top': !achievement.isMultiple,
-        selected: achievement.selected || achievement.completed
+        selected: achievement.selected
       }"
     >
       <div class="left">
@@ -59,7 +59,6 @@ defineProps({
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 10px;
 }
 .card-before {
   background-color: var(--secondary);
