@@ -1,14 +1,20 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import MainLoyout from '../Layouts/MainLayout.vue'
 import VueLoadImage from 'vue-load-image'
+import AchievementItem from '@/Components/AchievementItem.vue'
 
 const route = useRoute()
+const router = useRouter()
 const achievements = ref([])
 const userInfo = ref()
 
-const completedAchievements = computed(() => achievements.value.filter((a) => a.completed))
+const completedAchievements = computed(() =>
+  achievements.value.filter((a) => a.completed).sort((a, b) => a.xp < b.xp)
+)
+const completedCount = computed(() => completedAchievements.value.length)
+const achievementsCount = computed(() => achievements.value.length)
 
 onMounted(async () => await LoadData())
 
@@ -36,6 +42,10 @@ async function LoadData() {
     }
   }
 }
+
+function NavigateBack() {
+  router.back()
+}
 </script>
 
 <template>
@@ -43,8 +53,8 @@ async function LoadData() {
     <template v-if="userInfo">
       <header>
         <div class="line-wrapper">
-          <button @click="Logout" id="exit-button" class="icon-button">
-            <i class="icon-image mirror fa-solid fa-right-from-bracket"></i>
+          <button @click="NavigateBack" id="back-button" class="icon-button">
+            <i class="icon-image fa-solid fa-chevron-left"></i>
           </button>
           <vue-load-image>
             <template v-slot:image>
@@ -57,9 +67,7 @@ async function LoadData() {
               <i class="avatar avatar-error fa-solid fa-circle-exclamation"></i>
             </template>
           </vue-load-image>
-          <button @click="Logout" id="settings-button" class="icon-button">
-            <i class="icon-image fa-solid fa-gear"></i>
-          </button>
+          <div id="spacer" class="icon-button"></div>
         </div>
         <h1 id="user-name">{{ userInfo.firstName }} {{ userInfo.lastName }}</h1>
       </header>
@@ -83,6 +91,7 @@ async function LoadData() {
         <hr style="color: var(--primary); background-color: var(--primary)" />
         <div class="achievement-list">
           <template v-if="completedAchievements.length != 0">
+            <h3 class="achievements-title">Полученные достижения:</h3>
             <achievement-item
               v-for="achievement in completedAchievements"
               :key="achievement.Id"
@@ -114,16 +123,13 @@ async function LoadData() {
   border: 0;
   background-color: transparent;
   margin: 20px;
+  width: 33px;
   cursor: pointer;
 }
 
 .icon-image {
   font-size: 25pt;
   color: var(--primary);
-}
-
-.mirror {
-  transform: rotate(0.5turn);
 }
 
 .avatar {
@@ -233,44 +239,22 @@ async function LoadData() {
   font-weight: bold;
 }
 
-#filters {
-  display: flex;
-  justify-content: space-evenly;
-  background-color: var(--background);
-}
-
-.filter {
-  border: none;
-  background: none;
-  color: var(--secondary);
-  cursor: pointer;
-}
-
-.selected {
+.achievements-title {
   color: var(--primary);
-}
-
-.filter .filter-icon {
-  font-size: 18px;
-}
-
-.filter .filter-title {
-  font-size: 17px;
-}
-
-.selected-marker {
-  width: 100%;
-  margin-top: 10px;
-  height: 5px;
-  border-radius: 20px 20px 0 0;
-}
-
-.selected .selected-marker {
-  background-color: var(--primary);
+  font-size: 16pt;
 }
 
 .achievement-list {
-  margin-bottom: 100px;
+  margin: 10px 10px 100px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 500px) {
+  .achievement-list {
+    margin: 15px 15px 100px 15px;
+  }
 }
 
 .empty-hero {
