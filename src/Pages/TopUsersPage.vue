@@ -20,7 +20,7 @@ onMounted(async () => {
       <h1>Топ пользователей</h1>
     </header>
     <main>
-      <div class="users-list">
+      <div class="users-list" v-if="users.length > 0">
         <a :href="'/users/' + user.id" class="user" v-for="(user, idx) in users" :key="user.id">
           <div class="left">
             <vue-load-image>
@@ -43,6 +43,9 @@ onMounted(async () => {
             <p class="position">#{{ idx + 1 }}</p>
           </div>
         </a>
+      </div>
+      <div v-else class="loading">
+        <div class="loader"></div>
       </div>
     </main>
   </main-loyout>
@@ -142,5 +145,49 @@ main {
   font-weight: bold;
   font-size: 24px;
   margin-right: 10px;
+}
+
+/* PAGE LOADER */
+.loading {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-top: 30%;
+}
+
+.loader {
+  width: var(--size);
+  aspect-ratio: 1;
+  position: relative;
+  --distance: 100px;
+  --size: 50px;
+  --color: var(--primary);
+}
+.loader::before,
+.loader::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--color);
+}
+.loader::before {
+  box-shadow: var(--color) calc(var(--distance) * -1) 0;
+  animation: l8-1 1s infinite linear;
+}
+.loader::after {
+  transform: rotate(0deg) translateX(var(--distance));
+  animation: l8-2 1s infinite linear;
+}
+
+@keyframes l8-1 {
+  100% {
+    transform: translateX(var(--distance));
+  }
+}
+@keyframes l8-2 {
+  100% {
+    transform: rotate(-180deg) translateX(var(--distance));
+  }
 }
 </style>
