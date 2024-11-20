@@ -1,9 +1,12 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import AchievementItem from '../Components/AchievementItem.vue'
+import QrCodeModal from '../Components/QrCodeModal.vue'
 import MainLoyout from '../Layouts/MainLayout.vue'
 import { useAuthStore } from '../Stores/AuthStore'
 import { useRouter } from 'vue-router'
+import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr'
+import VueLoadImage from 'vue-load-image'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -13,38 +16,18 @@ const userInfo = ref()
 
 const currentPage = ref('noncompleted')
 
-onMounted(async () => {
-  if ((await authStore.tryAuth()) == false) {
-    router.push('/login')
-    return
-  }
+const showModal = ref(false)
 
-  const requestOptions = { headers: { Authorization: 'Bearer ' + authStore.authToken } }
-  let responce = await fetch('https://achieve.by:5000/api/users/current', requestOptions)
-  userInfo.value = await responce.json()
+const connection = ref(
+  new HubConnectionBuilder()
+    .withUrl('https://achieve.by:5000/achieve', {
+      skipNegotiation: true,
+      transport: HttpTransportType.WebSockets
+    })
+    .build()
+)
 
-  responce = await fetch('https://achieve.by:5000/api/achievements')
-  achievements.value = await responce.json()
-  achievements.value.sort((a, b) => a.xp > b.xp)
-
-  responce = await fetch(
-    'https://achieve.by:5000/api/completedAchievements/current',
-    requestOptions
-  )
-  const completed = await responce.json()
-  for (const ca of completed) {
-    var finded = achievements.value.find((a) => a.id == ca.achieveId)
-    if (finded) {
-      finded.completionCount = ca.completionCount
-      finded.completed = true
-    }
-  }
-})
-
-function Logout() {
-  authStore.logout()
-  router.push('/login')
-}
+const completeEventName = computed(() => 'completed:' + userInfo.value.id)
 
 const completedAchievements = computed(() =>
   achievements.value.filter((a) => a.completed && a.isMultiple == false)
@@ -59,23 +42,120 @@ const comboAchievements = computed(() =>
     .filter((a) => a.isMultiple)
     .sort((a, b) => a.completionCount > b.completionCount)
 )
-
 const achievementsCount = computed(() => achievements.value.length)
 const completedCount = computed(() => completedAchievements.value.length)
+
+const showFab = computed(() => selected.value.length > 0)
+
+const selected = computed(() => achievements.value.filter((a) => a.selected))
+
+const qrCoreValue = computed(
+  () => userInfo.value.id + ':' + selected.value.map((a) => a.id.toString()).join(':')
+)
+
+onMounted(async () => await LoadData())
+
+async function LoadData() {
+  if ((await authStore.tryAuth()) == false) {
+    router.push('/login')
+    return
+  }
+
+  const requestOptions = { headers: { Authorization: 'Bearer ' + authStore.authToken } }
+  let responce = await fetch('https://achieve.by:5000/api/users/current', requestOptions)
+  userInfo.value = await responce.json()
+
+  responce = await fetch('https://achieve.by:5000/api/achievements')
+  achievements.value = await responce.json()
+  achievements.value
+    .sort((a, b) => a.xp > b.xp)
+    .map((a) => {
+      a.selected = false
+      a.completed = false
+    })
+
+  responce = await fetch(
+    'https://achieve.by:5000/api/completedAchievements/current',
+    requestOptions
+  )
+  const completed = await responce.json()
+  for (const ca of completed) {
+    var finded = achievements.value.find((a) => a.id == ca.achieveId)
+    if (finded) {
+      finded.completionCount = ca.completionCount
+      finded.completed = true
+    }
+  }
+}
+
+function Logout() {
+  authStore.logout()
+  router.push('/login')
+}
+
+async function OpenModal() {
+  await connection.value.start().then(() => {
+    console.log('signalr connected')
+    connection.value.on(completeEventName.value, () => {
+      OnModalSubmit()
+    })
+    console.log('signalr subscribed ' + completeEventName.value)
+    showModal.value = true
+  })
+}
+
+async function OnModalSubmit() {
+  console.log('on ' + completeEventName.value)
+  showModal.value = false
+  await connection.value.stop().then(() => console.log('signalr disconnected'))
+  await LoadData()
+}
+
+async function CloseModal() {
+  console.log('close')
+  await connection.value.stop().then(() => console.log('signalr disconnected'))
+  showModal.value = false
+}
+
+function SelectAchievement(achievement) {
+  if (achievement.selected == true) {
+    achievement.selected = false
+    console.log('unselelect')
+  } else if (achievement.isMultiple || !achievement.completed) {
+    achievement.selected = true
+    console.log('select')
+  }
+}
 </script>
 <template>
-  <main-loyout>
+  <qr-code-modal
+    v-if="showModal"
+    @on-close="CloseModal"
+    :value="qrCoreValue"
+    :userInfo="userInfo"
+    :achievements="selected"
+  />
+  <button class="fab" :class="{ hide: !showFab }" @click="OpenModal">
+    <i class="fa-solid fa-qrcode"></i>
+  </button>
+  <main-loyout :tab="Number(1)">
     <template v-if="userInfo">
       <header>
         <div class="line-wrapper">
           <button @click="Logout" id="exit-button" class="icon-button">
             <i class="icon-image mirror fa-solid fa-right-from-bracket"></i>
           </button>
-          <img
-            id="user-avatar"
-            :src="'https://achieve.by:5000/' + userInfo.avatar"
-            alt="User Avatar"
-          />
+          <vue-load-image>
+            <template v-slot:image>
+              <img class="avatar" :src="'https://achieve.by:5000/' + userInfo.avatar" />
+            </template>
+            <template v-slot:preloader>
+              <i class="avatar avatar-loader fa-solid fa-loader"></i>
+            </template>
+            <template v-slot:error>
+              <i class="avatar avatar-error fa-solid fa-circle-exclamation"></i>
+            </template>
+          </vue-load-image>
           <button @click="Logout" id="settings-button" class="icon-button">
             <i class="icon-image fa-solid fa-gear"></i>
           </button>
@@ -132,6 +212,7 @@ const completedCount = computed(() => completedAchievements.value.length)
         <div class="achievement-list">
           <template v-if="currentPage == 'kombo'">
             <achievement-item
+              @click="SelectAchievement(achievement)"
               v-for="achievement in comboAchievements"
               :key="achievement.Id"
               :achievement="achievement"
@@ -140,6 +221,7 @@ const completedCount = computed(() => completedAchievements.value.length)
           <template v-else-if="currentPage == 'completed'">
             <template v-if="completedAchievements.length != 0">
               <achievement-item
+                @click="SelectAchievement(achievement)"
                 v-for="achievement in completedAchievements"
                 :key="achievement.Id"
                 :achievement="achievement"
@@ -156,6 +238,7 @@ const completedCount = computed(() => completedAchievements.value.length)
           </template>
           <template v-else>
             <achievement-item
+              @click="SelectAchievement(achievement)"
               v-for="achievement in nonCompletedAchievements"
               :key="achievement.Id"
               :achievement="achievement"
@@ -167,6 +250,22 @@ const completedCount = computed(() => completedAchievements.value.length)
   </main-loyout>
 </template>
 <style scoped>
+.fab {
+  position: fixed;
+  bottom: 100px;
+  right: 0;
+  margin: 20px;
+  background-color: var(--primary);
+  color: var(--on-primary);
+  padding: 10px;
+  font-size: 25pt;
+  border-radius: 20px;
+}
+
+.fab.hide {
+  visibility: hidden;
+}
+
 .line-wrapper {
   display: flex;
   flex-direction: row;
@@ -190,11 +289,49 @@ const completedCount = computed(() => completedAchievements.value.length)
   transform: rotate(0.5turn);
 }
 
-#user-avatar {
+.avatar {
   margin-top: 25px;
   width: 170px;
+  height: 170px;
   border-radius: 50%;
   box-shadow: 0 0 9px 0.1px var(--shadow);
+}
+
+.avatar-loader {
+  text-align: center;
+  font-size: 150px;
+  line-height: 170px;
+  color: var(--primary);
+  animation: rotation 1s infinite;
+}
+
+@keyframes rotation {
+  from🅓 {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 180deg;
+  }
+}
+
+.avatar-error {
+  text-align: center;
+  font-size: 150px;
+  line-height: 170px;
+  color: var(--primary);
+  animation: blinking 1s infinite;
+}
+
+@keyframes blinking {
+  from {
+    transform: translateY(-3px);
+  }
+  75% {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(-3px);
+  }
 }
 
 #user-name {
@@ -296,7 +433,16 @@ const completedCount = computed(() => completedAchievements.value.length)
 }
 
 .achievement-list {
-  margin-bottom: 100px;
+  margin: 10px 10px 100px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 500px) {
+  .achievement-list {
+    margin: 15px 15px 100px 15px;
+  }
 }
 
 .empty-hero {

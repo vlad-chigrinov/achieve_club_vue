@@ -1,4 +1,5 @@
 <script setup>
+import VueLoadImage from 'vue-load-image'
 defineProps({
   achievement: {
     type: Object,
@@ -17,9 +18,25 @@ defineProps({
       <span v-if="achievement.completionCount"> Комбо ×{{ achievement.completionCount }} </span>
       <span v-else> Начни комбо! </span>
     </div>
-    <div class="card" :class="{ 'card-top': !achievement.isMultiple }">
+    <div
+      class="card"
+      :class="{
+        'card-top': !achievement.isMultiple,
+        selected: achievement.selected
+      }"
+    >
       <div class="left">
-        <img class="logo" :src="'https://achieve.by:5000/' + achievement.logoURL" />
+        <vue-load-image>
+          <template v-slot:image>
+            <img class="logo" :src="'https://achieve.by:5000/' + achievement.logoURL" />
+          </template>
+          <template v-slot:preloader>
+            <i class="logo logo-loader fa-solid fa-loader"></i>
+          </template>
+          <template v-slot:error>
+            <i class="logo logo-error fa-solid fa-circle-exclamation"></i>
+          </template>
+        </vue-load-image>
       </div>
       <div class="right">
         <div class="header">
@@ -42,7 +59,6 @@ defineProps({
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 10px;
 }
 .card-before {
   background-color: var(--secondary);
@@ -55,13 +71,18 @@ defineProps({
 .card {
   display: flex;
   flex-direction: row;
-  gap: 5px;
+  gap: 7px;
   padding: 5px;
   width: 100%;
   background-color: var(--tertiary);
   color: var(--on-tertiary);
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
+}
+
+.card.selected {
+  background-color: var(--primary);
+  color: var(--on-primary);
 }
 
 .card-top {
@@ -76,6 +97,43 @@ defineProps({
 .logo {
   width: 65px;
   height: 65px;
+}
+
+.logo-loader {
+  text-align: center;
+  font-size: 55px;
+  line-height: 65px;
+  color: var(--primary);
+  animation: rotation 1s infinite;
+}
+
+@keyframes rotation {
+  from🅓 {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 180deg;
+  }
+}
+
+.logo-error {
+  text-align: center;
+  font-size: 55px;
+  line-height: 65px;
+  color: var(--primary);
+  animation: blinking 1s infinite;
+}
+
+@keyframes blinking {
+  from {
+    transform: translateY(-3px);
+  }
+  75% {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(-3px);
+  }
 }
 
 .right {
