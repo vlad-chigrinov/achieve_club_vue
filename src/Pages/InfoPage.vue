@@ -11,12 +11,7 @@ import 'swiper/css/navigation'
 <template>
   <main-layout :tab="Number(3)">
     <div class="content-wrapper">
-      <swiper
-        class="corousel"
-        :navigation="true"
-        :pagination="true"
-        :modules="[Pagination, Navigation]"
-      >
+      <swiper :navigation="true" :pagination="true" :modules="[Pagination, Navigation]">
         <swiper-slide>
           <info-card>
             <template #icon>
@@ -36,34 +31,51 @@ import 'swiper/css/navigation'
         <swiper-slide>
           <info-card>
             <template #icon>
-              <i class="fa-regular fa-star-christmas fa-2xl"></i>
+              <i class="fa-regular fa-sparkles fa-2xl"></i>
             </template>
             <template #title> Получайте XP за достижения </template>
             <template #content>
-              <p>Чем больше достижений</p>
-              <i class="fa-solid fa-arrow-down" style="text-align: center"></i>
-              <p>Тем больше XP</p>
-              <i class="fa-solid fa-arrow-down" style="text-align: center"></i>
-              <p>Тем выше вы в топе</p>
+              <div style="text-align: center">
+                <p>Больше достижений</p>
+                <i class="fa-solid fa-arrow-down"></i>
+                <p>Больше XP</p>
+                <i class="fa-solid fa-arrow-down"></i>
+                <p>Вы поднимаетесь в т+опе пользователей</p>
+              </div>
             </template>
           </info-card>
         </swiper-slide>
         <swiper-slide>
           <info-card>
             <template #icon>
-              <i class="fa-solid fa-sparkles fa-2xl"></i>
+              <i class="fa-solid fa-cubes-stacked fa-2xl"></i>
             </template>
-            <template #title> Комбо-достижения </template>
+            <template #title> Комбо достижения </template>
             <template #content>
               <p>
                 Все комбо достижения отображаются во вкладке <b>КОМБО</b>. Их вы можете выполнять
-                СКОЛЬКО УГОДКО - и каждый раз получать за это очки.
+                СКОЛЬКО УГОДНО - и каждый раз получать за это очки.
               </p>
               <p>
                 <i>
                   К примеру: если вы выполнили такое достижение 10 раз, то получили в 10 раз больше
                   очков!
                 </i>
+              </p>
+            </template>
+          </info-card>
+        </swiper-slide>
+        <swiper-slide>
+          <info-card>
+            <template #icon>
+              <i class="fa-solid fa-users fa-2xl"></i>
+            </template>
+            <template #title> Топ пользователей </template>
+            <template #content>
+              <p>Чем выше вы в топе - тем вы круче.</p>
+              <p>
+                <i> За первые места в топе можно получить приятные призы </i>
+                <i class="fa-solid fa-message-smile"></i>
               </p>
             </template>
           </info-card>
@@ -88,7 +100,8 @@ import 'swiper/css/navigation'
   --swiper-theme-color: var(--primary);
   --swiper-navigation-size: 20pt;
   --swiper-navigation-sides-offset: 20%;
-  --swiper-navigation-top-offset: 30%;
+  --swiper-navigation-top-offset: 97%;
+  --swiper-pagination-bullet-inactive-color: var(--on-secondary);
 }
 
 .swiper-slide {
@@ -98,5 +111,10 @@ import 'swiper/css/navigation'
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+</style>
+<style>
+.swiper>.swiper-pagination {
+  z-index: -10 !important;
 }
 </style>
