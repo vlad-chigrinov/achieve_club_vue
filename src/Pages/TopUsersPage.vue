@@ -154,40 +154,37 @@ main {
   justify-content: center;
   margin-top: 30%;
 }
-
 .loader {
   width: var(--size);
   aspect-ratio: 1;
-  position: relative;
-  --distance: 100px;
+  border-radius: 50%;
+  background: var(--color);
+  display: grid;
+  animation: l22-0 2s infinite linear;
   --size: 50px;
   --color: var(--primary);
 }
-.loader::before,
-.loader::after {
+.loader:before,
+.loader:after {
   content: '';
-  position: absolute;
-  inset: 0;
+  grid-area: 1/1;
+  margin: 15%;
   border-radius: 50%;
-  background: var(--color);
+  background: inherit;
+  transform: rotate(0deg) translate(150%);
+  animation: l22 1s infinite;
 }
-.loader::before {
-  box-shadow: var(--color) calc(var(--distance) * -1) 0;
-  animation: l8-1 1s infinite linear;
+.loader:after {
+  animation-delay: -0.5s;
 }
-.loader::after {
-  transform: rotate(0deg) translateX(var(--distance));
-  animation: l8-2 1s infinite linear;
-}
-
-@keyframes l8-1 {
+@keyframes l22-0 {
   100% {
-    transform: translateX(var(--distance));
+    transform: rotate(1turn);
   }
 }
-@keyframes l8-2 {
+@keyframes l22 {
   100% {
-    transform: rotate(-180deg) translateX(var(--distance));
+    transform: rotate(1turn) translate(150%);
   }
 }
 </style>
