@@ -42,7 +42,7 @@
       </div>
       <div class="field">
         <label class="input-label">Подтверждение пароля</label>
-        <input class="input" v-model="Account.password2" type="password" placeholder="•••••••••" />
+        <input class="input" v-model="password2" type="password" placeholder="•••••••••" />
         <div v-if="errors.doublePasswordError">
           <p class="error">{{errors.doublePasswordError}}</p>
         </div>
@@ -56,7 +56,7 @@
       <errormodal @close="closeErrorModal" @open="errorModalWindow" :email="emailAddress.value"></errormodal>
     </div>
     <div v-if="isVoiceModalOpen == true">
-      <regModal :account="Account" :inputs="input" @close="ModalClose"></regModal>
+      <regModal :Account="Account"  @close="ModalClose"></regModal>
     </div>  
   </main>
 </template>
@@ -191,11 +191,11 @@ async function sendProofCode (){
      isVoiceModalOpen.value = false
      result = false
    }
-   if (Account.value.password != password2.value) {
-     errors.value.doublePasswordError = 'Пароли должны совпадать'
-     isVoiceModalOpen.value = false
-     result = false
-   }
+  //  if (Account.value.password != password2.value) {
+  //    errors.value.doublePasswordError = 'Пароли должны совпадать'
+  //    isVoiceModalOpen.value = false
+  //    result = false
+  //  }
 
    return result
 }
