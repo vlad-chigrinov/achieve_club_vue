@@ -15,40 +15,40 @@
       <div class="field">
         <label class="input-label">Имя</label>
         <input class="input" v-model="Account.firstName" type="text" placeholder="Введите имя..." />
-        <div v-if="errors.firstNameError">
-          <p class="error">{{errors.firstNameError}}</p>
+        <div v-if="firstNameError">
+          <p class="error">{{firstNameError}}</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Фамилия</label>
         <input class="input" v-model="Account.lastName" type="text" placeholder="Введите фамилию..." />
-        <div v-if="errors.lastNameError">
-          <p class="error">{{errors.lastNameError}}</p>
+        <div v-if="lastNameError">
+          <p class="error">{{lastNameError}}</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">E-mail</label>
         <input class="input" v-model="Account.emailAddress" type="text" placeholder="email@mail.com" />
-        <div v-if="errors.emailError">
-          <p class="error">{{errors.emailError}}</p>
+        <div v-if="emailError">
+          <p class="error">{{emailError}}</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Пароль</label>
         <input class="input" v-model="Account.password" type="password" placeholder="•••••••••" />
-        <div v-if="errors.passwordError">
-          <p class="error">{{errors.passwordError}}</p>
+        <div v-if="passwordError">
+          <p class="error">{{passwordError}}</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Подтверждение пароля</label>
         <input class="input" v-model="password2" type="password" placeholder="•••••••••" />
-        <div v-if="errors.doublePasswordError">
-          <p class="error">{{errors.doublePasswordError}}</p>
+        <div v-if="doublePasswordError">
+          <p class="error">{{doublePasswordError}}</p>
         </div>
       </div>
-      <div v-show="errors.textError != ''">
-        <p class="error">{{errors.textError}}</p>
+      <div v-show="textError != ''">
+        <p class="error">{{textError}}</p>
       </div>
       <button type="submit" @click="sendProofCode" id="login-button" >Зарегистрироваться</button>
     </div>
@@ -64,56 +64,42 @@
 import { ref , watch } from 'vue'
 import errormodal from '../Components/409-time-out-modal.vue'
 import regModal from '../Components/registration-modal.vue'
-// eslint-disable-next-line no-unused-vars
-
 let isModalErrorOpen = ref(false);
-let input = ref({
-    inputPart1:'',
-    inputPart2:'',
-    inputPart3:'',
-    inputPart4:''
-})
-
 let Account = ref({
   lastName:null,
   firstName:'',
   password:'',
   emailAddress:'',
   avatarURL:'StaticFiles/dodge.gif',
-  clubId:1,
-  proofCode:Number()
+  clubId:1
 })
 const isVoiceModalOpen = ref(false);
 const password2 = ref('');
 
-let errors = ref({
-  passwordError:'',
-  doublePasswordError:'',
-  emailError:'',
-  firstNameError:'',
-  lastNameError:'',
-  proofCodeError:'',
-  textError:''
-})
+
+  let passwordError=ref()
+  let doublePasswordError=ref()
+  let emailError=ref()
+  let firstNameError=ref()
+  let lastNameError=ref()
+  
 watch(Account.value.emailAddress, () => {
-  errors.value.emailError = ''
-})
-watch(input.value.inputPart1,input.value.inputPart2,input.value.inputPart3,input.value.inputPart4, () => {
-  errors.value.proofCodeError = ''
+  emailError.value = ''
 })
 
+
 watch(Account.value.password, () => {
-  errors.value.passwordError = ''
+  passwordError.value = ''
 })
 
 watch(Account.value.firstName,()=>{
-  errors.value.firstNameError = ''
+  firstNameError.value = ''
 })
 watch(Account.value.lastName,()=>{
-  errors.value.lastNameError = ''
+  lastNameError.value = ''
 })
 watch(password2,() =>{
-  errors.value.doublePasswordError = ''
+ doublePasswordError.value = ''
 })
 
 
@@ -134,7 +120,7 @@ function ModalClose(){
 
 async function sendProofCode (){
   if(validateInputs()){
-    await fetch('https://achieve.by:5000/api/email/proof_email', {
+    let responce = await fetch('https://achieve.by:5000/api/email/proof_email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -142,60 +128,67 @@ async function sendProofCode (){
       },
       body: JSON.stringify(Account.value.emailAddress)
     })
-    ModalOpen();
+    if(responce.ok){
+      ModalOpen();
+    }
+    if(responce.value == 409){
+      isVoiceModalOpen.value = false;
+      isModalErrorOpen.value = true;
+      console.log(responce)
+    }
   }
-  }
+}
  function validateInputs() {
    let result = true
-   if(Account.value.firstName.length <=1 ){
-    errors.value.firstNameError = 'Имя должно содержать не менее 2 символов'
+   if(Account.value.firstName <=1 ){
+    firstNameError.value = 'Имя должно содержать не менее 2 символов'
     isVoiceModalOpen.value = false
   }
-   if(Account.value.lastName.length<=4){
-    errors.value.lastNameError = 'Имя должно содержать не менее 5 символов'
+   if(Account.value.lastName<=4){
+    lastNameError.value = 'Имя должно содержать не менее 5 символов'
     isVoiceModalOpen.value = false
 
   }
-   if (Account.value.emailAddress.length == 0) {
-     errors.value.emailError = 'Введите почту'
+   if (Account.value.emailAddress == 0) {
+     emailError.value = 'Введите почту'
      isVoiceModalOpen.value = false
      result = false
    }
    const emailRegex = /^\S+@\S+\.\S+$/
    if (!emailRegex.test(Account.value.emailAddress)) {
-     errors.value.emailError = 'Вы ввели недействительную почту'
+     emailError.value = 'Вы ввели недействительную почту'
      isVoiceModalOpen.value = false
      result = false
    }
 
-   if (Account.value.password.length == 0) {
-     errors.value.passwordError = 'Введите пароль'
+   if (Account.value.password == 0) {
+     passwordError.value = 'Введите пароль'
      isVoiceModalOpen.value = false
      result = false
    }
 
-   if (Account.value.password.length < 5) {
-     errors.value.passwordError = 'Пароль не должен содержать меньше 6 символов'
+   if (Account.value.password < 5) {
+     passwordError.value = 'Пароль не должен содержать меньше 6 символов'
      isVoiceModalOpen.value = false
      result = false
    }
 
    if (!/[A-z]/.test(Account.value.password)) {
-     errors.value.passwordError = 'Пароль должен содержать минимум 1 букву'
+     passwordError.value = 'Пароль должен содержать минимум 1 букву'
      isVoiceModalOpen.value = false
      result = false
    }
 
    if (!/\d/.test(Account.value.password)) {
-     errors.value.passwordError = 'Пароль должен содержать минимум 1 цифру'
+     passwordError.value = 'Пароль должен содержать минимум 1 цифру'
      isVoiceModalOpen.value = false
      result = false
    }
-  //  if (Account.value.password != password2.value) {
-  //    errors.value.doublePasswordError = 'Пароли должны совпадать'
-  //    isVoiceModalOpen.value = false
-  //    result = false
-  //  }
+    if (Account.value.password != password2.value) {
+     doublePasswordError.value = 'Пароли должны совпадать'
+     isVoiceModalOpen.value = false
+     result = false
+   }
 
    return result
 }
