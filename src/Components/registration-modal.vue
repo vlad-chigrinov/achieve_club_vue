@@ -54,7 +54,7 @@
           input.inputPart4 == ''
         "
       >
-        <p class="error">Введите код</p>
+        <p class="errors">Введите код</p>
       </div>
       <button v-else class="login-button1" @click="proofRegisterCode">Отправить</button>
     </div>

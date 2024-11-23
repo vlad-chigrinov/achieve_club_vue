@@ -14,28 +14,28 @@
     <div id="login-form">
       <div class="field">
         <label class="input-label">Имя</label>
-        <input class="input" v-model="Account.firstName" type="text" placeholder="Введите имя..." />
+        <input class="input" v-model="firstName" type="text" placeholder="Введите имя..." />
         <div v-if="firstNameError">
           <p class="error">{{firstNameError}}</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Фамилия</label>
-        <input class="input" v-model="Account.lastName" type="text" placeholder="Введите фамилию..." />
+        <input class="input" v-model="lastName" type="text" placeholder="Введите фамилию..." />
         <div v-if="lastNameError">
           <p class="error">{{lastNameError}}</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">E-mail</label>
-        <input class="input" v-model="Account.emailAddress" type="text" placeholder="email@mail.com" />
+        <input class="input" v-model="emailAddress" type="text" placeholder="email@mail.com" />
         <div v-if="emailError">
           <p class="error">{{emailError}}</p>
         </div>
       </div>
       <div class="field">
         <label class="input-label">Пароль</label>
-        <input class="input" v-model="Account.password" type="password" placeholder="•••••••••" />
+        <input class="input" v-model="password" type="password" placeholder="•••••••••" />
         <div v-if="passwordError">
           <p class="error">{{passwordError}}</p>
         </div>
@@ -56,7 +56,7 @@
       <errormodal @close="closeErrorModal" @open="errorModalWindow" :email="emailAddress.value"></errormodal>
     </div>
     <div v-if="isVoiceModalOpen == true">
-      <regModal :Account="Account"  @close="ModalClose"></regModal>
+      <regModal :Account="{firstName,lastName,emailAddress,password,clubId,avatarURL}"  @close="ModalClose"></regModal>
     </div>  
   </main>
 </template>
@@ -65,14 +65,22 @@ import { ref , watch } from 'vue'
 import errormodal from '../Components/409-time-out-modal.vue'
 import regModal from '../Components/registration-modal.vue'
 let isModalErrorOpen = ref(false);
-let Account = ref({
-  lastName:null,
-  firstName:'',
-  password:'',
-  emailAddress:'',
-  avatarURL:'StaticFiles/dodge.gif',
-  clubId:1
-})
+// let Account = reactive({
+//   lastName:'',
+//   firstName:'',
+//   password:'',
+//   emailAddress:'',
+//   avatarURL:'StaticFiles/dodge.gif',
+//   clubId:1
+// })
+let lastName = ref('');
+let firstName = ref('');
+let password = ref('');
+let emailAddress = ref('');
+let avatarURL = ref('StaticFiles/dodge.gif');
+let responce = ref('');
+let clubId = ref(1);
+
 const isVoiceModalOpen = ref(false);
 const password2 = ref('');
 
@@ -83,19 +91,19 @@ const password2 = ref('');
   let firstNameError=ref()
   let lastNameError=ref()
   
-watch(Account.value.emailAddress, () => {
+watch(emailAddress, () => {
   emailError.value = ''
 })
 
 
-watch(Account.value.password, () => {
+watch(password, () => {
   passwordError.value = ''
 })
 
-watch(Account.value.firstName,()=>{
+watch(firstName,()=>{
   firstNameError.value = ''
 })
-watch(Account.value.lastName,()=>{
+watch(lastName,()=>{
   lastNameError.value = ''
 })
 watch(password2,() =>{
@@ -112,6 +120,7 @@ function errorModalWindow(){
 }
 function ModalOpen(){
   isVoiceModalOpen.value = true;
+  
 }
 function ModalClose(){
   isVoiceModalOpen.value = false;
@@ -120,71 +129,68 @@ function ModalClose(){
 
 async function sendProofCode (){
   if(validateInputs()){
-    let responce = await fetch('https://achieve.by:5000/api/email/proof_email', {
+    responce.value = await fetch('https://achieve.by:5000/api/email/proof_email', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
         'Accept-Language': 'ru'
       },
-      body: JSON.stringify(Account.value.emailAddress)
+      body: JSON.stringify(emailAddress.value)
     })
-    if(responce.ok){
+    if(responce.value.ok){
       ModalOpen();
-    }
-    if(responce.value == 409){
-      isVoiceModalOpen.value = false;
-      isModalErrorOpen.value = true;
-      console.log(responce)
+      
     }
   }
 }
  function validateInputs() {
    let result = true
-   if(Account.value.firstName <=1 ){
+   if(firstName.value.length <=1 ){
     firstNameError.value = 'Имя должно содержать не менее 2 символов'
     isVoiceModalOpen.value = false
   }
-   if(Account.value.lastName<=4){
+   if(lastName.value.length<=4){
     lastNameError.value = 'Имя должно содержать не менее 5 символов'
     isVoiceModalOpen.value = false
 
   }
-   if (Account.value.emailAddress == 0) {
+   if (emailAddress.value.length == 0) {
      emailError.value = 'Введите почту'
      isVoiceModalOpen.value = false
      result = false
    }
    const emailRegex = /^\S+@\S+\.\S+$/
-   if (!emailRegex.test(Account.value.emailAddress)) {
+   if (!emailRegex.test(emailAddress.value)) {
      emailError.value = 'Вы ввели недействительную почту'
      isVoiceModalOpen.value = false
      result = false
    }
 
-   if (Account.value.password == 0) {
+   if (password.value
+   .length == 0) {
      passwordError.value = 'Введите пароль'
      isVoiceModalOpen.value = false
      result = false
    }
 
-   if (Account.value.password < 5) {
+   if (password.value.length < 5) {
      passwordError.value = 'Пароль не должен содержать меньше 6 символов'
      isVoiceModalOpen.value = false
      result = false
    }
 
-   if (!/[A-z]/.test(Account.value.password)) {
+   if (!/[A-z]/.test(password.value)) {
      passwordError.value = 'Пароль должен содержать минимум 1 букву'
      isVoiceModalOpen.value = false
      result = false
    }
 
-   if (!/\d/.test(Account.value.password)) {
+   if (!/\d/.test(password.value)) {
      passwordError.value = 'Пароль должен содержать минимум 1 цифру'
      isVoiceModalOpen.value = false
      result = false
    }
-    if (Account.value.password != password2.value) {
+    if (password.value != password2.value) {
      doublePasswordError.value = 'Пароли должны совпадать'
      isVoiceModalOpen.value = false
      result = false
