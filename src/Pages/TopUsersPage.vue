@@ -1,253 +1,190 @@
+<script setup>
+import { onMounted, ref } from 'vue'
+import MainLoyout from '../Layouts/MainLayout.vue'
+import axios from 'axios'
+import VueLoadImage from 'vue-load-image'
+
+const users = ref([])
+
+onMounted(async () => {
+  await axios
+    .get('https://achieve.by:5000/api/users')
+    .then((f) => (users.value = f.data.sort((a, b) => a.xpSum < b.xpSum)))
+    .catch((e) => console.log(e))
+})
+</script>
+
 <template>
-  <header>
-    <div class="heading-wrapper">
-      <div id="profileSlogan">
-        <span>Топ <b>100</b> пользователей</span>
+  <main-loyout :tab="Number(2)">
+    <header>
+      <h1>Топ пользователей</h1>
+    </header>
+    <main>
+      <div class="users-list" v-if="users.length > 0">
+        <a :href="'/users/' + user.id" class="user" v-for="(user, idx) in users" :key="user.id">
+          <div class="left">
+            <vue-load-image>
+              <template v-slot:image>
+                <img class="avatar" :src="'https://achieve.by:5000/' + user.avatar" />
+              </template>
+              <template v-slot:preloader>
+                <i class="avatar avatar-loader fa-solid fa-loader"></i>
+              </template>
+              <template v-slot:error>
+                <i class="avatar avatar-error fa-solid fa-circle-exclamation"></i>
+              </template>
+            </vue-load-image>
+          </div>
+          <div class="center">
+            <p class="name">{{ user.firstName }} {{ user.lastName }}</p>
+            <p class="xp">{{ user.xpSum }} <span class="xp-help">XP</span></p>
+          </div>
+          <div class="right">
+            <p class="position">#{{ idx + 1 }}</p>
+          </div>
+        </a>
       </div>
-    </div>
-  </header>
-  <!-----------------------------------header----------------------------------------->
-  <main>
-    <div class="topUsers">
-      <a href="#">
-        <div class="topUser">
-          <div class="userImage">
-            <img alt="" src="http://achieve.by:5000/icons/clubs/palace.png" />
-          </div>
-          <div class="userAboutWrapper">
-            <div class="nameSurnameUser">
-              <span>First Last</span>
-            </div>
-            <div class="xpCountUser">
-              <span>Опыт: 1000</span>
-            </div>
-          </div>
-          <div class="ClubLogoAndPositionUser">
-            <div class="clubUserLogo">
-              <img alt="" src="http://achieve.by:5000/icons/clubs/palace.png" />
-            </div>
-            <div class="topPositionUser">
-              <span>#1</span>
-            </div>
-          </div>
-        </div>
-      </a>
-    </div>
-  </main>
+      <div v-else class="loading">
+        <div class="loader"></div>
+      </div>
+    </main>
+  </main-loyout>
 </template>
 
 <style scoped>
 header {
-  background-color: #0e1316;
-  border-radius: 0px 0px 50px 50px;
+  display: flex;
+  justify-content: center;
+}
+
+h1 {
+  color: var(--primary);
+  margin: 15px;
+  font-size: 22px;
 }
 
 main {
-  margin-bottom: 3%;
+  margin-top: 20px;
 }
 
-.heading-wrapper {
+.users-list {
   display: flex;
-  justify-content: center;
-  padding-top: 15px;
-}
-
-#profileSlogan {
-  width: 100%;
-  font-size: 24px;
-  font-family: 'Exo 2', sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  margin: 0;
-  color: white;
-  text-align: center;
-  padding-bottom: 20px;
-}
-
-footer {
-  width: 100%;
-  position: fixed;
-  bottom: 0;
-}
-
-.footerSections {
-  display: flex;
-  background: white;
-  width: 100%;
-  justify-content: center;
-  -webkit-box-shadow: 0px -5px 15px 4px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0px -5px 15px 4px rgba(0, 0, 0, 0.2);
-  box-shadow: 0px -5px 15px 4px rgba(0, 0, 0, 0.2);
-}
-
-footer img {
-  width: 50px;
-  margin: 10px 30px 5px 30px;
-  object-fit: cover;
-}
-
-.secondSection hr {
-  border-bottom: 5px solid #0d4e81;
-  border-radius: 10px 10px 0px 0px;
-  margin: 0;
-}
-
-.topUsers {
-  display: flex;
-  justify-content: center;
   flex-direction: column;
-  margin: 15px;
-  align-items: center;
+  gap: 10px;
+  margin-bottom: 100px;
 }
 
-.topUsers > a {
-  width: 40%;
-}
-
-.topUser {
-  background: #151e1d;
-  border-radius: 20px;
+.user {
+  text-decoration: none;
+  background-color: var(--tertiary);
+  color: var(--on-tertiary);
+  border-radius: 15px;
+  margin: 0 10px 0 10px;
+  padding: 7px;
   display: flex;
-  padding: 15px;
-  margin-top: 15px;
-  cursor: pointer;
+  align-items: center;
+  gap: 12px;
 }
 
-.userImage img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
+.user .avatar {
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
 }
 
-.userAboutWrapper {
+.user .avatar-loader {
+  text-align: center;
+  font-size: 3em;
+  color: var(--primary);
+  animation: rotation 1s infinite;
+}
+
+@keyframes rotation {
+  from🅓 {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 180deg;
+  }
+}
+
+.user .avatar-error {
+  text-align: center;
+  font-size: 3em;
+  color: var(--primary);
+  animation: blinking 1s infinite;
+}
+
+@keyframes blinking {
+  from {
+    transform: translateY(-3px);
+  }
+  75% {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(-3px);
+  }
+}
+
+.user .center {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding-left: 10px;
-  width: 40%;
-}
-
-.nameSurnameUser {
-  font-family: 'Exo 2';
-  font-style: normal;
-  font-weight: normal;
-  color: white;
-}
-
-.xpCountUser {
-  font-size: 13px;
-  color: white;
-}
-
-.xpCountDefaultUser {
-  font-size: 13px;
-  color: white;
-}
-
-.clubUserLogo {
-  text-align: center;
-  display: flex;
-  align-items: center;
-  padding-right: 15px;
-}
-
-.clubUserLogo img {
-  width: 45px;
-  object-fit: cover;
-}
-
-.topPositionUser {
-  font-size: 23px;
-  font-weight: bold;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  color: white;
-}
-
-.topPositionUserDefault {
-  font-size: 23px;
-  font-weight: normal;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  color: white;
-}
-
-.ClubLogoAndPositionUser {
-  width: 40%;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.px {
   width: 100%;
-  height: 75px;
 }
 
-@media (max-width: 800px) {
-  .topUsers > a {
-    width: 80%;
-  }
-
-  .topPositionUser {
-    font-size: 1.5em;
-  }
+.name {
+  font-size: 14px;
 }
 
-@media (max-width: 430px) {
-  #infoTask {
-    text-align: left;
-  }
+.xp-help {
+  color: var(--secondary);
 }
 
-@media (max-width: 1100px) {
-  .ClubLogoAndPositionUser {
-    width: 50%;
-  }
+.position {
+  font-weight: bold;
+  font-size: 24px;
+  margin-right: 10px;
+}
 
-  .topUsers > a {
-    width: 80%;
+/* PAGE LOADER */
+.loading {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-top: 30%;
+}
+.loader {
+  width: var(--size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color);
+  display: grid;
+  animation: l22-0 2s infinite linear;
+  --size: 50px;
+  --color: var(--primary);
+}
+.loader:before,
+.loader:after {
+  content: '';
+  grid-area: 1/1;
+  margin: 15%;
+  border-radius: 50%;
+  background: inherit;
+  transform: rotate(0deg) translate(150%);
+  animation: l22 1s infinite;
+}
+.loader:after {
+  animation-delay: -0.5s;
+}
+@keyframes l22-0 {
+  100% {
+    transform: rotate(1turn);
   }
-
-  .userAboutWrapper {
-    width: 50%;
-  }
-
-  #infoTask {
-    width: 100%;
-    text-align: left;
-  }
-
-  .notInfoTask {
-    width: 100%;
-    text-align: left;
-  }
-
-  #nameTask {
-    text-align: left;
-  }
-
-  .aboutTask {
-    width: 100%;
-  }
-
-  .mark {
-    display: unset;
-  }
-
-  .taskXP {
-    width: 100px;
-    text-align: right;
-  }
-
-  .completedTask {
-    cursor: pointer;
-  }
-
-  .notCompletedTask {
-    cursor: pointer;
+}
+@keyframes l22 {
+  100% {
+    transform: rotate(1turn) translate(150%);
   }
 }
 </style>

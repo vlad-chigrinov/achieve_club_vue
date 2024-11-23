@@ -2,12 +2,13 @@
 import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../Stores/AuthStore'
+import axios from 'axios'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
-const emailInput = ref('v@v.vv')
-const passwordInput = ref('vlad8888')
+const emailInput = ref()
+const passwordInput = ref()
 
 const emailError = ref('')
 const passwordError = ref('')
@@ -29,28 +30,25 @@ const loginDisabled = computed(() => {
 
 async function Login() {
   if (validateInputs()) {
-    const path = '/api/auth/login?api-version=1.1'
+    const path = 'https://achieve.by:5000/api/auth/login?api-version=1.1'
     const requestData = { email: emailInput.value, password: passwordInput.value }
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify(requestData)
-    }
-    const responce = await fetch(path, requestOptions)
-    if (responce.ok) {
-      const data = await responce.json()
-      const tokens = {
-        userId: data['userId'],
-        authToken: data['authToken'],
-        refreshToken: data['refreshToken']
-      }
-      authStore.login(tokens)
-      router.push('/')
-    } else {
-      serverError.value = 'Неправильный логин или пароль'
-    }
+
+    axios
+      .post(path, requestData)
+      .then(function (responce) {
+        const data = responce.data
+        const tokens = {
+          userId: data['userId'],
+          authToken: data['authToken'],
+          refreshToken: data['refreshToken']
+        }
+        authStore.login(tokens)
+        router.push('/')
+      })
+      .catch((error) => {
+        console.log(error)
+        serverError.value = 'Неправильный логин или пароль'
+      })
   }
 }
 
@@ -93,20 +91,11 @@ function validateInputs() {
 
 <template>
   <header>
-    <div id="title">
-      <h1>Вход в аккаунт</h1>
-      <select class="change-lang" style="display: none">
-        <option value="ru">RU</option>
-        <option value="en">EN</option>
-        <option value="pl">PL</option>
-      </select>
-    </div>
-    <div id="subtitle">
-      <h3>
-        <span>или </span>
-        <a href="registration">зарегистрируйтесь</a>
-      </h3>
-    </div>
+    <h1 id="title">Вход в аккаунт</h1>
+    <h3 id="subtitle">
+      <span>или&nbsp;</span>
+      <a href="registration">зарегистрируйтесь</a>
+    </h3>
   </header>
   <main>
     <div id="login-form">
@@ -132,6 +121,7 @@ function validateInputs() {
         <a href="#" class="input-help">Забыли пароль?</a>
       </div>
       <button @click="Login" id="login-button" :disabled="loginDisabled">Войти</button>
+      <p class="error" v-if="serverError">{{ serverError }}</p>
     </div>
   </main>
 </template>
@@ -141,38 +131,30 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 50px;
 }
 
 #title {
   display: flex;
   align-items: center;
+  font-size: 26pt;
+  font-weight: 400;
+  line-height: 30pt;
+  color: var(--primary);
 }
 
 #subtitle {
   display: flex;
   justify-content: flex-start;
-  color: #d1d6d9;
+  font-size: 20pt;
+  font-weight: 400;
+  line-height: 28pt;
+  color: var(--secondary);
 }
 
 #subtitle a {
-  color: #80d4d6;
-}
-
-#title > h1 {
-  color: #d1d6d9;
-  font-size: 20pt;
-}
-
-#title > .change-lang {
-  margin: 10px;
-  border: 2px solid #80d4d6;
-  border-radius: 10px;
-  padding: 7px;
-  background-color: #151e1d;
-  color: #d9dee1;
-  cursor: pointer;
-  font-weight: bold;
+  color: var(--primary);
+  text-shadow: var(--shadow) 0 0 2px;
 }
 
 main {
@@ -181,11 +163,15 @@ main {
 }
 
 #login-form {
+  background-color: var(--tertiary);
+  color: var(--on-tertiary);
+  padding: 30px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 700px;
-  margin: 60px 40px 0 40px;
+  max-width: 800px;
+  margin: 60px 20px 0 20px;
 }
 
 .field {
@@ -193,7 +179,6 @@ main {
 }
 
 .input-label {
-  color: #bdc7c8;
   font-size: 10pt;
   display: block;
   margin: 5px;
@@ -201,68 +186,58 @@ main {
 
 .custom-input {
   font-size: 15pt;
-  background-color: #0e1316;
-  color: #d9dee1;
+  background-color: var(--background);
+  color: var(--primary);
   padding: 7px;
   width: 100%;
   border-radius: 5px;
+  border: none;
 }
 
 .custom-input::placeholder {
-  color: #bdc7c8;
   opacity: 0.25;
 }
 
 .custom-input:focus {
-  border-color: transparent;
-  box-shadow: 0 0 1px 0.2rem #80d5d6a9;
+  box-shadow: 0 0 6px 0.1rem var(--shadow);
 }
 
 .custom-input:not(:focus) {
-  border: 2px solid gray;
-}
-
-.is-error {
-  border-bottom: 3px solid orangered;
-}
-
-.is-hidden {
-  display: none !important;
+  box-shadow: 0 0 6px 0.1rem var(--inverse-shadow);
 }
 
 .error {
-  color: orangered;
+  background-color: var(--secondary);
+  color: var(--on-secondary);
   font-size: 10pt;
-  margin: 3px;
-}
-
-.error-message {
-  color: orangered;
-  font-size: 10pt;
-  margin: 0 0 10px 0;
-  text-align: center;
+  margin-top: 7px;
+  padding: 3px;
+  display: inline-block;
+  border-radius: 5px;
 }
 
 .input-help {
   display: block;
   font-size: 10pt;
-  color: #80d4d6;
+  color: var(--primary);
   margin: 7px 0;
+  text-shadow: var(--shadow) 0 0 2px;
 }
 
 #login-button {
-  color: #80d4d6;
+  color: var(--on-primary);
   font-size: 15pt;
   font-weight: bold;
-  padding: 10px 30px 10px 30px;
-  background-color: #151e1d;
+  padding: 8px 26px 8px 26px;
+  background-color: var(--primary);
   border: 0;
-  border-radius: 20px;
+  border-radius: 18px;
   cursor: pointer;
 }
 
 #login-button:disabled {
-  color: gray;
+  background-color: var(--secondary);
+  color: var(--tertiary);
   cursor: not-allowed;
 }
 </style>
