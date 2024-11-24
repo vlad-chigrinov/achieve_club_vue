@@ -48,12 +48,12 @@
           <p class="error">{{doublePasswordError}}</p>
         </div>
       </div>
-      <div v-show="textError != ''">
-        <p class="error">{{textError}}</p>
-      </div>
       <br>
       <button type="submit" @click="sendProofCode" id="login-button" >Зарегистрироваться</button>
     </div>
+    </div>
+    <div v-if="textError != ''">
+      <p class="error">{{textError}}</p>
     </div>
     <div v-if="isModalErrorOpen == true">
       <errormodal @close="closeErrorModal" @open="errorModalWindow" :email="emailAddress"></errormodal>
@@ -86,9 +86,12 @@ const password2 = ref('');
   let emailError=ref()
   let firstNameError=ref()
   let lastNameError=ref()
-  
+  let textError=ref();
 watch(emailAddress, () => {
   emailError.value = ''
+})
+watch(responce, () => {
+  textError.value = ''
 })
 
 
@@ -132,6 +135,10 @@ async function sendProofCode (){
       },
       body: JSON.stringify(emailAddress.value)
     })
+    if(responce.value.status.email){
+      isVoiceModalOpen.value = false;
+      textError.value = 'Такой пользователь уже зарегестрирован'
+    }
     ModalOpen();
   }
 }
@@ -217,6 +224,7 @@ header {
 #title {
   display: flex;
   align-items: center;
+  margin-top:5%;
 }
 
 #subtitle {

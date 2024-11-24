@@ -1,5 +1,5 @@
 <template>
-  <div class="container" @click.self="close">
+  <div class="container" >
     <br />
     <div class="content">
       <div id="sms-modal-text">
@@ -45,20 +45,12 @@
           @input="moveFocus($event, length4)"
         />
       </div>
-      <div
-        class="errors"
-        v-if="
-          input.inputPart1 == '' ||
-          input.inputPart2 == '' ||
-          input.inputPart3 == '' ||
-          input.inputPart4 == ''
-        "
-      >
-        <p class="errors">Введите код</p>
+      <div class="button-cont">
+        <button v-if=" input.inputPart1 != '' && input.inputPart2 != '' && input.inputPart3 != '' && input.inputPart4 != ''" class="login-button1" @click="proofRegisterCode">Отправить</button> 
+        <button  class="login-button1" @click.self="close">Закрыть</button>
       </div>
-      <button v-else class="login-button1" @click="proofRegisterCode">Отправить</button>
+      </div>
     </div>
-  </div>
 </template>
 <script>
 import { ref } from 'vue'
@@ -157,6 +149,18 @@ const proofCodeError = ref('')
 // })
 </script>
 <style scoped>
+.button-cont{
+  display:flex;
+  justify-content: space-around;
+  margin-top:3%;
+  gap:5%;
+}
+@media(max-width:1100px){
+  .button-cont{
+    display:flex;
+    flex-direction: column
+  }
+}
 #login-button {
   color: var(--on-tertiary);
   font-size: 15pt;
@@ -183,7 +187,7 @@ const proofCodeError = ref('')
 }
 .container {
   max-width: 30%;
-  max-height: 50%;
+  height: 60vh;
   margin: 0 auto;
   margin-top: 10%;
   position: fixed;
@@ -214,7 +218,7 @@ const proofCodeError = ref('')
 @media (max-width: 577px) {
   .container {
     max-width: 50%;
-    max-height: 50%;
+    max-height: 55%;
     margin: 0 auto;
     margin-top: 30%;
     position: fixed;
@@ -229,10 +233,10 @@ const proofCodeError = ref('')
     text-align: justify;
   }
 }
-@media (max-width: 410px) {
+@media (max-width: 435px) {
   .container {
-    max-width: 60%;
-    max-height: 45%;
+    max-width: 10%;
+    max-height: 55%;
     margin: 0 auto;
     margin-top: 50%;
     position: fixed;
@@ -241,6 +245,30 @@ const proofCodeError = ref('')
     background-color: #0e1316;
     border-radius: 5px;
     box-shadow: 0 0 6px .1rem var(  --shadow);
+  }
+  
+  .modal-text {
+    font-size: 13px;
+    text-align: justify;
+   
+  }
+}
+@media (max-width: 410px) {
+  .container {
+    max-width: 15%;
+    height: 65vh !important;
+    margin: 0 auto;
+    margin-top: 50%;
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    background-color: #0e1316;
+    border-radius: 5px;
+    box-shadow: 0 0 6px .1rem var(  --shadow);
+  }
+  .login-button1{
+    height:5vh;
+    font-size: 0.6rem;
   }
   .modal-text {
     font-size: 13px;
