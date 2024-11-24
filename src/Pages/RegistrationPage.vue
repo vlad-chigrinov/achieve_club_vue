@@ -135,7 +135,7 @@ async function sendProofCode (){
       },
       body: JSON.stringify(emailAddress.value)
     })
-    if(responce.value.message == 409){
+    if(responce.value.statusText == 'email'){
       isVoiceModalOpen.value = false;
       textError.value = 'Такой пользователь уже зарегестрирован'
     }
