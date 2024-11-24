@@ -5,7 +5,7 @@
     </div>
     <div id="subtitle">
       <h3>
-        <span style="color:#3d3d3d;">или </span>
+        <span style="color:var( --tertiary);">или </span>
         <a href="login">войдите в аккаунт</a>
       </h3>
     </div>
@@ -193,7 +193,7 @@ async function sendProofCode (){
 </script>
 <style scoped>
 .container__inputs{
-  background-color: #272727;
+  background-color: var(--tertiary);
   padding:4%;
   display: flex;
   justify-content: center;
@@ -201,7 +201,7 @@ async function sendProofCode (){
   border-radius:20px;
 }
 body{
-  background-color: #474747;;
+  background-color: var(--secondary);
 }
 *{
   margin:0;
@@ -222,23 +222,22 @@ header {
 #subtitle {
   display: flex;
   justify-content: flex-start;
-  color: #d1d6d9;
+  color: var( --primary);
 }
 main {
   margin-bottom: 10%;
 }
 #subtitle a {
-  color: #ffffff;
+  color:var( --primary);
 }
 
 #title > h1 {
-  color: #d1d6d9;
+  color:var( --primary);
   font-size: 20pt;
 }
 
 #title > .change-lang {
   margin: 10px;
-  border: 2px solid #80d4d6;
   border-radius: 10px;
   padding: 7px;
   background-color: #151e1d;
@@ -256,7 +255,7 @@ main {
 }
 
 .input-label {
-  color: #ffffff;
+  color:var(--outline);
   font-size: 10pt;
   display: block;
   margin: 5px;
@@ -264,111 +263,62 @@ main {
 
 .input {
   font-size: 15pt;
-  background-color: #0a0a0a;
+  background-color: var(--background);
   border:0;
-  color: #d9dee1;
+  color: var(--outline);
   border-radius:5px;
   padding: 10px;
-  box-shadow: 0 0 6px .1rem #000000;
+  box-shadow: 0 0 6px .1rem var(--inverse-shadow);
   width:auto;
 }
 .input:hover{
   font-size: 15pt;
-  background-color: #0a0a0a;
+  background-color: var( --background);
   border:0;
-  color: #d9dee1;
+  color: var(--shadow);
   border-radius:5px;
   padding: 10px;
-  box-shadow: 0 0 6px .1rem #ffffff;
+  box-shadow: 0 0 6px .1rem var(--shadow);
   width:auto;
 }
 .input:focus{
-  box-shadow: 0 0 6px .1rem #ffffff;
+  box-shadow: 0 0 6px .1rem var(--shadow);
 }
 .input::placeholder {
-  color: #bdc7c8;
+  color: var(--primary);
   opacity: 0.25;
 }
 
 .is-error {
-  border-bottom: 3px solid orangered;
+  border-bottom: 3px solid var(--error);
 }
 
 .error {
-  color: orangered;
+  color: var(--error);
   font-size: 10pt;
   margin: 3px;
 }
 
-.input-help {
-  display: block;
-  font-size: 10pt;
-  color: #80d4d6;
-}
+
 
 #login-button {
-  color: #000000;
+  color: var(--on-primary);
   font-size: 15pt;
   font-weight: bold;
   padding: 10px 20px 10px 20px;
-  background-color: #ffffff;
+  background-color: var(--on-tertiary);
   border: 0;
   border-radius: 20px;
   cursor: pointer;
   width:100%;
 }
-.login-button1 {
-  
-  height:20%;
-  text-align: center;
-  color: #80d4d6;
-  font-size: 1.0rem;
-  font-weight: bold;
-  padding: 10px 30px 10px 30px;
-  background-color: #151e1d;
-  border: 0;
-  border-radius: 20px;
-  cursor: pointer;
-  margin-top:5%;
-}
+
 
 .field {
   margin-bottom: 10px;
   width: 30%;
 }
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 50vh;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-}
 
-.modal-content {
-  background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
 .container{
   max-width:30%;
   max-height:50%;

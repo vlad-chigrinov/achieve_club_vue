@@ -1,5 +1,5 @@
 <template>
-  <div class="container" @click.self="close">X
+  <div class="container" @click.self="close">
     <br />
     <div class="content">
       <div id="sms-modal-text">
@@ -158,11 +158,11 @@ const proofCodeError = ref('')
 </script>
 <style scoped>
 #login-button {
-  color: #000000;
+  color: var(--on-tertiary);
   font-size: 15pt;
   font-weight: bold;
   padding: 10px 20px 10px 20px;
-  background-color: #ffffff;
+  background-color: var(--modal-back);
   border: 0;
   border-radius: 20px;
   cursor: pointer;
@@ -171,11 +171,11 @@ const proofCodeError = ref('')
 .login-button1 {
   height: 20%;
   text-align: center;
-  color: #000000;
+  color: var(--secondary);
   font-size: 1rem;
   font-weight: bold;
   padding: 10px 30px 10px 30px;
-  background-color: #ffffff;
+  background-color: var(--on-tertiary);
   border: 0;
   border-radius: 20px;
   cursor: pointer;
@@ -189,9 +189,9 @@ const proofCodeError = ref('')
   position: fixed;
   inset: 0;
   z-index: 10;
-  background-color: #131313 !important;
+  background-color: var( --background) !important;
   border-radius: 5px;
-  box-shadow: 0 0 6px .1rem #ffffff;
+  box-shadow: 0 0 6px .1rem var(  --shadow);
 }
 .errors {
   color: red;
@@ -208,7 +208,7 @@ const proofCodeError = ref('')
     z-index: 10;
     background-color: #0e1316;
     border-radius: 5px;
-    box-shadow: 0 0 6px .1rem #ffffff;
+    box-shadow: 0 0 6px .1rem var(  --shadow);
   }
 }
 @media (max-width: 577px) {
@@ -222,7 +222,7 @@ const proofCodeError = ref('')
     z-index: 10;
     background-color: #0e1316;
     border-radius: 5px;
-    box-shadow: 0 0 6px .1rem #ffffff;
+    box-shadow: 0 0 6px .1rem var(  --shadow);
   }
   .modal-text {
     font-size: 15px;
@@ -240,11 +240,12 @@ const proofCodeError = ref('')
     z-index: 10;
     background-color: #0e1316;
     border-radius: 5px;
-    box-shadow: 0 0 6px .1rem #ffffff;
+    box-shadow: 0 0 6px .1rem var(  --shadow);
   }
   .modal-text {
     font-size: 13px;
     text-align: justify;
+   
   }
 }
 .content {
@@ -261,8 +262,8 @@ const proofCodeError = ref('')
 .text {
   padding: 4%;
 }
-#modal-text {
-  margin-bottom: 5%;
+.modal-text {
+  color:var( --primary) !important;
 }
 .input-container {
   display: flex;
@@ -273,21 +274,22 @@ const proofCodeError = ref('')
 .input-part {
   width: 18%;
   height: 10vh;
-  background: #000000;
+  background: var(--on-primary);
   border:0;
-  box-shadow: 0 0 6px .1rem #000000;
+  box-shadow: 0 0 6px .1rem var(--primary);
   border-radius: 15px !important;
   font-size: 15px;
   padding: 1%;
   text-align: center;
   margin-top: 15%;
+  color:  var(--primary);
 }
 .input-part:focus{
-  box-shadow: 0 0 6px .1rem #ffffff;
+  box-shadow: 0 0 6px .1rem var(  --shadow);
 
 }
 .input-part:hover{
-  box-shadow: 0 0 6px .1rem #ffffff;
+  box-shadow: 0 0 6px .1rem var(  --shadow);
 
 }
 .input-part:first-child {
