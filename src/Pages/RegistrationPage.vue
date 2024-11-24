@@ -5,13 +5,14 @@
     </div>
     <div id="subtitle">
       <h3>
-        <span>или </span>
+        <span style="color:#3d3d3d;">или </span>
         <a href="login">войдите в аккаунт</a>
       </h3>
     </div>
   </header>
   <main>
     <div id="login-form">
+      <div class="container__inputs">
       <div class="field">
         <label class="input-label">Имя</label>
         <input class="input" v-model="firstName" type="text" placeholder="Введите имя..." />
@@ -50,10 +51,12 @@
       <div v-show="textError != ''">
         <p class="error">{{textError}}</p>
       </div>
+      <br>
       <button type="submit" @click="sendProofCode" id="login-button" >Зарегистрироваться</button>
     </div>
+    </div>
     <div v-if="isModalErrorOpen == true">
-      <errormodal @close="closeErrorModal" @open="errorModalWindow" :email="emailAddress.value"></errormodal>
+      <errormodal @close="closeErrorModal" @open="errorModalWindow" :email="emailAddress"></errormodal>
     </div>
     <div v-if="isVoiceModalOpen == true">
       <regModal :Account="{firstName,lastName,emailAddress,password,clubId,avatarURL}"  @close="ModalClose"></regModal>
@@ -65,14 +68,7 @@ import { ref , watch } from 'vue'
 import errormodal from '../Components/409-time-out-modal.vue'
 import regModal from '../Components/registration-modal.vue'
 let isModalErrorOpen = ref(false);
-// let Account = reactive({
-//   lastName:'',
-//   firstName:'',
-//   password:'',
-//   emailAddress:'',
-//   avatarURL:'StaticFiles/dodge.gif',
-//   clubId:1
-// })
+
 let lastName = ref('');
 let firstName = ref('');
 let password = ref('');
@@ -116,11 +112,10 @@ const closeErrorModal = ()=>{
   isModalErrorOpen.value = false;
 }
 function errorModalWindow(){
-  isVoiceModalOpen.value = true;
+  isModalErrorOpen.value = true;
 }
 function ModalOpen(){
-  isVoiceModalOpen.value = true;
-  
+  isVoiceModalOpen.value = true; 
 }
 function ModalClose(){
   isVoiceModalOpen.value = false;
@@ -137,10 +132,7 @@ async function sendProofCode (){
       },
       body: JSON.stringify(emailAddress.value)
     })
-    if(responce.value.ok){
-      ModalOpen();
-      
-    }
+    ModalOpen();
   }
 }
  function validateInputs() {
@@ -200,6 +192,17 @@ async function sendProofCode (){
 }
 </script>
 <style scoped>
+.container__inputs{
+  background-color: #272727;
+  padding:4%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  border-radius:20px;
+}
+body{
+  background-color: #474747;;
+}
 *{
   margin:0;
   padding:0;
@@ -225,7 +228,7 @@ main {
   margin-bottom: 10%;
 }
 #subtitle a {
-  color: #80d4d6;
+  color: #ffffff;
 }
 
 #title > h1 {
@@ -248,11 +251,12 @@ main {
   margin-top: 60px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
 
 .input-label {
-  color: #bdc7c8;
+  color: #ffffff;
   font-size: 10pt;
   display: block;
   margin: 5px;
@@ -260,14 +264,27 @@ main {
 
 .input {
   font-size: 15pt;
-  background-color: #0e1316;
-  border: 0;
-  border-bottom: 3px solid #80d4d6;
+  background-color: #0a0a0a;
+  border:0;
   color: #d9dee1;
-  padding: 5px;
-  width: 100%;
+  border-radius:5px;
+  padding: 10px;
+  box-shadow: 0 0 6px .1rem #000000;
+  width:auto;
 }
-
+.input:hover{
+  font-size: 15pt;
+  background-color: #0a0a0a;
+  border:0;
+  color: #d9dee1;
+  border-radius:5px;
+  padding: 10px;
+  box-shadow: 0 0 6px .1rem #ffffff;
+  width:auto;
+}
+.input:focus{
+  box-shadow: 0 0 6px .1rem #ffffff;
+}
 .input::placeholder {
   color: #bdc7c8;
   opacity: 0.25;
@@ -290,14 +307,15 @@ main {
 }
 
 #login-button {
-  color: #80d4d6;
+  color: #000000;
   font-size: 15pt;
   font-weight: bold;
-  padding: 10px 30px 10px 30px;
-  background-color: #151e1d;
+  padding: 10px 20px 10px 20px;
+  background-color: #ffffff;
   border: 0;
   border-radius: 20px;
   cursor: pointer;
+  width:100%;
 }
 .login-button1 {
   
