@@ -53,13 +53,6 @@
         <p v-if="registrationError" class="error">{{ registrationError }}</p>
       </div>
     </div>
-    <div v-if="isModalErrorOpen == true">
-      <errormodal
-        @close="closeErrorModal"
-        @open="errorModalWindow"
-        :email="emailAddress"
-      ></errormodal>
-    </div>
     <div v-if="isVoiceModalOpen == true">
       <regModal
         :Account="{ firstName, lastName, emailAddress, password, clubId, avatarURL }"
@@ -70,10 +63,8 @@
 </template>
 <script setup>
 import { ref, watch } from 'vue'
-import errormodal from '../Components/409-time-out-modal.vue'
 import regModal from '../Components/registration-modal.vue'
 import axios from 'axios'
-let isModalErrorOpen = ref(false)
 
 let lastName = ref('')
 let firstName = ref('')
