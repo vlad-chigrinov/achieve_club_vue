@@ -1,5 +1,5 @@
 <template>
-  <div class="container" @click.self="close">
+  <div class="container" @click.self="close">X
     <br />
     <div class="content">
       <div id="sms-modal-text">
@@ -54,7 +54,7 @@
           input.inputPart4 == ''
         "
       >
-        <p class="error">Введите код</p>
+        <p class="errors">Введите код</p>
       </div>
       <button v-else class="login-button1" @click="proofRegisterCode">Отправить</button>
     </div>
@@ -158,23 +158,24 @@ const proofCodeError = ref('')
 </script>
 <style scoped>
 #login-button {
-  color: #80d4d6;
+  color: #000000;
   font-size: 15pt;
   font-weight: bold;
-  padding: 10px 30px 10px 30px;
-  background-color: #151e1d;
+  padding: 10px 20px 10px 20px;
+  background-color: #ffffff;
   border: 0;
   border-radius: 20px;
   cursor: pointer;
+  width:100%;
 }
 .login-button1 {
   height: 20%;
   text-align: center;
-  color: #80d4d6;
+  color: #000000;
   font-size: 1rem;
   font-weight: bold;
   padding: 10px 30px 10px 30px;
-  background-color: #151e1d;
+  background-color: #ffffff;
   border: 0;
   border-radius: 20px;
   cursor: pointer;
@@ -188,12 +189,13 @@ const proofCodeError = ref('')
   position: fixed;
   inset: 0;
   z-index: 10;
-  background-color: #0e1316;
+  background-color: #131313 !important;
   border-radius: 5px;
-  border: 1px solid #80d4d6;
+  box-shadow: 0 0 6px .1rem #ffffff;
 }
 .errors {
   color: red;
+  margin-top:5%;
 }
 @media (max-width: 782px) {
   .container {
@@ -206,7 +208,7 @@ const proofCodeError = ref('')
     z-index: 10;
     background-color: #0e1316;
     border-radius: 5px;
-    border: 1px solid #80d4d6;
+    box-shadow: 0 0 6px .1rem #ffffff;
   }
 }
 @media (max-width: 577px) {
@@ -220,7 +222,7 @@ const proofCodeError = ref('')
     z-index: 10;
     background-color: #0e1316;
     border-radius: 5px;
-    border: 1px solid #80d4d6;
+    box-shadow: 0 0 6px .1rem #ffffff;
   }
   .modal-text {
     font-size: 15px;
@@ -238,7 +240,7 @@ const proofCodeError = ref('')
     z-index: 10;
     background-color: #0e1316;
     border-radius: 5px;
-    border: 1px solid #80d4d6;
+    box-shadow: 0 0 6px .1rem #ffffff;
   }
   .modal-text {
     font-size: 13px;
@@ -271,13 +273,22 @@ const proofCodeError = ref('')
 .input-part {
   width: 18%;
   height: 10vh;
-  background: none;
-  border: 2px solid #929696;
+  background: #000000;
+  border:0;
+  box-shadow: 0 0 6px .1rem #000000;
   border-radius: 15px !important;
   font-size: 15px;
   padding: 1%;
   text-align: center;
   margin-top: 15%;
+}
+.input-part:focus{
+  box-shadow: 0 0 6px .1rem #ffffff;
+
+}
+.input-part:hover{
+  box-shadow: 0 0 6px .1rem #ffffff;
+
 }
 .input-part:first-child {
   border-radius: 5%;

@@ -1,7 +1,7 @@
 <template>
 <div class="container">
     <p id="modal-text">Код для подверждения уже был отправлен на почту</p>
-    <p id="modal-text">{{this.emailvalue}}</p>
+    <p id="modal-text">{{this.email}}</p>
     <div class="buttons">
         <button class="login-button1" @click="open">Ввести</button>
         <button class="login-button1" @click="close">Отмена</button>
@@ -18,8 +18,7 @@ export default{
     },
     data(){
         return{
-            isModalOpen:false,
-            emailvalue:''
+            isModalOpen:false
         }
     },
     methods:{
