@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
- 
   state: () => ({
     isAuth: false,
     userId: 0,
@@ -55,8 +54,6 @@ export const useAuthStore = defineStore('auth', {
       this.authToken = null
       this.refreshToken = null
     }
-   
-    
   }
 })
 
