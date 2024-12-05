@@ -1,8 +1,9 @@
 <script setup>
 import { defineEmits, defineProps } from 'vue'
 import QrcodeVue from 'qrcode.vue'
+import BaseModal from './BaseModal.vue'
 
-defineEmits(['onClose'])
+defineEmits(['on-close'])
 
 defineProps({
   value: {
@@ -20,56 +21,31 @@ defineProps({
 })
 </script>
 <template>
-  <div class="modal-wrapper" @click.self="$emit('on-close')">
-    <div class="modal">
-      <div class="user-info">
-        <img class="avatar" :src="'https://achieve.by:5000/' + userInfo.avatar" />
-        <p class="name">{{ userInfo.firstName }} {{ userInfo.lastName }}</p>
-      </div>
-      <p class="achieve-count">Достижений: 10</p>
-      <div class="achievements">
-        <div class="achievement" v-for="achievement in achievements" :key="achievement.Id">
-          <img :src="'https://achieve.by:5000/' + achievement.logoURL" />
-          <p>{{ achievement.title }}</p>
-        </div>
-      </div>
-      <div class="qr-wrapper">
-        <div class="qr">
-          <qrcode-vue :size="Number(150)" :value />
-        </div>
-      </div>
-      <p class="help-text">Пожалуйста, покажите QR-код тренеру.</p>
-      <div class="close-wrapper">
-        <button class="close" @click="$emit('on-close')">Закруть</button>
+  <base-modal @on-close="$emit('on-close')">
+    <div class="user-info">
+      <img class="avatar" :src="'https://achieve.by:5000/' + userInfo.avatar" />
+      <p class="name">{{ userInfo.firstName }} {{ userInfo.lastName }}</p>
+    </div>
+    <p class="achieve-count">Достижений: 10</p>
+    <div class="achievements">
+      <div class="achievement" v-for="achievement in achievements" :key="achievement.Id">
+        <img :src="'https://achieve.by:5000/' + achievement.logoURL" />
+        <p>{{ achievement.title }}</p>
       </div>
     </div>
-  </div>
+    <div class="qr-wrapper">
+      <div class="qr">
+        <qrcode-vue :size="Number(150)" :value />
+      </div>
+    </div>
+    <p class="help-text">Пожалуйста, покажите QR-код тренеру.</p>
+    <div class="close-wrapper">
+      <button class="close" @click="$emit('on-close')">Закруть</button>
+    </div>
+  </base-modal>
 </template>
 
 <style scoped>
-.modal-wrapper {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 99;
-  background-color: rgba(128, 128, 128, 0.25);
-}
-
-.modal {
-  background-color: white;
-  padding: 20px;
-  border-radius: 20px;
-  margin: 0 40px 0 40px;
-  background-color: var(--background);
-  color: var(--primary);
-  border: 1px solid var(--outline);
-  max-width: 400px;
-  min-width: 290px;
-}
-
 .user-info {
   display: flex;
   gap: 10px;
