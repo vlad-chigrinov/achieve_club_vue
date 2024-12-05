@@ -3,16 +3,19 @@ import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../Stores/AuthStore'
 import axios from 'axios'
+import ForgotPasswordModal from '@/Components/ForgotPasswordModal.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
-const emailInput = ref()
-const passwordInput = ref()
+const emailInput = ref('')
+const passwordInput = ref('')
 
 const emailError = ref('')
 const passwordError = ref('')
 const serverError = ref('')
+
+const showModal = ref(false)
 
 watch(emailInput, () => {
   emailError.value = ''
@@ -29,7 +32,7 @@ const loginDisabled = computed(() => {
 })
 
 async function Login() {
-  if (validateInputs()) {
+  if (ValidateInputs()) {
     const path = 'https://achieve.by:5000/api/auth/login?api-version=1.1'
     const requestData = { email: emailInput.value, password: passwordInput.value }
 
@@ -52,15 +55,15 @@ async function Login() {
   }
 }
 
-function validateInputs() {
+function ValidateInputs() {
   let result = true
+
+  const emailRegex = /^\S+@\S+\.\S+$/
 
   if (emailInput.value.length == 0) {
     emailError.value = 'Введите почту'
     result = false
-  }
-  const emailRegex = /^\S+@\S+\.\S+$/
-  if (!emailRegex.test(emailInput.value)) {
+  } else if (!emailRegex.test(emailInput.value)) {
     emailError.value = 'Вы ввели недействительную почту'
     result = false
   }
@@ -68,20 +71,14 @@ function validateInputs() {
   if (passwordInput.value.length == 0) {
     passwordError.value = 'Введите пароль'
     result = false
-  }
-
-  if (passwordInput.value.length < 6) {
-    passwordError.value = 'Недействительный пароль'
+  } else if (passwordInput.value.length < 6) {
+    passwordError.value = 'Минимум 6 символом'
     result = false
-  }
-
-  if (!/[A-z]/.test(passwordInput.value)) {
-    passwordError.value = 'Недействительный пароль'
+  } else if (!/[A-z]/.test(passwordInput.value)) {
+    passwordError.value = 'Минимум 1 буква'
     result = false
-  }
-
-  if (!/\d/.test(passwordInput.value)) {
-    passwordError.value = 'Недействительный пароль'
+  } else if (!/\d/.test(passwordInput.value)) {
+    passwordError.value = 'Минимум 1 цифра'
     result = false
   }
 
@@ -90,6 +87,7 @@ function validateInputs() {
 </script>
 
 <template>
+  <forgot-password-modal v-if="showModal" @on-close="showModal = false" />
   <header>
     <h1 id="title">Вход в аккаунт</h1>
     <h3 id="subtitle">
@@ -118,7 +116,7 @@ function validateInputs() {
           type="password"
         />
         <p class="error" v-if="passwordError">{{ passwordError }}</p>
-        <a href="#" class="input-help">Забыли пароль?</a>
+        <a @click="showModal = true" class="input-help">Забыли пароль?</a>
       </div>
       <button @click="Login" id="login-button" :disabled="loginDisabled">Войти</button>
       <p class="error" v-if="serverError">{{ serverError }}</p>
@@ -131,7 +129,7 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 50px;
+  padding-top: 50px;
 }
 
 #title {
@@ -222,6 +220,7 @@ main {
   color: var(--primary);
   margin: 7px 0;
   text-shadow: var(--shadow) 0 0 2px;
+  cursor: pointer;
 }
 
 #login-button {
