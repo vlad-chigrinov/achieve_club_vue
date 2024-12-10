@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import AchievementItem from '../Components/AchievementItem.vue'
 import QrCodeModal from '../Components/QrCodeModal.vue'
+import SettingsModal from '@/Components/SettingsModal.vue'
 import MainLoyout from '../Layouts/MainLayout.vue'
 import { useAuthStore } from '../Stores/AuthStore'
 import { useRouter } from 'vue-router'
@@ -16,7 +17,9 @@ const userInfo = ref()
 
 const currentPage = ref('noncompleted')
 
-const showModal = ref(false)
+const showSettingsModal = ref(false)
+
+const showQrModal = ref(false)
 
 const connection = ref(
   new HubConnectionBuilder()
@@ -61,8 +64,7 @@ async function LoadData() {
     return
   }
 
-  const requestOptions = { headers: { Authorization: 'Bearer ' + authStore.authToken } }
-  let responce = await fetch('https://achieve.by:5000/api/users/current', requestOptions)
+  let responce = await fetch('https://achieve.by:5000/api/users/' + authStore.getUserId)
   userInfo.value = await responce.json()
 
   responce = await fetch('https://achieve.by:5000/api/achievements')
@@ -74,10 +76,7 @@ async function LoadData() {
       a.completed = false
     })
 
-  responce = await fetch(
-    'https://achieve.by:5000/api/completedAchievements/current',
-    requestOptions
-  )
+  responce = await fetch('https://achieve.by:5000/api/completedAchievements/' + authStore.getUserId)
   const completed = await responce.json()
   for (const ca of completed) {
     var finded = achievements.value.find((a) => a.id == ca.achieveId)
@@ -100,13 +99,13 @@ async function OpenModal() {
       OnModalSubmit()
     })
     console.log('signalr subscribed ' + completeEventName.value)
-    showModal.value = true
+    showQrModal.value = true
   })
 }
 
 async function OnModalSubmit() {
   console.log('on ' + completeEventName.value)
-  showModal.value = false
+  showQrModal.value = false
   await connection.value.stop().then(() => console.log('signalr disconnected'))
   await LoadData()
 }
@@ -114,7 +113,7 @@ async function OnModalSubmit() {
 async function CloseModal() {
   console.log('close')
   await connection.value.stop().then(() => console.log('signalr disconnected'))
-  showModal.value = false
+  showQrModal.value = false
 }
 
 function SelectAchievement(achievement) {
@@ -129,12 +128,13 @@ function SelectAchievement(achievement) {
 </script>
 <template>
   <qr-code-modal
-    v-if="showModal"
+    v-if="showQrModal"
     @on-close="CloseModal"
     :value="qrCoreValue"
     :userInfo="userInfo"
     :achievements="selected"
   />
+  <settings-modal v-if="showSettingsModal" @on-close="showSettingsModal = false" />
   <button class="fab" :class="{ hide: !showFab }" @click="OpenModal">
     <i class="fa-solid fa-qrcode"></i>
   </button>
@@ -156,7 +156,7 @@ function SelectAchievement(achievement) {
               <i class="avatar avatar-error fa-solid fa-circle-exclamation"></i>
             </template>
           </vue-load-image>
-          <button @click="Logout" id="settings-button" class="icon-button">
+          <button @click="showSettingsModal = true" id="settings-button" class="icon-button">
             <i class="icon-image fa-solid fa-gear"></i>
           </button>
         </div>
