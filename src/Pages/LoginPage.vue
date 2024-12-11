@@ -93,7 +93,7 @@ function ValidateInputs() {
     <h1 id="title">{{ $t('login.title') }}</h1>
     <h3 id="subtitle">
       <span>{{ $t('login.or') }}&nbsp;</span>
-      <a href="registration">{{ $t('login.register') }}</a>
+      <a href="registration">{{ $t('login.registerLink') }}</a>
     </h3>
   </header>
   <main>
@@ -124,7 +124,7 @@ function ValidateInputs() {
       </button>
       <p class="error" v-if="serverError">{{ $t(serverError) }}</p>
     </div>
-    <locale-changer />
+    <locale-changer style="margin-bottom: 30px" />
   </main>
 </template>
 

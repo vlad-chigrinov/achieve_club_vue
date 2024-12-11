@@ -1,79 +1,84 @@
 <template>
+  <div v-if="isVoiceModalOpen == true">
+    <regModal
+      :Account="{ firstName, lastName, emailAddress, password, clubId, avatarURL }"
+      @close="ModalClose"
+    ></regModal>
+  </div>
   <header>
     <div id="title">
       <h1>{{ $t('register.title') }}</h1>
     </div>
     <div id="subtitle">
       <h3>
-        <span style="color: var(--tertiary)">{{ $t('register.title') }} </span>
-        <a href="login">{{ $t('register.title') }}</a>
+        <span style="color: var(--tertiary)">{{ $t('register.or') }}</span>
+        &nbsp;
+        <a href="login">{{ $t('register.loginLink') }}</a>
       </h3>
     </div>
   </header>
   <main>
     <div id="login-form">
-      <div class="container__inputs">
-        <div class="field">
-          <label class="input-label">{{ $t('register.title') }}</label>
-          <input class="input" v-model="firstName" type="text" placeholder="Введите имя..." />
-          <div v-if="firstNameError">
-            <p class="error">{{ firstNameError }}</p>
-          </div>
+      <div class="field">
+        <label class="input-label">{{ $t('register.firstName') }}</label>
+        <input
+          class="input"
+          v-model="firstName"
+          type="text"
+          :placeholder="$t('register.firstNamePlaceholder')"
+        />
+        <div v-if="firstNameError">
+          <p class="error">{{ $t(firstNameError) }}</p>
         </div>
-        <div class="field">
-          <label class="input-label">{{ $t('register.title') }}</label>
-          <input class="input" v-model="lastName" type="text" placeholder="Введите фамилию..." />
-          <div v-if="lastNameError">
-            <p class="error">{{ lastNameError }}</p>
-          </div>
+      </div>
+      <div class="field">
+        <label class="input-label">{{ $t('register.lastName') }}</label>
+        <input
+          class="input"
+          v-model="lastName"
+          type="text"
+          :placeholder="$t('register.lastNamePlaceholder')"
+        />
+        <div v-if="lastNameError">
+          <p class="error">{{ $t(lastNameError) }}</p>
         </div>
-        <div class="field">
-          <label class="input-label">{{ $t('register.title') }}</label>
-          <input class="input" v-model="emailAddress" type="text" placeholder="email@mail.com" />
-          <div v-if="emailError">
-            <p class="error">{{ emailError }}</p>
-          </div>
+      </div>
+      <div class="field">
+        <label class="input-label">{{ $t('register.email') }}</label>
+        <input class="input" v-model="emailAddress" type="text" placeholder="email@mail.com" />
+        <div v-if="emailError">
+          <p class="error">{{ $t(emailError) }}</p>
         </div>
-        <div class="field">
-          <label class="input-label">{{ $t('register.title') }}</label>
-          <input class="input" v-model="password" type="password" placeholder="•••••••••" />
-          <div v-if="passwordError">
-            <p class="error">{{ passwordError }}</p>
-          </div>
+      </div>
+      <div class="field">
+        <label class="input-label">{{ $t('register.password') }}</label>
+        <input class="input" v-model="password" type="password" placeholder="•••••••••" />
+        <div v-if="passwordError">
+          <p class="error">{{ $t(passwordError) }}</p>
         </div>
-        <div class="field">
-          <label class="input-label">{{ $t('register.title') }}</label>
-          <input class="input" v-model="password2" type="password" placeholder="•••••••••" />
-          <div v-if="doublePasswordError">
-            <p class="error">{{ doublePasswordError }}</p>
-          </div>
+      </div>
+      <div class="field">
+        <label class="input-label">{{ $t('register.confirmPassword') }}</label>
+        <input class="input" v-model="password2" type="password" placeholder="•••••••••" />
+        <div v-if="confirmPasswordError">
+          <p class="error">{{ $t(confirmPasswordError) }}</p>
         </div>
-        <br />
-        <button type="submit" @click="sendProofCode" id="login-button">Зарегистрироваться</button>
+      </div>
+      <br />
+      <button type="submit" @click="sendProofCode" id="login-button">
+        {{ $t('register.register') }}
+      </button>
+      <div v-if="registerError">
+        <p class="error">{{ $t(registerError) }}</p>
       </div>
     </div>
-    <div v-if="textError != ''">
-      <p class="error">{{ textError }}</p>
-    </div>
-    <div v-if="isModalErrorOpen == true">
-      <errormodal
-        @close="closeErrorModal"
-        @open="errorModalWindow"
-        :email="emailAddress"
-      ></errormodal>
-    </div>
-    <div v-if="isVoiceModalOpen == true">
-      <regModal
-        :Account="{ firstName, lastName, emailAddress, password, clubId, avatarURL }"
-        @close="ModalClose"
-      ></regModal>
-    </div>
+    <locale-changer style="margin-bottom: 30px" />
   </main>
 </template>
 <script setup>
 import { ref, watch } from 'vue'
-import regModal from '../Components/registration-modal.vue'
-let isModalErrorOpen = ref(false)
+import regModal from '../Components/RegistrationModal.vue'
+import LocaleChanger from '@/Components/LocaleChanger.vue'
 
 let lastName = ref('')
 let firstName = ref('')
@@ -87,16 +92,16 @@ const isVoiceModalOpen = ref(false)
 const password2 = ref('')
 
 let passwordError = ref()
-let doublePasswordError = ref()
+let confirmPasswordError = ref()
 let emailError = ref()
 let firstNameError = ref()
 let lastNameError = ref()
-let textError = ref()
+let registerError = ref()
 watch(emailAddress, () => {
   emailError.value = ''
 })
 watch(responce, () => {
-  textError.value = ''
+  registerError.value = ''
 })
 
 watch(password, () => {
@@ -110,15 +115,9 @@ watch(lastName, () => {
   lastNameError.value = ''
 })
 watch(password2, () => {
-  doublePasswordError.value = ''
+  confirmPasswordError.value = ''
 })
 
-const closeErrorModal = () => {
-  isModalErrorOpen.value = false
-}
-function errorModalWindow() {
-  isModalErrorOpen.value = true
-}
 function ModalOpen() {
   isVoiceModalOpen.value = true
 }
@@ -138,58 +137,58 @@ async function sendProofCode() {
     })
     if (responce.value.statusText == 'email') {
       isVoiceModalOpen.value = false
-      textError.value = 'Такой пользователь уже зарегестрирован'
+      registerError.value = 'register.errors.emailAlreadyUse'
     }
     ModalOpen()
   }
 }
 function validateInputs() {
   let result = true
-  if (firstName.value.length <= 1) {
-    firstNameError.value = 'Имя должно содержать не менее 2 символов'
+  if (firstName.value.length < 2) {
+    firstNameError.value = 'register.errors.firstName2Letters'
     isVoiceModalOpen.value = false
   }
-  if (lastName.value.length <= 4) {
-    lastNameError.value = 'Имя должно содержать не менее 5 символов'
+  if (lastName.value.length < 5) {
+    lastNameError.value = 'register.errors.lastName5Letters'
     isVoiceModalOpen.value = false
   }
   if (emailAddress.value.length == 0) {
-    emailError.value = 'Введите почту'
+    emailError.value = 'register.errors.enterEmail'
     isVoiceModalOpen.value = false
     result = false
   }
   const emailRegex = /^\S+@\S+\.\S+$/
   if (!emailRegex.test(emailAddress.value)) {
-    emailError.value = 'Вы ввели недействительную почту'
+    emailError.value = 'register.errors.wrongEmail'
     isVoiceModalOpen.value = false
     result = false
   }
 
   if (password.value.length == 0) {
-    passwordError.value = 'Введите пароль'
+    passwordError.value = 'register.errors.enterPassword'
     isVoiceModalOpen.value = false
     result = false
   }
 
-  if (password.value.length < 5) {
-    passwordError.value = 'Пароль не должен содержать меньше 6 символов'
+  if (password.value.length < 6) {
+    passwordError.value = 'register.errors.password6Characters'
     isVoiceModalOpen.value = false
     result = false
   }
 
   if (!/[A-z]/.test(password.value)) {
-    passwordError.value = 'Пароль должен содержать минимум 1 букву'
+    passwordError.value = 'register.errors.password1Letter'
     isVoiceModalOpen.value = false
     result = false
   }
 
   if (!/\d/.test(password.value)) {
-    passwordError.value = 'Пароль должен содержать минимум 1 цифру'
+    passwordError.value = 'register.errors.password1Digit'
     isVoiceModalOpen.value = false
     result = false
   }
   if (password.value != password2.value) {
-    doublePasswordError.value = 'Пароли должны совпадать'
+    confirmPasswordError.value = 'register.errors.passwordNotEqualConfirmPassword'
     isVoiceModalOpen.value = false
     result = false
   }
@@ -198,14 +197,6 @@ function validateInputs() {
 }
 </script>
 <style scoped>
-.container__inputs {
-  background-color: var(--tertiary);
-  padding: 4%;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  border-radius: 20px;
-}
 body {
   background-color: var(--secondary);
 }
@@ -231,9 +222,6 @@ header {
   justify-content: flex-start;
   color: var(--primary);
 }
-main {
-  margin-bottom: 10%;
-}
 #subtitle a {
   color: var(--primary);
 }
@@ -253,12 +241,29 @@ main {
   font-weight: bold;
 }
 
-#login-form {
-  margin-top: 60px;
+main {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  gap: 10px;
+}
+
+#login-form {
+  background-color: var(--tertiary);
+  color: var(--on-tertiary);
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 20px 5px 20px;
+  gap: 7px;
+}
+
+@media (min-height: 600px) {
+  #login-form {
+    margin-top: 40px;
+  }
 }
 
 .input-label {
@@ -276,17 +281,7 @@ main {
   border-radius: 5px;
   padding: 10px;
   box-shadow: 0 0 6px 0.1rem var(--inverse-shadow);
-  width: auto;
-}
-.input:hover {
-  font-size: 15pt;
-  background-color: var(--background);
-  border: 0;
-  color: var(--shadow);
-  border-radius: 5px;
-  padding: 10px;
-  box-shadow: 0 0 6px 0.1rem var(--shadow);
-  width: auto;
+  width: 100%;
 }
 .input:focus {
   box-shadow: 0 0 6px 0.1rem var(--shadow);
@@ -301,9 +296,9 @@ main {
 }
 
 .error {
-  color: var(--error);
-  font-size: 10pt;
-  margin: 3px;
+  color: var(--on-secondary);
+  font-size: 12pt;
+  margin-top: 6px;
 }
 
 #login-button {
@@ -315,76 +310,12 @@ main {
   border: 0;
   border-radius: 20px;
   cursor: pointer;
-  width: 100%;
 }
 
 .field {
-  margin-bottom: 10px;
-  width: 30%;
+  width: 100%;
 }
 
-.container {
-  max-width: 30%;
-  max-height: 50%;
-  margin: 0 auto;
-  margin-top: 10%;
-  position: fixed;
-  inset: 0;
-  z-index: 10;
-  background-color: #0e1316;
-  border-radius: 5px;
-  border: 1px solid #80d4d6;
-}
-@media (max-width: 782px) {
-  .container {
-    max-width: 40%;
-    max-height: 50%;
-    margin: 0 auto;
-    margin-top: 20%;
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    background-color: #0e1316;
-    border-radius: 5px;
-    border: 1px solid #80d4d6;
-  }
-}
-@media (max-width: 577px) {
-  .container {
-    max-width: 50%;
-    max-height: 50%;
-    margin: 0 auto;
-    margin-top: 30%;
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    background-color: #0e1316;
-    border-radius: 5px;
-    border: 1px solid #80d4d6;
-  }
-  .modal-text {
-    font-size: 15px;
-    text-align: justify;
-  }
-}
-@media (max-width: 410px) {
-  .container {
-    max-width: 60%;
-    max-height: 45%;
-    margin: 0 auto;
-    margin-top: 50%;
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    background-color: #0e1316;
-    border-radius: 5px;
-    border: 1px solid #80d4d6;
-  }
-  .modal-text {
-    font-size: 13px;
-    text-align: justify;
-  }
-}
 .content {
   padding: 4%;
   display: flex;
@@ -424,10 +355,5 @@ main {
 }
 .input-part:last-child {
   border-radius: 5%;
-}
-@media (max-width: 768px) {
-  .field {
-    width: 85%;
-  }
 }
 </style>

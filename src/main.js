@@ -84,11 +84,29 @@ const i18n = createI18n({
         or: 'или',
         loginLink: 'войдите в аккаунт',
         firstName: 'Имя',
+        firstNamePlaceholder: 'Введите имя...',
         lastName: 'Фамилия',
+        lastNamePlaceholder: 'Введите фамилию...',
         email: 'E-mail',
         password: 'Пароль',
         confirmPassword: 'Подтверждение пароля',
-        register: 'Зарегистрироваться'
+        register: 'Зарегистрироваться',
+        checkEmailHint: 'Проверьте почту {email}. Код должен придти в течение {interval} минут',
+        checkProofCode: 'Проверить',
+        closeModal: 'Закрыть',
+        errors: {
+          emailAlreadyUse: 'Эта почта уже используется',
+          firstName2Letters: 'Имя должно содержать не менее 2 символов',
+          lastName5Letters: 'Имя должно содержать не менее 5 символов',
+          enterEmail: 'Введите почту',
+          wrongEmail: 'Вы ввели недействительную почту',
+          enterPassword: 'Введите пароль',
+          password6Characters: 'Пароль не должен содержать меньше 6 символов',
+          password1Letter: 'Пароль должен содержать минимум 1 букву',
+          password1Digit: 'Пароль должен содержать минимум 1 цифру',
+          passwordNotEqualConfirmPassword: 'Пароли должны совпадать',
+          wrongCode: 'Неверный код'
+        }
       },
       menu: {
         profile: 'Профиль',
@@ -128,8 +146,7 @@ const i18n = createI18n({
         completedAchievementsTitle: 'Полученные достижения:',
         emptyCompletedHero: {
           title: 'Тут пока пусто!',
-          content:
-            '{userName} пока не выполнил ни одного достижения.'
+          content: '{userName} пока не выполнил ни одного достижения.'
         }
       },
       achievement: {
@@ -211,6 +228,35 @@ const i18n = createI18n({
           passwordNotEqualConfirmPassword: 'Hasła muszą być zgodne'
         }
       },
+      register: {
+        title: 'Rejestracja',
+        or: 'lub',
+        loginLink: 'logowanie',
+        firstName: 'Nazwa',
+        firstNamePlaceholder: 'Wprowadź nazwę...',
+        lastName: 'Nazwisko',
+        lastNamePlaceholder: 'Wprowadź nazwisko...',
+        email: 'E-mail',
+        password: 'Hasło',
+        confirmPassword: 'Potwierdzenie hasła',
+        register: 'Zarejestruj się',
+        checkEmailHint: 'Sprawdź {email}. Kod powinien dotrzeć w ciągu {interval} minut',
+        checkProofCode: 'Sprawdź to',
+        closeModal: 'Zamknij',
+        errors: {
+          emailAlreadyUse: 'Ten post jest już używany',
+          firstName2Letters: 'Nazwa musi składać się z co najmniej 2 znaków',
+          lastName5Letters: 'Nazwa musi składać się z co najmniej 5 znaków',
+          enterEmail: 'Wprowadź swój adres e-mail',
+          wrongEmail: 'Wprowadzono nieprawidłowy adres e-mail',
+          enterPassword: 'Wprowadź hasło',
+          password6Characters: 'Hasło nie może zawierać mniej niż 6 znaków',
+          password1Letter: 'Hasło musi zawierać co najmniej 1 literę',
+          password1Digit: 'Hasło musi zawierać co najmniej 1 cyfrę',
+          passwordNotEqualConfirmPassword: 'Hasła muszą być zgodne',
+          wrongCode: 'Nieprawidłowy kod'
+        }
+      },
       menu: {
         profile: 'Profil',
         topUsers: 'Top 100',
@@ -249,8 +295,7 @@ const i18n = createI18n({
         completedAchievementsTitle: 'Zdobyte osiągnięcia:',
         emptyCompletedHero: {
           title: 'Nadal jest pusty!',
-          content:
-            '{userName} nie ukończył jeszcze żadnych osiągnięć.'
+          content: '{userName} nie ukończył jeszcze żadnych osiągnięć.'
         }
       },
       achievement: {

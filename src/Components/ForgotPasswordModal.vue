@@ -159,7 +159,7 @@ function ValidatePassword() {
         </button>
       </template>
       <template v-else-if="currentStep == 1">
-        <p>{{ $t('forgotPassword.checkEmailHint') }}</p>
+        <p>{{ $t('forgotPassword.checkEmailHint', { email: emailInput, interval: 3 }) }}</p>
         <div class="code-field">
           <label class="input-label">{{ $t('forgotPassword.enterCodeHint') }}</label>
           <v-otp-input
@@ -183,7 +183,7 @@ function ValidatePassword() {
           <input
             v-model.trim="passwordInput"
             class="custom-input"
-            placeholder="&bull;&bull;&bull;&bull;&bull;&bull;"
+            placeholder="•••••••••"
             type="password"
           />
         </div>
@@ -193,7 +193,7 @@ function ValidatePassword() {
           <input
             v-model.trim="password2Input"
             class="custom-input"
-            placeholder="&bull;&bull;&bull;&bull;&bull;&bull;"
+            placeholder="•••••••••"
             type="password"
           />
         </div>

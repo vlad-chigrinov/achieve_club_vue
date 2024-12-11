@@ -4,11 +4,14 @@ import { useRoute, useRouter } from 'vue-router'
 import MainLoyout from '../Layouts/MainLayout.vue'
 import VueLoadImage from 'vue-load-image'
 import AchievementItem from '@/Components/AchievementItem.vue'
+import axios from 'axios'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
 const router = useRouter()
 const achievements = ref([])
 const userInfo = ref()
+const i18nLocale = useI18n()
 
 const completedAchievements = computed(() =>
   achievements.value.filter((a) => a.completed).sort((a, b) => a.xp < b.xp)
@@ -22,13 +25,18 @@ async function LoadData() {
   let responce = await fetch('https://achieve.by:5000/api/users/' + route.params['id'])
   userInfo.value = await responce.json()
 
-  responce = await fetch('https://achieve.by:5000/api/achievements')
-  achievements.value = await responce.json()
-  achievements.value
-    .sort((a, b) => a.xp > b.xp)
-    .map((a) => {
-      a.selected = false
-      a.completed = false
+  await axios
+    .get('https://achieve.by:5000/api/achievements', {
+      headers: { 'Accept-Language': i18nLocale.locale.value }
+    })
+    .then((r) => {
+      achievements.value = r.data
+      achievements.value
+        .sort((a, b) => a.xp > b.xp)
+        .map((a) => {
+          a.selected = false
+          a.completed = false
+        })
     })
 
   responce = await fetch('https://achieve.by:5000/api/completedAchievements/' + route.params['id'])

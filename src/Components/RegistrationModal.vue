@@ -1,13 +1,9 @@
 <template>
-  <div class="container" >
-    <br />
-    <div class="content">
-      <div id="sms-modal-text">
-        <p style="text-align: center" class="modal-text">Подтверждение адреса</p>
-        <p style="text-align: center" class="modal-text">электронной почты</p>
-        <p style="text-align: center" class="modal-text">Вы получили код по электронной почте</p>
-        <p style="text-align: center" class="modal-text">{{ Account.emailAddress }}</p>
-      </div>
+  <base-modal @on-close="close">
+    <div class="wrapper">
+      <p class="sms-modal-text" style="text-align: center">
+        {{ $t('register.checkEmailHint', { email: Account.emailAddress, interval: 3 }) }}
+      </p>
       <div class="input-container">
         <input
           :ref="input.inputPart1"
@@ -45,16 +41,28 @@
           @input="moveFocus($event, length4)"
         />
       </div>
-      <div class="button-cont">
-        <button v-if=" input.inputPart1 != '' && input.inputPart2 != '' && input.inputPart3 != '' && input.inputPart4 != ''" class="login-button1" @click="proofRegisterCode">Отправить</button> 
-        <button  class="login-button1" @click.self="close">Закрыть</button>
-      </div>
-      </div>
+      <button
+        v-if="
+          input.inputPart1 != '' &&
+          input.inputPart2 != '' &&
+          input.inputPart3 != '' &&
+          input.inputPart4 != ''
+        "
+        class="login-button"
+        @click="proofRegisterCode"
+      >
+        {{ $t('register.checkProofCode') }}
+      </button>
+      <button class="login-button" @click.self="close">
+        {{ $t('register.closeModal') }}
+      </button>
     </div>
+  </base-modal>
 </template>
 <script>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import BaseModal from './BaseModal.vue'
 export default {
   props: {
     Account: {
@@ -62,6 +70,7 @@ export default {
       required: true
     }
   },
+  components: { BaseModal },
   data() {
     return {
       length1: '',
@@ -129,7 +138,7 @@ export default {
         }
         if (responce2.value == 400) {
           console.log(this.proofCode)
-          proofCodeError.value = 'Неверный код'
+          proofCodeError.value = 'wrongCode'
         }
       }
     }
@@ -149,31 +158,29 @@ const proofCodeError = ref('')
 // })
 </script>
 <style scoped>
-.button-cont{
-  display:flex;
-  justify-content: space-around;
-  margin-top:3%;
-  gap:5%;
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-@media(max-width:1100px){
-  .button-cont{
-    display:flex;
-    flex-direction: column
+
+.sms-modal-text {
+  color: var(--on-secondary);
+}
+
+.button-cont {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 3%;
+  gap: 5%;
+}
+@media (max-width: 1100px) {
+  .button-cont {
+    display: flex;
+    flex-direction: column;
   }
 }
-#login-button {
-  color: var(--on-tertiary);
-  font-size: 15pt;
-  font-weight: bold;
-  padding: 10px 20px 10px 20px;
-  background-color: var(--modal-back);
-  border: 0;
-  border-radius: 20px;
-  cursor: pointer;
-  width:100%;
-}
-.login-button1 {
-  height: 20%;
+.login-button {
   text-align: center;
   color: var(--secondary);
   font-size: 1rem;
@@ -183,50 +190,41 @@ const proofCodeError = ref('')
   border: 0;
   border-radius: 20px;
   cursor: pointer;
-  margin-top: 5%;
 }
 .container {
-  max-width: 30%;
   height: 60vh;
   margin: 0 auto;
-  margin-top: 10%;
   position: fixed;
   inset: 0;
   z-index: 10;
-  background-color: var( --background) !important;
+  background-color: var(--background) !important;
   border-radius: 5px;
-  box-shadow: 0 0 6px .1rem var(  --shadow);
+  box-shadow: 0 0 6px 0.1rem var(--shadow);
 }
 .errors {
   color: red;
-  margin-top:5%;
+  margin-top: 5%;
 }
 @media (max-width: 782px) {
   .container {
-    max-width: 40%;
-    max-height: 50%;
     margin: 0 auto;
-    margin-top: 20%;
     position: fixed;
     inset: 0;
     z-index: 10;
     background-color: #0e1316;
     border-radius: 5px;
-    box-shadow: 0 0 6px .1rem var(  --shadow);
+    box-shadow: 0 0 6px 0.1rem var(--shadow);
   }
 }
 @media (max-width: 577px) {
   .container {
-    max-width: 50%;
-    max-height: 55%;
     margin: 0 auto;
-    margin-top: 30%;
     position: fixed;
     inset: 0;
     z-index: 10;
     background-color: #0e1316;
     border-radius: 5px;
-    box-shadow: 0 0 6px .1rem var(  --shadow);
+    box-shadow: 0 0 6px 0.1rem var(--shadow);
   }
   .modal-text {
     font-size: 15px;
@@ -235,45 +233,38 @@ const proofCodeError = ref('')
 }
 @media (max-width: 435px) {
   .container {
-    max-width: 10%;
-    max-height: 55%;
     margin: 0 auto;
-    margin-top: 50%;
     position: fixed;
     inset: 0;
     z-index: 10;
     background-color: #0e1316;
     border-radius: 5px;
-    box-shadow: 0 0 6px .1rem var(  --shadow);
+    box-shadow: 0 0 6px 0.1rem var(--shadow);
   }
-  
+
   .modal-text {
     font-size: 13px;
     text-align: justify;
-   
   }
 }
 @media (max-width: 410px) {
   .container {
-    max-width: 15%;
     height: 65vh !important;
     margin: 0 auto;
-    margin-top: 50%;
     position: fixed;
     inset: 0;
     z-index: 10;
     background-color: #0e1316;
     border-radius: 5px;
-    box-shadow: 0 0 6px .1rem var(  --shadow);
+    box-shadow: 0 0 6px 0.1rem var(--shadow);
   }
-  .login-button1{
-    height:5vh;
+  .login-button1 {
+    height: 5vh;
     font-size: 0.6rem;
   }
   .modal-text {
     font-size: 13px;
     text-align: justify;
-   
   }
 }
 .content {
@@ -291,7 +282,7 @@ const proofCodeError = ref('')
   padding: 4%;
 }
 .modal-text {
-  color:var( --primary) !important;
+  color: var(--primary) !important;
 }
 .input-container {
   display: flex;
@@ -300,35 +291,28 @@ const proofCodeError = ref('')
   gap: 5%;
 }
 .input-part {
-  width: 18%;
-  height: 10vh;
+  width: 50px;
+  height: 50px;
   background: var(--on-primary);
-  border:0;
-  box-shadow: 0 0 6px .1rem var(--primary);
+  border: 0;
+  box-shadow: 0 0 6px 0.1rem var(--primary);
   border-radius: 15px !important;
-  font-size: 15px;
+  font-size: 20px;
+  font-weight: bold;
   padding: 1%;
   text-align: center;
-  margin-top: 15%;
-  color:  var(--primary);
+  color: var(--primary);
 }
-.input-part:focus{
-  box-shadow: 0 0 6px .1rem var(  --shadow);
-
+.input-part:focus {
+  box-shadow: 0 0 6px 0.1rem var(--shadow);
 }
-.input-part:hover{
-  box-shadow: 0 0 6px .1rem var(  --shadow);
-
+.input-part:hover {
+  box-shadow: 0 0 6px 0.1rem var(--shadow);
 }
 .input-part:first-child {
   border-radius: 5%;
 }
 .input-part:last-child {
   border-radius: 5%;
-}
-@media (max-width: 768px) {
-  .field {
-    width: 85%;
-  }
 }
 </style>
