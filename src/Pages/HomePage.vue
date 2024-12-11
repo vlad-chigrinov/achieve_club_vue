@@ -182,7 +182,11 @@ function SelectAchievement(achievement) {
           <div class="info-block">
             <i class="info-icon fa-solid fa-circles-overlap"></i>
             <div class="info-data">
-              <p class="info-value">{{ completedCount }} из {{ achievementsCount }}</p>
+              <p class="info-value">
+                {{
+                  $t('profile.stats.achieveCompletedFormat', [completedCount, achievementsCount])
+                }}
+              </p>
               <p class="info-title">{{ $t('profile.stats.achieveCompleted') }}</p>
             </div>
           </div>
@@ -237,10 +241,9 @@ function SelectAchievement(achievement) {
             </template>
             <div v-else class="empty-hero">
               <i class="fa-solid fa-dolly-empty"></i>
-              <h3>Начни выполнять достижения!</h3>
+              <h3>{{ $t('profile.emptyCompletedHero.title') }}</h3>
               <p>
-                Тут отображаются все твои выволненные достижения, чтобы тут что-то появилось -
-                выполни любое достижение.
+                {{ $t('profile.emptyCompletedHero.content') }}
               </p>
             </div>
           </template>
@@ -423,6 +426,7 @@ function SelectAchievement(achievement) {
 
 .filter .filter-icon {
   font-size: 18px;
+  margin-right: 4px;
 }
 
 .filter .filter-title {
@@ -462,18 +466,19 @@ function SelectAchievement(achievement) {
   color: var(--on-tertiary);
   border-radius: 15px;
   padding: 10px;
+  gap: 10px;
 }
 
 .empty-hero i {
   font-size: 65px;
-  margin: 3px;
 }
 
 .empty-hero h3 {
   font-size: 18px;
+  text-align: center;
 }
 
 .empty-hero p {
-  font-size: 14px;
+  font-size: 16px;
 }
 </style>

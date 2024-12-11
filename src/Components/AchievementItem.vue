@@ -15,8 +15,10 @@ defineProps({
       :class="{ 'card-top': achievement.isMultiple }"
       v-if="achievement.isMultiple"
     >
-      <span v-if="achievement.completionCount"> Комбо ×{{ achievement.completionCount }} </span>
-      <span v-else> Начни комбо! </span>
+      <span v-if="achievement.completionCount">
+        {{ $t('achievement.comboFormat', { count: achievement.completionCount }) }}</span
+      >
+      <span v-else> {{ $t('achievement.startCombo') }} </span>
     </div>
     <div
       class="card"

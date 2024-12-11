@@ -1,12 +1,12 @@
 <template>
   <header>
     <div id="title">
-      <h1>Зарегистрируйтесь</h1>
+      <h1>{{ $t('register.title') }}</h1>
     </div>
     <div id="subtitle">
       <h3>
-        <span style="color: var(--tertiary)">или </span>
-        <a href="login">войдите в аккаунт</a>
+        <span style="color: var(--tertiary)">{{ $t('register.title') }} </span>
+        <a href="login">{{ $t('register.title') }}</a>
       </h3>
     </div>
   </header>
@@ -14,35 +14,35 @@
     <div id="login-form">
       <div class="container__inputs">
         <div class="field">
-          <label class="input-label">Имя</label>
+          <label class="input-label">{{ $t('register.title') }}</label>
           <input class="input" v-model="firstName" type="text" placeholder="Введите имя..." />
           <div v-if="firstNameError">
             <p class="error">{{ firstNameError }}</p>
           </div>
         </div>
         <div class="field">
-          <label class="input-label">Фамилия</label>
+          <label class="input-label">{{ $t('register.title') }}</label>
           <input class="input" v-model="lastName" type="text" placeholder="Введите фамилию..." />
           <div v-if="lastNameError">
             <p class="error">{{ lastNameError }}</p>
           </div>
         </div>
         <div class="field">
-          <label class="input-label">E-mail</label>
+          <label class="input-label">{{ $t('register.title') }}</label>
           <input class="input" v-model="emailAddress" type="text" placeholder="email@mail.com" />
           <div v-if="emailError">
             <p class="error">{{ emailError }}</p>
           </div>
         </div>
         <div class="field">
-          <label class="input-label">Пароль</label>
+          <label class="input-label">{{ $t('register.title') }}</label>
           <input class="input" v-model="password" type="password" placeholder="•••••••••" />
           <div v-if="passwordError">
             <p class="error">{{ passwordError }}</p>
           </div>
         </div>
         <div class="field">
-          <label class="input-label">Подтверждение пароля</label>
+          <label class="input-label">{{ $t('register.title') }}</label>
           <input class="input" v-model="password2" type="password" placeholder="•••••••••" />
           <div v-if="doublePasswordError">
             <p class="error">{{ doublePasswordError }}</p>

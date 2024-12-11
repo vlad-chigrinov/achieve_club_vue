@@ -27,7 +27,7 @@ async function OnPickFile(event) {
   <base-modal @on-close="$emit('on-close')">
     <div class="wrapper">
       <div class="title-wrapper">
-        <h3>Настройки</h3>
+        <h3>{{ $t('profileSettings.title') }}</h3>
         <button @click="$emit('on-close')" class="close-button">
           <i class="fa-solid fa-xmark"></i>
         </button>
@@ -42,7 +42,7 @@ async function OnPickFile(event) {
         />
         <label for="file-input" id="file-input-label">
           <i class="fa-regular fa-file-arrow-up"></i>
-          Выбрать аватарку...
+          {{ $t('profileSettings.selectAvatar') }}
         </label>
       </div>
       <locale-changer />

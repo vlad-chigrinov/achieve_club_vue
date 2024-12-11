@@ -17,13 +17,13 @@ import 'swiper/css/navigation'
             <template #icon>
               <i class="fa-solid fa-qrcode fa-2xl"></i>
             </template>
-            <template #title> {{ $t('infoPage.card1.title') }} </template>
+            <template #title> {{ $t('infoPage[0].title') }} </template>
             <template #content>
-              <p>{{ $t('infoPage.card1.subTitle') }}</p>
+              <p>{{ $t('infoPage[0].subTitle') }}</p>
               <ul>
-                <li>{{ $t('infoPage.card1.point1') }}</li>
-                <li>{{ $t('infoPage.card1.point2') }}</li>
-                <li>{{ $t('infoPage.card1.point3') }}</li>
+                <li>{{ $t('infoPage[0].points[0]') }}</li>
+                <li>{{ $t('infoPage[0].points[1]') }}</li>
+                <li>{{ $t('infoPage[0].points[2]') }}</li>
               </ul>
             </template>
           </info-card>
@@ -33,14 +33,14 @@ import 'swiper/css/navigation'
             <template #icon>
               <i class="fa-regular fa-sparkles fa-2xl"></i>
             </template>
-            <template #title> {{ $t('infoPage.card2.title') }} </template>
+            <template #title> {{ $t('infoPage[1].title') }} </template>
             <template #content>
               <div style="text-align: center">
-                <p>{{ $t('infoPage.card2.point1') }}</p>
+                <p>{{ $t('infoPage[1].points[0]') }}</p>
                 <i class="fa-solid fa-arrow-down"></i>
-                <p>{{ $t('infoPage.card2.point2') }}</p>
+                <p>{{ $t('infoPage[1].points[1]') }}</p>
                 <i class="fa-solid fa-arrow-down"></i>
-                <p>{{ $t('infoPage.card2.point3') }}</p>
+                <p>{{ $t('infoPage[1].points[2]') }}</p>
               </div>
             </template>
           </info-card>
@@ -50,14 +50,14 @@ import 'swiper/css/navigation'
             <template #icon>
               <i class="fa-solid fa-cubes-stacked fa-2xl"></i>
             </template>
-            <template #title> {{ $t('infoPage.card3.title') }} </template>
+            <template #title> {{ $t('infoPage[2].title') }} </template>
             <template #content>
               <p>
-                {{ $t('infoPage.card3.point1') }}
+                {{ $t('infoPage[2].points[0]') }}
               </p>
               <p>
                 <i>
-                  {{ $t('infoPage.card3.point2') }}
+                  {{ $t('infoPage[2].points[1]') }}
                 </i>
               </p>
             </template>
@@ -68,11 +68,11 @@ import 'swiper/css/navigation'
             <template #icon>
               <i class="fa-solid fa-users fa-2xl"></i>
             </template>
-            <template #title> {{ $t('infoPage.card4.title') }} </template>
+            <template #title> {{ $t('infoPage[3].title') }} </template>
             <template #content>
-              <p>{{ $t('infoPage.card4.point1') }}</p>
+              <p>{{ $t('infoPage[3].points[0]') }}</p>
               <p>
-                <i> {{ $t('infoPage.card4.point2') }}</i>
+                <i> {{ $t('infoPage[3].points[1]') }}</i>
                 &nbsp;
                 <i class="fa-solid fa-message-smile"></i>
               </p>

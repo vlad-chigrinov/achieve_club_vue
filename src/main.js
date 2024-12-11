@@ -30,15 +30,15 @@ const router = createRouter({
 })
 
 const i18n = createI18n({
-  locale: 'ru',
-  fallbackLocale: 'pl',
+  locale: localStorage.getItem('lang') || 'ru',
+  fallbackLocale: 'ru',
   availableLocales: ['ru', 'pl'],
   messages: {
     ru: {
       login: {
         title: 'Вход в аккаунт',
         or: 'или',
-        register: 'зарегистрируйтесь',
+        registerLink: 'зарегистрируйтесь',
         email: 'Почта',
         password: 'Пароль',
         forgotPassword: 'Забыли пароль?',
@@ -79,6 +79,17 @@ const i18n = createI18n({
           passwordNotEqualConfirmPassword: 'Пароли должны совпадать'
         }
       },
+      register: {
+        title: 'Зарегистрируйтесь',
+        or: 'или',
+        loginLink: 'войдите в аккаунт',
+        firstName: 'Имя',
+        lastName: 'Фамилия',
+        email: 'E-mail',
+        password: 'Пароль',
+        confirmPassword: 'Подтверждение пароля',
+        register: 'Зарегистрироваться'
+      },
       menu: {
         profile: 'Профиль',
         topUsers: 'Топ 100',
@@ -87,50 +98,79 @@ const i18n = createI18n({
       profile: {
         stats: {
           xpSum: 'Всего XP',
-          achieveCompleted: 'Заданий выполнено'
+          achieveCompleted: 'Заданий выполнено',
+          achieveCompletedFormat: '{0} из {1}'
         },
         filters: {
           combo: 'комбо',
           completed: 'сделано',
           nonCompleted: 'несделано'
+        },
+        emptyCompletedHero: {
+          title: 'Начни выполнять достижения!',
+          content:
+            'Тут отображаются все твои выполненные достижения, чтобы тут что-то появилось - выполни любое достижение.'
         }
+      },
+      profileSettings: {
+        title: 'Настройки',
+        selectAvatar: 'Выбрать аватарку...'
       },
       topUsers: {
         title: 'Топ пользователей'
       },
-      infoPage: {
-        card1: {
+      userPage: {
+        stats: {
+          xpSum: 'Всего XP',
+          achieveCompleted: 'Заданий выполнено',
+          achieveCompletedFormat: '{0} из {1}'
+        },
+        completedAchievementsTitle: 'Полученные достижения:',
+        emptyCompletedHero: {
+          title: 'Тут пока пусто!',
+          content:
+            '{userName} пока не выполнил ни одного достижения.'
+        }
+      },
+      achievement: {
+        startCombo: 'Начни комбо!',
+        comboFormat: 'Комбо ×{count}'
+      },
+      infoPage: [
+        {
           title: 'Выполнение достижений',
           subTitle: 'Чтобы выполнить достижение вам нужно:',
-          point1: 'Выбрать желаемое достижение',
-          point2: 'Нажать на вспывающую кнопку',
-          point3: 'Попросить у тренера просканировать код'
+          points: [
+            'Выбрать желаемое достижение',
+            'Нажать на вспывающую кнопку',
+            'Попросить у тренера просканировать код'
+          ]
         },
-        card2: {
+        {
           title: 'Получайте XP за достижения',
-          point1: 'Больше достижений',
-          point2: 'Больше XP',
-          point3: 'Вы поднимаетесь в топе пользователей'
+          points: ['Больше достижений', 'Больше XP', 'Вы поднимаетесь в топе пользователей']
         },
-        card3: {
+        {
           title: 'Комбо достижения',
-          point1:
+          points: [
             'Все комбо достижения отображаются во вкладке КОМБО. Их вы можете выполнять СКОЛЬКО УГОДНО - и каждый раз получать за это очки.',
-          point2:
             'К примеру: если вы выполнили такое достижение на 100 очков 10 раз, то получили 100 × 10 = 1000XP!'
+          ]
         },
-        card4: {
+        {
           title: 'Топ пользователей',
-          point1: 'Чем выше вы в топе - тем вы круче',
-          point2: 'За первые места в топе можно получить приятные призы'
+          points: [
+            'Чем выше вы в топе - тем вы круче',
+            'За первые места в топе можно получить приятные призы'
+          ]
         }
-      }
+      ]
     },
     pl: {
       login: {
         title: 'Logowanie',
         or: 'lub',
-        register: 'rejestracja',
+        registerLink: 'rejestracja',
         email: 'Poczta',
         password: 'Hasło',
         forgotPassword: 'Zapomniałeś hasła?',
@@ -170,7 +210,82 @@ const i18n = createI18n({
           password1Digit: 'Minimum 1 cyfra',
           passwordNotEqualConfirmPassword: 'Hasła muszą być zgodne'
         }
-      }
+      },
+      menu: {
+        profile: 'Profil',
+        topUsers: 'Top 100',
+        infoPage: 'Info'
+      },
+      profile: {
+        stats: {
+          xpSum: 'Total XP',
+          achieveCompleted: 'Ukończone zadania',
+          achieveCompletedFormat: '{0} z {1}'
+        },
+        filters: {
+          combo: 'combo',
+          completed: 'done',
+          nonCompleted: 'not done'
+        },
+        emptyCompletedHero: {
+          title: 'Zacznij zdobywać osiągnięcia!',
+          content:
+            'Wszystkie ukończone osiągnięcia są wyświetlane tutaj, aby coś się tutaj pojawiło - ukończ dowolne osiągnięcie.'
+        }
+      },
+      profileSettings: {
+        title: 'Ustawienia',
+        selectAvatar: 'Wybierz awatar...'
+      },
+      topUsers: {
+        title: 'Najlepsi użytkownicy'
+      },
+      userPage: {
+        stats: {
+          xpSum: 'Total XP',
+          achieveCompleted: 'Ukończone zadania',
+          achieveCompletedFormat: '{0} z {1}'
+        },
+        completedAchievementsTitle: 'Zdobyte osiągnięcia:',
+        emptyCompletedHero: {
+          title: 'Nadal jest pusty!',
+          content:
+            '{userName} nie ukończył jeszcze żadnych osiągnięć.'
+        }
+      },
+      achievement: {
+        startCombo: 'Uruchom kombinację!',
+        comboFormat: 'Combo ×{count}'
+      },
+      infoPage: [
+        {
+          title: 'Osiągnięcia',
+          subTitle: 'Aby zdobyć to osiągnięcie, musisz:',
+          points: [
+            'Wybierz żądane osiągnięcie',
+            'Naciśnij przycisk wyskakujący',
+            'Poproś trenera o zeskanowanie kodu'
+          ]
+        },
+        {
+          title: 'Zdobywaj XP za osiągnięcia',
+          points: ['Więcej osiągnięć', 'Więcej XP', 'Wchodzisz na szczyt użytkowników']
+        },
+        {
+          title: 'Osiągnięcie Combo',
+          points: [
+            'Wszystkie osiągnięcia combo są wyświetlane w zakładce COMBO. Możesz je wykonywać tyle razy, ile chcesz - i za każdym razem otrzymasz za nie punkty.',
+            'Na przykład: jeśli ukończyłeś takie osiągnięcie za 100 punktów 10 razy, otrzymałeś 100 × 10 = 1000XP!'
+          ]
+        },
+        {
+          title: 'Najlepsi użytkownicy',
+          points: [
+            'Im wyżej na górze, tym chłodniej.',
+            'Za pierwsze miejsca w czołówce można otrzymać fajne nagrody'
+          ]
+        }
+      ]
     }
   }
 })

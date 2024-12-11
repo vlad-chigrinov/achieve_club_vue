@@ -17,7 +17,7 @@ watch(currentLocale, () => {
 })
 
 onMounted(() => {
-  currentLocale.value = localStorage.getItem('lang') || 'ru'
+  currentLocale.value = i18n.locale.value 
 })
 </script>
 <template>

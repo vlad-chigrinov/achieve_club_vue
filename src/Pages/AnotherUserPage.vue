@@ -77,21 +77,25 @@ function NavigateBack() {
             <i class="info-icon fa-solid fa-sparkles"></i>
             <div class="info-data">
               <p class="info-value">{{ userInfo.xpSum }}</p>
-              <p class="info-title">Всего XP</p>
+              <p class="info-title">{{ $t('userPage.stats.xpSum') }}</p>
             </div>
           </div>
           <div class="info-block">
             <i class="info-icon fa-solid fa-circles-overlap"></i>
             <div class="info-data">
-              <p class="info-value">{{ completedCount }} из {{ achievementsCount }}</p>
-              <p class="info-title">Заданий выполнено</p>
+              <p class="info-value">
+                {{
+                  $t('userPage.stats.achieveCompletedFormat', [completedCount, achievementsCount])
+                }}
+              </p>
+              <p class="info-title">{{ $t('userPage.stats.achieveCompleted') }}</p>
             </div>
           </div>
         </div>
         <hr style="color: var(--primary); background-color: var(--primary)" />
         <div class="achievement-list">
           <template v-if="completedAchievements.length != 0">
-            <h3 class="achievements-title">Полученные достижения:</h3>
+            <h3 class="achievements-title">{{ $t('userPage.completedAchievementsTitle') }}</h3>
             <achievement-item
               v-for="achievement in completedAchievements"
               :key="achievement.Id"
@@ -100,11 +104,8 @@ function NavigateBack() {
           </template>
           <div v-else class="empty-hero">
             <i class="fa-solid fa-dolly-empty"></i>
-            <h3>Начни выполнять достижения!</h3>
-            <p>
-              Тут отображаются все твои выволненные достижения, чтобы тут что-то появилось - выполни
-              любое достижение.
-            </p>
+            <h3>{{ $t('userPage.emptyCompletedHero.title') }}</h3>
+            <p>{{ $t('userPage.emptyCompletedHero.content', { userName: userInfo.firstName }) }}</p>
           </div>
         </div>
       </main>
@@ -266,11 +267,11 @@ function NavigateBack() {
   color: var(--on-tertiary);
   border-radius: 15px;
   padding: 10px;
+  gap: 10px;
 }
 
 .empty-hero i {
   font-size: 65px;
-  margin: 3px;
 }
 
 .empty-hero h3 {
