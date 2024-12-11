@@ -130,6 +130,11 @@ const i18n = createI18n({
             'Тут отображаются все твои выполненные достижения, чтобы тут что-то появилось - выполни любое достижение.'
         }
       },
+      qrModal: {
+        achievementCount: 'Достижений: {count}',
+        scanHint: 'Пожалуйста, покажите QR-код тренеру.',
+        close: 'Закрыть'
+      },
       profileSettings: {
         title: 'Настройки',
         selectAvatar: 'Выбрать аватарку...'
@@ -278,6 +283,11 @@ const i18n = createI18n({
           content:
             'Wszystkie ukończone osiągnięcia są wyświetlane tutaj, aby coś się tutaj pojawiło - ukończ dowolne osiągnięcie.'
         }
+      },
+      qrModal: {
+        achievementCount: 'Osiągnięcia: {count}',
+        scanHint: 'Prosimy o pokazanie kodu QR trenerowi.',
+        close: 'Zamknij'
       },
       profileSettings: {
         title: 'Ustawienia',

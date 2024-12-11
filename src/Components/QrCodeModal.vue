@@ -26,7 +26,9 @@ defineProps({
       <img class="avatar" :src="'https://achieve.by:5000/' + userInfo.avatar" />
       <p class="name">{{ userInfo.firstName }} {{ userInfo.lastName }}</p>
     </div>
-    <p class="achieve-count">Достижений: 10</p>
+    <p class="achieve-count">
+      {{ $t('qrModal.achievementCount', { count: achievements.length }) }}
+    </p>
     <div class="achievements">
       <div class="achievement" v-for="achievement in achievements" :key="achievement.Id">
         <img :src="'https://achieve.by:5000/' + achievement.logoURL" />
@@ -38,9 +40,9 @@ defineProps({
         <qrcode-vue :size="Number(150)" :value />
       </div>
     </div>
-    <p class="help-text">Пожалуйста, покажите QR-код тренеру.</p>
+    <p class="help-text">{{ $t('qrModal.scanHint') }}</p>
     <div class="close-wrapper">
-      <button class="close" @click="$emit('on-close')">Закруть</button>
+      <button class="close" @click="$emit('on-close')">{{ $t('qrModal.close') }}</button>
     </div>
   </base-modal>
 </template>
@@ -68,8 +70,10 @@ defineProps({
 
 .achievements {
   display: flex;
-  overflow: scroll;
+  overflow-x: scroll;
+  overflow-y: hidden;
   gap: 5px;
+  scroll-behavior: smooth;
 }
 
 .achievement {
@@ -117,10 +121,12 @@ defineProps({
 }
 
 .close {
-  padding: 7px;
-  border-radius: 15px;
+  padding: 12px;
+  border-radius: 18px;
+  font-size: 16px;
   font-weight: bold;
   background-color: var(--primary);
   color: var(--on-primary);
+  border: none;
 }
 </style>
