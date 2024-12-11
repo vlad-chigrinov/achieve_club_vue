@@ -4,6 +4,7 @@ import { defineEmits } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/Stores/AuthStore'
 import { useRouter } from 'vue-router'
+import LocaleChanger from './LocaleChanger.vue'
 
 defineEmits(['on-close'])
 
@@ -24,33 +25,46 @@ async function OnPickFile(event) {
 
 <template>
   <base-modal @on-close="$emit('on-close')">
-    <div class="title-wrapper">
-      <h3>Настройки</h3>
-      <button @click="$emit('on-close')" class="close-button">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-    <div class="file">
-      <input
-        type="file"
-        id="file-input"
-        accept="image/png, image/jpg, image/jpeg, image/webp, image/bmp, image/gif"
-        multiple="false"
-        @change="OnPickFile($event)"
-      />
-      <label for="file-input" id="file-input-label">
-        <i class="fa-regular fa-file-arrow-up"></i>
-        Выбрать аватарку...
-      </label>
+    <div class="wrapper">
+      <div class="title-wrapper">
+        <h3>Настройки</h3>
+        <button @click="$emit('on-close')" class="close-button">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="file">
+        <input
+          type="file"
+          id="file-input"
+          accept="image/png, image/jpg, image/jpeg, image/webp, image/bmp, image/gif"
+          multiple="false"
+          @change="OnPickFile($event)"
+        />
+        <label for="file-input" id="file-input-label">
+          <i class="fa-regular fa-file-arrow-up"></i>
+          Выбрать аватарку...
+        </label>
+      </div>
+      <locale-changer />
     </div>
   </base-modal>
 </template>
 
 <style scoped>
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
 .title-wrapper {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 5px;
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 .close-button {
@@ -68,7 +82,7 @@ async function OnPickFile(event) {
 #file-input {
   width: 0.1px;
   height: 0.1px;
-  margin-top: 20px;
+  margin: 10px 0 30px 0;
 }
 
 #file-input-label {

@@ -17,7 +17,7 @@ onMounted(async () => {
 <template>
   <main-loyout :tab="Number(2)">
     <header>
-      <h1>Топ пользователей</h1>
+      <h1>{{ $t('topUsers.title') }}</h1>
     </header>
     <main>
       <div class="users-list" v-if="users.length > 0">
@@ -61,10 +61,6 @@ h1 {
   color: var(--primary);
   margin: 15px;
   font-size: 22px;
-}
-
-main {
-  margin-top: 20px;
 }
 
 .users-list {

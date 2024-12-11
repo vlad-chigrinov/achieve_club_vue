@@ -15,15 +15,15 @@ defineProps({
     <div id="menu">
       <a class="menu-item" :class="{ selected: tab == 1 }" href="/">
         <i class="icon-image fa-solid fa-user"></i>
-        <h3>Профиль</h3>
+        <h3>{{ $t('menu.profile') }}</h3>
       </a>
       <a class="menu-item" :class="{ selected: tab == 2 }" href="/topusers">
         <i class="icon-image fa-solid fa-users"></i>
-        <h3>Топ 100</h3>
+        <h3>{{ $t('menu.topUsers') }}</h3>
       </a>
       <a class="menu-item" :class="{ selected: tab == 3 }" href="/info">
         <i class="icon-image fa-solid fa-circle-info"></i>
-        <h3>Инфо</h3>
+        <h3>{{ $t('menu.infoPage') }}</h3>
       </a>
     </div>
   </footer>

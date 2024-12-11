@@ -42,12 +42,12 @@ async function SendProofCode() {
     .then(() => (currentStep.value = 1))
     .catch((err) => {
       if (err.response.status != 409) {
-        emailError.value = 'Ошибка сервера ' + err.response.status
+        emailError.value = 'forgotPassword.errors.serverError' + err.response.status
         return
       }
 
       if (err.response.data == 'email') {
-        emailError.value = 'Пользователя с такой почтой не существует'
+        emailError.value = 'forgotPassword.errors.userWithEmailNotFound'
         return
       }
 
@@ -57,13 +57,13 @@ async function SendProofCode() {
 
 function ValidateEmail() {
   if (emailInput.value == '') {
-    emailError.value = 'Введите почту'
+    emailError.value = 'forgotPassword.errors.enterEmail'
     return false
   }
 
   const emailRegex = /^\S+@\S+\.\S+$/
   if (!emailRegex.test(emailInput.value)) {
-    emailError.value = 'Вы ввели недействительную почту'
+    emailError.value = 'forgotPassword.errors.wrongEmail'
     return false
   }
 
@@ -110,21 +110,21 @@ function ValidatePassword() {
   let result = true
 
   if (passwordInput.value.length == 0) {
-    passwordError.value = 'Введите пароль'
+    passwordError.value = 'forgotPassword.errors.enterPassword'
     result = false
   } else if (passwordInput.value.length < 6) {
-    passwordError.value = 'Минимум 6 символом'
+    passwordError.value = 'forgotPassword.errors.password6Characters'
     result = false
   } else if (!/[A-z]/.test(passwordInput.value)) {
-    passwordError.value = 'Минимум 1 буква'
+    passwordError.value = 'forgotPassword.errors.password1Letter'
     result = false
   } else if (!/\d/.test(passwordInput.value)) {
-    passwordError.value = 'Минимум 1 цифра'
+    passwordError.value = 'forgotPassword.errors.password1Digit'
     result = false
   }
 
   if (password2Input.value != passwordInput.value) {
-    password2Error.value = 'Пароли должны совпадать'
+    password2Error.value = 'forgotPassword.errors.passwordNotEqualConfirmPassword'
     result = false
   }
 
@@ -136,15 +136,15 @@ function ValidatePassword() {
   <base-modal>
     <div class="wrapper">
       <div class="title-wrapper">
-        <h3>Восстановление пароля</h3>
+        <h3>{{ $t('forgotPassword.title') }}</h3>
         <button @click="$emit('on-close')" class="close-button">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
       <template v-if="currentStep == 0">
-        <p>Введите адрес электронной почты, с помощью которой вы создавали аккаунт</p>
+        <p>{{ $t('forgotPassword.enterEmailHint') }}</p>
         <div class="field">
-          <label for="email" class="input-label">Почта</label>
+          <label for="email" class="input-label">{{ $t('forgotPassword.email') }}</label>
           <input
             v-model.trim="emailInput"
             @keydown.enter="SendProofCode"
@@ -153,13 +153,15 @@ function ValidatePassword() {
             type="email"
           />
         </div>
-        <p class="error" v-if="emailError">{{ emailError }}</p>
-        <button type="submit" class="action-button" @click="SendProofCode">Отправить код</button>
+        <p class="error" v-if="emailError">{{ $t(emailError) }}</p>
+        <button type="submit" class="action-button" @click="SendProofCode">
+          {{ $t('forgotPassword.sendCode') }}
+        </button>
       </template>
       <template v-else-if="currentStep == 1">
-        <p>Проверьте почту <b>test@mail.com</b>. Код должен придти в течение <i>3 минут</i></p>
+        <p>{{ $t('forgotPassword.checkEmailHint') }}</p>
         <div class="code-field">
-          <label class="input-label">Введите 4-значный код</label>
+          <label class="input-label">{{ $t('forgotPassword.enterCodeHint') }}</label>
           <v-otp-input
             ref="otpRef"
             :should-auto-focus="true"
@@ -172,12 +174,12 @@ function ValidatePassword() {
             :is-disabled="isOtpLoading"
           />
         </div>
-        <p class="error" v-if="isOtpError">Вы ввели неправильный код, попробуйте еще раз</p>
+        <p class="error" v-if="isOtpError">{{ $t('forgotPassword.errors.wrongCodeMessage') }}</p>
       </template>
       <template v-else-if="currentStep == 2">
-        <p>Придумайте новый пароль</p>
+        <p>{{ $t('forgotPassword.newPasswordHint') }}</p>
         <div class="field">
-          <label class="input-label">Пароль</label>
+          <label class="input-label">{{ $t('forgotPassword.password') }}</label>
           <input
             v-model.trim="passwordInput"
             class="custom-input"
@@ -185,9 +187,9 @@ function ValidatePassword() {
             type="password"
           />
         </div>
-        <p class="error" v-if="passwordError">{{ passwordError }}</p>
+        <p class="error" v-if="passwordError">{{ $t(passwordError) }}</p>
         <div class="field">
-          <label class="input-label">Подтвеждение пароля</label>
+          <label class="input-label">{{ $t('forgotPassword.passwordConfirm') }}</label>
           <input
             v-model.trim="password2Input"
             class="custom-input"
@@ -195,14 +197,16 @@ function ValidatePassword() {
             type="password"
           />
         </div>
-        <p class="error" v-if="password2Error">{{ password2Error }}</p>
-        <button type="submit" class="action-button" @click="ChangePassword">Сменить пароль</button>
+        <p class="error" v-if="password2Error">{{ $t(password2Error) }}</p>
+        <button type="submit" class="action-button" @click="ChangePassword">
+          {{ $t('forgotPassword.changePassword') }}
+        </button>
       </template>
       <template v-else>
-        <p>Пароль был успешно изменен!</p>
+        <p>{{ $t('forgotPassword.successMessage') }}</p>
         <a @click="$emit('on-close')" class="back-button">
           <i class="fa-solid fa-left"></i>
-          &nbsp; Вернуться ко входу
+          &nbsp; {{ $t('forgotPassword.backToLogin') }}
         </a>
       </template>
     </div>

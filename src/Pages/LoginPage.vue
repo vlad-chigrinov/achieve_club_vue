@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../Stores/AuthStore'
 import axios from 'axios'
 import ForgotPasswordModal from '@/Components/ForgotPasswordModal.vue'
+import LocaleChanger from '@/Components/LocaleChanger.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -50,7 +51,7 @@ async function Login() {
       })
       .catch((error) => {
         console.log(error)
-        serverError.value = 'Неправильный логин или пароль'
+        serverError.value = 'login.errors.wrongLoginOrPassword'
       })
   }
 }
@@ -61,24 +62,24 @@ function ValidateInputs() {
   const emailRegex = /^\S+@\S+\.\S+$/
 
   if (emailInput.value.length == 0) {
-    emailError.value = 'Введите почту'
+    emailError.value = 'login.errors.enterEmail'
     result = false
   } else if (!emailRegex.test(emailInput.value)) {
-    emailError.value = 'Вы ввели недействительную почту'
+    emailError.value = 'login.errors.wrongEmail'
     result = false
   }
 
   if (passwordInput.value.length == 0) {
-    passwordError.value = 'Введите пароль'
+    passwordError.value = 'login.errors.enterPassword'
     result = false
   } else if (passwordInput.value.length < 6) {
-    passwordError.value = 'Минимум 6 символом'
+    passwordError.value = 'login.errors.password6Characters'
     result = false
   } else if (!/[A-z]/.test(passwordInput.value)) {
-    passwordError.value = 'Минимум 1 буква'
+    passwordError.value = 'login.errors.password1Letter'
     result = false
   } else if (!/\d/.test(passwordInput.value)) {
-    passwordError.value = 'Минимум 1 цифра'
+    passwordError.value = 'login.errors.password1Digit'
     result = false
   }
 
@@ -89,38 +90,41 @@ function ValidateInputs() {
 <template>
   <forgot-password-modal v-if="showModal" @on-close="showModal = false" />
   <header>
-    <h1 id="title">Вход в аккаунт</h1>
+    <h1 id="title">{{ $t('login.title') }}</h1>
     <h3 id="subtitle">
-      <span>или&nbsp;</span>
-      <a href="registration">зарегистрируйтесь</a>
+      <span>{{ $t('login.or') }}&nbsp;</span>
+      <a href="registration">{{ $t('login.register') }}</a>
     </h3>
   </header>
   <main>
     <div id="login-form">
       <div class="field">
-        <label for="email" class="input-label">Почта</label>
+        <label for="email" class="input-label">{{ $t('login.email') }}</label>
         <input
           v-model.trim="emailInput"
           class="custom-input"
           placeholder="email@mail.com"
           type="email"
         />
-        <p class="error" v-if="emailError">{{ emailError }}</p>
+        <p class="error" v-if="emailError">{{ $t(emailError) }}</p>
       </div>
       <div class="field">
-        <label class="input-label">Пароль</label>
+        <label class="input-label">{{ $t('login.password') }}</label>
         <input
           v-model.trim="passwordInput"
           class="custom-input"
           placeholder="•••••••••"
           type="password"
         />
-        <p class="error" v-if="passwordError">{{ passwordError }}</p>
-        <a @click="showModal = true" class="input-help">Забыли пароль?</a>
+        <p class="error" v-if="passwordError">{{ $t(passwordError) }}</p>
+        <a @click="showModal = true" class="input-help">{{ $t('login.forgotPassword') }}</a>
       </div>
-      <button @click="Login" id="login-button" :disabled="loginDisabled">Войти</button>
-      <p class="error" v-if="serverError">{{ serverError }}</p>
+      <button @click="Login" id="login-button" :disabled="loginDisabled">
+        {{ $t('login.login') }}
+      </button>
+      <p class="error" v-if="serverError">{{ $t(serverError) }}</p>
     </div>
+    <locale-changer />
   </main>
 </template>
 
@@ -157,7 +161,9 @@ header {
 
 main {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 #login-form {

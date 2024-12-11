@@ -8,7 +8,10 @@ import { useAuthStore } from '../Stores/AuthStore'
 import { useRouter } from 'vue-router'
 import { HttpTransportType, HubConnectionBuilder } from '@microsoft/signalr'
 import VueLoadImage from 'vue-load-image'
+import { useI18n } from 'vue-i18n'
+import axios from 'axios'
 
+const i18nLocale = useI18n()
 const authStore = useAuthStore()
 const router = useRouter()
 
@@ -67,13 +70,18 @@ async function LoadData() {
   let responce = await fetch('https://achieve.by:5000/api/users/' + authStore.getUserId)
   userInfo.value = await responce.json()
 
-  responce = await fetch('https://achieve.by:5000/api/achievements')
-  achievements.value = await responce.json()
-  achievements.value
-    .sort((a, b) => a.xp > b.xp)
-    .map((a) => {
-      a.selected = false
-      a.completed = false
+  await axios
+    .get('https://achieve.by:5000/api/achievements', {
+      headers: { 'Accept-Language': i18nLocale.locale.value }
+    })
+    .then((r) => {
+      achievements.value = r.data
+      achievements.value
+        .sort((a, b) => a.xp > b.xp)
+        .map((a) => {
+          a.selected = false
+          a.completed = false
+        })
     })
 
   responce = await fetch('https://achieve.by:5000/api/completedAchievements/' + authStore.getUserId)
@@ -168,14 +176,14 @@ function SelectAchievement(achievement) {
             <i class="info-icon fa-solid fa-sparkles"></i>
             <div class="info-data">
               <p class="info-value">{{ userInfo.xpSum }}</p>
-              <p class="info-title">Всего XP</p>
+              <p class="info-title">{{ $t('profile.stats.xpSum') }}</p>
             </div>
           </div>
           <div class="info-block">
             <i class="info-icon fa-solid fa-circles-overlap"></i>
             <div class="info-data">
               <p class="info-value">{{ completedCount }} из {{ achievementsCount }}</p>
-              <p class="info-title">Заданий выполнено</p>
+              <p class="info-title">{{ $t('profile.stats.achieveCompleted') }}</p>
             </div>
           </div>
         </div>
@@ -186,7 +194,7 @@ function SelectAchievement(achievement) {
             @click="currentPage = 'kombo'"
           >
             <i class="filter-icon fa-solid fa-cubes-stacked"></i>
-            <span class="filter-title"> комбо </span>
+            <span class="filter-title"> {{ $t('profile.filters.combo') }} </span>
             <div class="selected-marker"></div>
           </button>
           <button
@@ -195,7 +203,7 @@ function SelectAchievement(achievement) {
             @click="currentPage = 'completed'"
           >
             <i class="filter-icon fa-solid fa-circle-check"></i>
-            <span class="filter-title"> сделано </span>
+            <span class="filter-title"> {{ $t('profile.filters.completed') }} </span>
             <div class="selected-marker"></div>
           </button>
           <button
@@ -204,7 +212,7 @@ function SelectAchievement(achievement) {
             @click="currentPage = 'noncompleted'"
           >
             <i class="filter-icon fa-solid fa-circle-xmark"></i>
-            <span class="filter-title"> несделано </span>
+            <span class="filter-title"> {{ $t('profile.filters.nonCompleted') }} </span>
             <div class="selected-marker"></div>
           </button>
         </div>

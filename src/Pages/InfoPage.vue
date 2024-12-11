@@ -17,13 +17,13 @@ import 'swiper/css/navigation'
             <template #icon>
               <i class="fa-solid fa-qrcode fa-2xl"></i>
             </template>
-            <template #title> Выполнение достижений </template>
+            <template #title> {{ $t('infoPage.card1.title') }} </template>
             <template #content>
-              <p>Чтобы выполнить достижение вам нужно:</p>
+              <p>{{ $t('infoPage.card1.subTitle') }}</p>
               <ul>
-                <li>Выбрать желаемое достижение</li>
-                <li>Нажать на вспывающую кнопку</li>
-                <li>Попросить у тренера просканировать код</li>
+                <li>{{ $t('infoPage.card1.point1') }}</li>
+                <li>{{ $t('infoPage.card1.point2') }}</li>
+                <li>{{ $t('infoPage.card1.point3') }}</li>
               </ul>
             </template>
           </info-card>
@@ -33,14 +33,14 @@ import 'swiper/css/navigation'
             <template #icon>
               <i class="fa-regular fa-sparkles fa-2xl"></i>
             </template>
-            <template #title> Получайте XP за достижения </template>
+            <template #title> {{ $t('infoPage.card2.title') }} </template>
             <template #content>
               <div style="text-align: center">
-                <p>Больше достижений</p>
+                <p>{{ $t('infoPage.card2.point1') }}</p>
                 <i class="fa-solid fa-arrow-down"></i>
-                <p>Больше XP</p>
+                <p>{{ $t('infoPage.card2.point2') }}</p>
                 <i class="fa-solid fa-arrow-down"></i>
-                <p>Вы поднимаетесь в т+опе пользователей</p>
+                <p>{{ $t('infoPage.card2.point3') }}</p>
               </div>
             </template>
           </info-card>
@@ -50,16 +50,14 @@ import 'swiper/css/navigation'
             <template #icon>
               <i class="fa-solid fa-cubes-stacked fa-2xl"></i>
             </template>
-            <template #title> Комбо достижения </template>
+            <template #title> {{ $t('infoPage.card3.title') }} </template>
             <template #content>
               <p>
-                Все комбо достижения отображаются во вкладке <b>КОМБО</b>. Их вы можете выполнять
-                СКОЛЬКО УГОДНО - и каждый раз получать за это очки.
+                {{ $t('infoPage.card3.point1') }}
               </p>
               <p>
                 <i>
-                  К примеру: если вы выполнили такое достижение 10 раз, то получили в 10 раз больше
-                  очков!
+                  {{ $t('infoPage.card3.point2') }}
                 </i>
               </p>
             </template>
@@ -70,11 +68,12 @@ import 'swiper/css/navigation'
             <template #icon>
               <i class="fa-solid fa-users fa-2xl"></i>
             </template>
-            <template #title> Топ пользователей </template>
+            <template #title> {{ $t('infoPage.card4.title') }} </template>
             <template #content>
-              <p>Чем выше вы в топе - тем вы круче.</p>
+              <p>{{ $t('infoPage.card4.point1') }}</p>
               <p>
-                <i> За первые места в топе можно получить приятные призы </i>
+                <i> {{ $t('infoPage.card4.point2') }}</i>
+                &nbsp;
                 <i class="fa-solid fa-message-smile"></i>
               </p>
             </template>
@@ -114,7 +113,7 @@ import 'swiper/css/navigation'
 }
 </style>
 <style>
-.swiper>.swiper-pagination {
+.swiper > .swiper-pagination {
   z-index: -10 !important;
 }
 </style>
