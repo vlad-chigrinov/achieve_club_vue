@@ -7,9 +7,9 @@ import VueLoadImage from 'vue-load-image'
 const users = ref([])
 
 onMounted(async () => {
-  await axios
+  users.value = await axios
     .get('https://achieve.by:5000/api/users')
-    .then((f) => (users.value = f.data.sort((a, b) => a.xpSum < b.xpSum)))
+    .then((f) => f.data.sort((a, b) => b.xpSum - a.xpSum))
     .catch((e) => console.log(e))
 })
 </script>
