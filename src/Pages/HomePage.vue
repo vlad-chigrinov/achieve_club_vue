@@ -46,7 +46,7 @@ const nonCompletedAchievements = computed(() =>
 const comboAchievements = computed(() =>
   achievements.value
     .filter((a) => a.isMultiple)
-    .sort((a, b) => a.completionCount > b.completionCount)
+    .sort((a, b) => b.completionCount - a.completionCount)
 )
 const achievementsCount = computed(() => achievements.value.length)
 const completedCount = computed(() => completedAchievements.value.length)
@@ -77,7 +77,7 @@ async function LoadData() {
     .then((r) => {
       achievements.value = r.data
       achievements.value
-        .sort((a, b) => a.xp > b.xp)
+        .sort((a, b) => b.xp - a.xp)
         .map((a) => {
           a.selected = false
           a.completed = false

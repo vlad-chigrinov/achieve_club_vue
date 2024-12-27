@@ -14,7 +14,7 @@ const userInfo = ref()
 const i18nLocale = useI18n()
 
 const completedAchievements = computed(() =>
-  achievements.value.filter((a) => a.completed).sort((a, b) => a.xp < b.xp)
+  achievements.value.filter((a) => a.completed).sort((a, b) => b.xp - a.xp)
 )
 const completedCount = computed(() => completedAchievements.value.length)
 const achievementsCount = computed(() => achievements.value.length)
@@ -32,7 +32,7 @@ async function LoadData() {
     .then((r) => {
       achievements.value = r.data
       achievements.value
-        .sort((a, b) => a.xp > b.xp)
+        .sort((a, b) => b.xp - a.xp)
         .map((a) => {
           a.selected = false
           a.completed = false
