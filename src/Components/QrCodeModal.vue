@@ -2,6 +2,7 @@
 import { defineEmits, defineProps } from 'vue'
 import QrcodeVue from 'qrcode.vue'
 import BaseModal from './BaseModal.vue'
+import axios from 'axios'
 
 defineEmits(['on-close'])
 
@@ -23,7 +24,7 @@ defineProps({
 <template>
   <base-modal @on-close="$emit('on-close')">
     <div class="user-info">
-      <img class="avatar" :src="'https://achieve.by:5000/' + userInfo.avatar" />
+      <img class="avatar" :src="axios.defaults.baseURL + userInfo.avatar" />
       <p class="name">{{ userInfo.firstName }} {{ userInfo.lastName }}</p>
     </div>
     <p class="achieve-count">
@@ -31,7 +32,7 @@ defineProps({
     </p>
     <div class="achievements">
       <div class="achievement" v-for="achievement in achievements" :key="achievement.Id">
-        <img :src="'https://achieve.by:5000/' + achievement.logoURL" />
+        <img :src="axios.defaults.baseURL + achievement.logoURL" />
         <p>{{ achievement.title }}</p>
       </div>
     </div>

@@ -36,7 +36,7 @@ async function SendProofCode() {
   if (ValidateEmail() == false) return
 
   await axios
-    .post('https://achieve.by:5000/api/email/change_password', emailInput.value, {
+    .post('api/email/change_password', emailInput.value, {
       headers: { 'Content-Type': 'application/json' }
     })
     .then(() => (currentStep.value = 1))
@@ -74,7 +74,7 @@ async function ValidateProofCode(value) {
   isOtpLoading.value = true
 
   await axios
-    .post('https://achieve.by:5000/api/email/validate_code', {
+    .post('api/email/validate_code', {
       emailAddress: emailInput.value,
       proofCode: value
     })
@@ -94,7 +94,7 @@ async function ValidateProofCode(value) {
 async function ChangePassword() {
   if (ValidatePassword()) {
     await axios
-      .patch('https://achieve.by:5000/api/auth/change_password', {
+      .patch('api/auth/change_password', {
         emailAddress: emailInput.value,
         proofCode: proofCodeInput.value,
         password: passwordInput.value

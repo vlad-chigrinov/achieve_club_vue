@@ -22,11 +22,10 @@ const achievementsCount = computed(() => achievements.value.length)
 onMounted(async () => await LoadData())
 
 async function LoadData() {
-  let responce = await fetch('https://achieve.by:5000/api/users/' + route.params['id'])
-  userInfo.value = await responce.json()
-
+  let responce = await axios.get('api/users/' + route.params['id'])
+  userInfo.value = await responce.data
   await axios
-    .get('https://achieve.by:5000/api/achievements', {
+    .get('api/achievements', {
       headers: { 'Accept-Language': i18nLocale.locale.value }
     })
     .then((r) => {
@@ -39,9 +38,9 @@ async function LoadData() {
         })
     })
 
-  responce = await fetch('https://achieve.by:5000/api/completedAchievements/' + route.params['id'])
+  responce = await axios.get('api/completedAchievements/' + route.params['id'])
 
-  const completed = await responce.json()
+  const completed = await responce.data
   for (const ca of completed) {
     var finded = achievements.value.find((a) => a.id == ca.achieveId)
     if (finded) {
@@ -66,7 +65,7 @@ function NavigateBack() {
           </button>
           <vue-load-image>
             <template v-slot:image>
-              <img class="avatar" :src="'https://achieve.by:5000/' + userInfo.avatar" />
+              <img class="avatar" :src="axios.defaults.baseURL + userInfo.avatar" />
             </template>
             <template v-slot:preloader>
               <i class="avatar avatar-loader fa-solid fa-loader"></i>

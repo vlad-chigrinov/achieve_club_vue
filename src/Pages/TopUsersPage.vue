@@ -8,7 +8,7 @@ const users = ref([])
 
 onMounted(async () => {
   users.value = await axios
-    .get('https://achieve.by:5000/api/users')
+    .get('api/users')
     .then((f) => f.data.sort((a, b) => b.xpSum - a.xpSum))
     .catch((e) => console.log(e))
 })
@@ -25,7 +25,7 @@ onMounted(async () => {
           <div class="left">
             <vue-load-image>
               <template v-slot:image>
-                <img class="avatar" :src="'https://achieve.by:5000/' + user.avatar" />
+                <img class="avatar" :src="axios.defaults.baseURL + user.avatar" />
               </template>
               <template v-slot:preloader>
                 <i class="avatar avatar-loader fa-solid fa-loader"></i>

@@ -12,6 +12,7 @@ import TopUsersPage from './Pages/TopUsersPage.vue'
 import InfoPage from './Pages/InfoPage.vue'
 import AnotherUserPage from './Pages/AnotherUserPage.vue'
 import { createI18n } from 'vue-i18n'
+import axios from 'axios'
 
 const routes = [
   { path: '/', component: HomePage },
@@ -344,5 +345,7 @@ const i18n = createI18n({
     }
   }
 })
+
+axios.defaults.baseURL = 'https://localhost:7170/' //'https://achieve.by:5000/'
 
 createApp(App).use(pinia).use(router).use(i18n).mount('#app')

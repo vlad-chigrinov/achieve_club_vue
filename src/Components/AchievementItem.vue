@@ -1,4 +1,5 @@
 <script setup>
+import axios from 'axios'
 import VueLoadImage from 'vue-load-image'
 defineProps({
   achievement: {
@@ -30,7 +31,7 @@ defineProps({
       <div class="left">
         <vue-load-image>
           <template v-slot:image>
-            <img class="logo" :src="'https://achieve.by:5000/' + achievement.logoURL" />
+            <img class="logo" :src="axios.defaults.baseURL + achievement.logoURL" />
           </template>
           <template v-slot:preloader>
             <i class="logo logo-loader fa-solid fa-loader"></i>

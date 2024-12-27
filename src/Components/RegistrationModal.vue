@@ -63,6 +63,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseModal from './BaseModal.vue'
+import axios from 'axios'
 export default {
   props: {
     Account: {
@@ -107,36 +108,24 @@ export default {
         this.input.inputPart2 +
         this.input.inputPart3 +
         this.input.inputPart4
-      let responce1 = await fetch('https://achieve.by:5000/api/email/validate_code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: JSON.stringify({
-          emailAddress: this.Account.emailAddress,
-          proofcode: Number(this.proofCode)
-        })
+      let responce1 = await axios.post('api/email/validate_code', {
+        emailAddress: this.Account.emailAddress,
+        proofcode: Number(this.proofCode)
       })
-      if (responce1.ok) {
-        let responce2 = await fetch('https://achieve.by:5000/api/auth/registration', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json;charset=utf-8'
-          },
-          body: JSON.stringify({
-            firstName: this.Account.firstName,
-            lastName: this.Account.lastName,
-            emailAddress: this.Account.emailAddress,
-            avatarURL: this.Account.avatarURL,
-            clubId: this.Account.clubId,
-            password: this.Account.password,
-            proofcode: this.proofCode
-          })
+      if (responce1.status == 200) {
+        let responce2 = await axios.post('api/auth/registration', {
+          firstName: this.Account.firstName,
+          lastName: this.Account.lastName,
+          emailAddress: this.Account.emailAddress,
+          avatarURL: this.Account.avatarURL,
+          clubId: this.Account.clubId,
+          password: this.Account.password,
+          proofcode: this.proofCode
         })
-        if (responce2.ok) {
+        if (responce2.status == 200) {
           this.router.push('/')
         }
-        if (responce2.value == 400) {
+        if (responce2.status == 400) {
           console.log(this.proofCode)
           proofCodeError.value = 'wrongCode'
         }

@@ -17,7 +17,7 @@ async function OnPickFile(event) {
   console.log(event.target.files)
   var formData = new FormData()
   formData.append('file', event.target.files[0])
-  await axios.post('https://achieve.by:5000/api/avatar', formData, {
+  await axios.post('api/avatar', formData, {
     headers: { Authorization: 'Bearer ' + authStore.authToken }
   })
 }

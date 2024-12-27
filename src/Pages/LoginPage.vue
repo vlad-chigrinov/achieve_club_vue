@@ -34,11 +34,11 @@ const loginDisabled = computed(() => {
 
 async function Login() {
   if (ValidateInputs()) {
-    const path = 'https://achieve.by:5000/api/auth/login?api-version=1.1'
-    const requestData = { email: emailInput.value, password: passwordInput.value }
-
     axios
-      .post(path, requestData)
+      .post('api/auth/login?api-version=1.1', {
+        email: emailInput.value,
+        password: passwordInput.value
+      })
       .then(function (responce) {
         const data = responce.data
         const tokens = {
@@ -99,7 +99,7 @@ function ValidateInputs() {
   <main>
     <div id="login-form">
       <div class="field">
-        <label for="email" class="input-label">{{ $t('login.email') }}</label>
+        <label class="input-label">{{ $t('login.email') }}</label>
         <input
           v-model.trim="emailInput"
           class="custom-input"

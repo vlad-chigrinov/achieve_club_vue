@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
@@ -59,7 +60,7 @@ export const useAuthStore = defineStore('auth', {
 
 async function SendPingRequest(authToken) {
   console.log('send ping request')
-  const responce = await fetch('https://achieve.by:5000/api/ping', {
+  const responce = await axios.get('api/ping', {
     headers: { Authorization: 'Bearer ' + authToken }
   })
   return responce.ok
@@ -67,12 +68,11 @@ async function SendPingRequest(authToken) {
 
 async function SendRefreshRequest(userId, refreshToken) {
   console.log('send refresh request')
-  const responce = await fetch('https://achieve.by:5000/api/auth/refresh?api-version=1.1', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ userId: userId, refreshToken: refreshToken })
+  const responce = await axios.post('api/auth/refresh?api-version=1.1', {
+    userId: userId,
+    refreshToken: refreshToken
   })
-  return responce.ok ? await responce.json() : null
+  return responce.ok ? responce.data : null
 }
 
 function SaveUserData(tokens) {
